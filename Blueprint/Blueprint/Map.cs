@@ -16,7 +16,7 @@ namespace Blueprint
         public Texture2D BlockTexture;
         public DroppedItem[] DroppedItems;
 
-        public Map()
+        public Map(int mapId)
         {
 
             Types = new BlockType[50];
@@ -39,7 +39,7 @@ namespace Blueprint
 
             DroppedItems = new DroppedItem[255];
 
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://local.blueprintgame.com:8888/maps/manifest/3");
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://local.blueprintgame.com:8888/maps/manifest/" + mapId);
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
 
             StreamReader reader = new StreamReader(response.GetResponseStream());

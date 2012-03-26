@@ -45,7 +45,7 @@ namespace Blueprint
             MaxJump = 100;
 
             FrameCount = 4;
-            FrameSkipCount = 5;
+            FrameSkipCount = 8;
             FrameSkipUpto = 1;
 
             Health = 100;
@@ -143,7 +143,6 @@ namespace Blueprint
 
             if (currentKeyboardState.IsKeyDown(Keys.A) && !stopLeft)
             {
-
                 LastMovement.X -= Speed;
                 Direction = "left";
             }
@@ -152,33 +151,40 @@ namespace Blueprint
                 LastMovement.X += Speed;
                 Direction = "right";
             }
-            if (currentKeyboardState.IsKeyDown(Keys.Space) && !stopTop && !Falling) // Jumping
-            {
 
-                if (previousKeyboardState.IsKeyDown(Keys.Space))
+            if (currentKeyboardState.IsKeyDown(Keys.Space))
+            {
+                if (previousKeyboardState.IsKeyDown(Keys.Space) && Jumping) // Continue Jumping
                 {
                     AmountJumped += Speed;
                 }
-                else
+
+                if (!previousKeyboardState.IsKeyDown(Keys.Space) && !Falling && !Jumping) // Started Jumping
                 {
                     AmountJumped = Speed;
-                    Falling = true;
-                }
-
-                if (AmountJumped >= MaxJump)
-                {
-                    Jumping = false;
-                }
-                else
-                {
                     Jumping = true;
                 }
-
-                if(Jumping){
-                    LastMovement.Y -= Speed * (float)2.5;
-                }
-
             }
+
+            if (AmountJumped >= MaxJump || stopTop)
+            {
+                Jumping = false;
+                Falling = true;
+            }
+
+            if (previousKeyboardState.IsKeyDown(Keys.Space) && !currentKeyboardState.IsKeyDown(Keys.Space) && Jumping)
+            {
+                Falling = true;
+                Jumping = false;
+                AmountJumped = MaxJump;
+            }
+
+            if (Jumping)
+            {
+                LastMovement.Y -= Speed * (float)2.5;
+            }
+
+
             if (!stopBottom) // Gravity
             {
                 LastMovement.Y += Speed;
@@ -230,6 +236,14 @@ namespace Blueprint
             }
 
             int spritecol = (FrameUpto - 1) * 32;
+
+            if (Falling)
+            {
+                spriterow += (4 * 44);
+            } else if (Jumping)
+            {
+                spriterow += (2 * 44);
+            }
 
             spriteBatch.Draw(PlayerTexture, Position + camera, new Rectangle(spritecol, spriterow, 32, 44), Color.White);
 

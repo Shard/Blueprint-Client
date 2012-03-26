@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using Lidgren.Network;
 
 namespace Blueprint
 {
@@ -22,6 +23,9 @@ namespace Blueprint
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+        string console;
+        int MapId;
+
         KeyboardState currentKeyboardState;
         KeyboardState previousKeyboardState;
         MouseState previousMouseState;
@@ -30,21 +34,43 @@ namespace Blueprint
         Player Player; // The play that is currently being played
         Map Map; // The current map the player is on
         ItemCollection ItemCollection; // A collection of every item avaliable
+        Chat Chat;
 
         Vector2 camera; // The camera position
 
         SpriteFont font; // The main font used
         Texture2D Cursor; // Cursor Texture
 
-        public Game1()
+        public Game1(string[] args)
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             this.Window.AllowUserResizing = true;
 
+            if (args.Length > 0)
+            {
+                console = args[0];
+                // Handle Paramaters
+                string arg = args[0];
+                arg = arg.Replace("blueprint://", "");
+                arg = arg.Replace("/", "");
+                MapId = Convert.ToInt16(arg);
+            }
+            else
+            {
+                console = "No Paramaters";
+                MapId = 3;
+            }
+
+            // Registery
+            string gameLocation = System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase;
+            string fullLocation = System.IO.Path.GetDirectoryName(gameLocation);
+            fullLocation = "\"" + fullLocation.Replace("file:\\","") + "\\blueprint.exe\" \"%1\"";
+
             RegistryKey reg = Registry.ClassesRoot.OpenSubKey("blueprint");
             if (reg == null)
             {
+                // Need to initialize Registery
                 RegistryKey blueprint = Registry.ClassesRoot.CreateSubKey("blueprint");
                 Registry.ClassesRoot.OpenSubKey("blueprint", true)
                     .SetValue("", "URL: Blueprint Protocol", RegistryValueKind.String);
@@ -55,8 +81,22 @@ namespace Blueprint
                 Registry.ClassesRoot.CreateSubKey("blueprint\\shell\\open");
                 RegistryKey commandKey = Registry.ClassesRoot.CreateSubKey("blueprint\\shell\\open\\command");
 
-                commandKey.SetValue("", "C:\\Users\\Mark\\Desktop\\Blueprint\\Blueprint\\Blueprint\\Blueprint\\bin\\x86\\Debug\\blueprint.exe", RegistryValueKind.String);
+                commandKey.SetValue("", fullLocation, RegistryValueKind.String);
             }
+            else
+            {
+                //RegistryKey commandKey = Registry.ClassesRoot.CreateSubKey("blueprint\\shell\\open\\command");
+                //commandKey.SetValue("", fullLocation, RegistryValueKind.String);
+                // Make sure the path is ok, Send the server the update command if it needs updating
+            }
+
+            this.Window.ClientSizeChanged += new EventHandler<EventArgs>(Window_ClientSizeChanged);
+
+        }
+
+        void Window_ClientSizeChanged(object sender, EventArgs e)
+        {
+            camera = new Vector2((GraphicsDevice.Viewport.TitleSafeArea.X + GraphicsDevice.Viewport.TitleSafeArea.Width / 2) - Player.Position.X, (GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2) - Player.Position.Y);
         }
 
         /// <summary>
@@ -70,7 +110,9 @@ namespace Blueprint
 
             Player = new Player();
             camera = new Vector2((GraphicsDevice.Viewport.TitleSafeArea.X + GraphicsDevice.Viewport.TitleSafeArea.Width / 2) - 100, (GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2) + 100);
-            Map = new Map();
+            Map = new Map(MapId);
+            Chat = new Chat();
+
             ItemCollection = new ItemCollection();
             ItemCollection.mock();
 
@@ -118,6 +160,8 @@ namespace Blueprint
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
+
+            
 
             previousKeyboardState = currentKeyboardState;
             currentKeyboardState = Keyboard.GetState();
@@ -179,6 +223,7 @@ namespace Blueprint
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
+         
             spriteBatch.Begin();
             Map.Draw(spriteBatch, camera);
             Player.Draw(spriteBatch, camera);
@@ -191,6 +236,11 @@ namespace Blueprint
             }
                 
             spriteBatch.Draw(Cursor, new Rectangle(currentMouseState.X, currentMouseState.Y, 20, 20), new Rectangle(0,0,32,32), Color.White);
+
+            spriteBatch.DrawString(font, console, new Vector2(10, 10), Color.Wheat);
+
+            
+
             spriteBatch.End();
             base.Draw(gameTime);
         }
