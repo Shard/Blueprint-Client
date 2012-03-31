@@ -37,7 +37,7 @@
     <SuiteName>Project Blueprint</SuiteName>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>28</ApplicationRevision>
+    <ApplicationRevision>29</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -82,6 +82,9 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Box2D.XNA">
+      <HintPath>..\..\..\Lib\box2d\Box2D.XNA\bin\x86\Debug\Box2D.XNA.dll</HintPath>
+    </Reference>
     <Reference Include="Lidgren.Network">
       <HintPath>..\..\..\..\net\Lidgren-network-gen3\Lidgren.Network\bin\Debug\Lidgren.Network.dll</HintPath>
     </Reference>
@@ -98,6 +101,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Blocks\Block.cs" />
+    <Compile Include="Movement.cs" />
     <Compile Include="Net\Chat.cs" />
     <Compile Include="Core\Camera.cs" />
     <Compile Include="Net\Client.cs" />
@@ -112,6 +116,15 @@
     <Compile Include="Items\ItemPackage.cs" />
     <Compile Include="Items\ItemType.cs" />
     <Compile Include="Items\Quickbar.cs" />
+    <Compile Include="Npc\ActiveNpc.cs" />
+    <Compile Include="Npc\DropChance.cs" />
+    <Compile Include="Npc\Npc.cs" />
+    <Compile Include="Npc\NpcAi.cs" />
+    <Compile Include="Npc\NpcAnimation.cs" />
+    <Compile Include="Npc\NpcPackage.cs" />
+    <Compile Include="Npc\NpcRace.cs" />
+    <Compile Include="Npc\Shop.cs" />
+    <Compile Include="Npc\ShopItem.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\Program.cs" />

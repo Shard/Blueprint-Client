@@ -28,9 +28,9 @@ namespace Blueprint
         Package Package;
         Control Control;
         WeaponPackage WeaponPackage;
+        NpcPackage NpcPackage;
 
-
-        Camera Camera; // The camera position
+        Camera Camera; // The camera
 
         SpriteFont font; // The main font used
         Texture2D Cursor; // Cursor Texture
@@ -71,6 +71,7 @@ namespace Blueprint
             WeaponPackage = new WeaponPackage();
             ItemPackage.mock(Map.Types, WeaponPackage.Weapons);
             Control = new Control();
+            NpcPackage = new NpcPackage();
 
             base.Initialize();
         }
@@ -110,6 +111,7 @@ namespace Blueprint
             ItemPackage.Initialize(Content.Load<Texture2D>("items"));
             Player.Inventory.Initialize(Content.Load<Texture2D>("inventory"), ItemPackage);
             WeaponPackage.Initialize(Content.Load<Texture2D>("weapons"));
+            NpcPackage.Initialize(Content.Load<Texture2D>("npcs"));
 
             spriteBatch = new SpriteBatch(GraphicsDevice);
 

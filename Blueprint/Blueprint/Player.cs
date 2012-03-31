@@ -23,6 +23,7 @@ namespace Blueprint
         public bool Falling; // If the player is falling, and thus cannot jump
         public float AmountJumped; // The amount the player has jumped
         public float MaxJump; // Maximun Jump Height
+        public Movement Movement; // Handles movement and collisions
 
         // Sprites
         public Texture2D PlayerTexture;
@@ -57,6 +58,8 @@ namespace Blueprint
 
         public void Update(Control control, Map map, Chat chat)
         {
+
+            //Movement.Update(control);
 
             // Collision
             PlayerArea = new Rectangle((int)Position.X, (int)Position.Y, 32, 48);
