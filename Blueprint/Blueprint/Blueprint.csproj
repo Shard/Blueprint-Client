@@ -37,7 +37,7 @@
     <SuiteName>Project Blueprint</SuiteName>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>20</ApplicationRevision>
+    <ApplicationRevision>28</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -97,17 +97,29 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Block.cs" />
+    <Compile Include="Blocks\Block.cs" />
     <Compile Include="Chat.cs" />
-    <Compile Include="DroppedItem.cs" />
-    <Compile Include="Inventory.cs" />
-    <Compile Include="Item.cs" />
-    <Compile Include="Map.cs" />
+    <Compile Include="Core\Camera.cs" />
+    <Compile Include="Core\Client.cs" />
+    <Compile Include="Core\Config.cs" />
+    <Compile Include="Core\Control.cs" />
+    <Compile Include="Core\Package.cs" />
+    <Compile Include="Items\DroppedItem.cs" />
+    <Compile Include="Items\Inventory.cs" />
+    <Compile Include="Items\Item.cs" />
+    <Compile Include="Blocks\Map.cs" />
+    <Compile Include="Items\ItemCollection.cs" />
+    <Compile Include="Items\ItemPackage.cs" />
+    <Compile Include="Items\ItemType.cs" />
+    <Compile Include="Items\Quickbar.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="Game1.cs" />
+    <Compile Include="Core\Program.cs" />
+    <Compile Include="Core\Game1.cs" />
+    <Compile Include="Core\Server.cs" />
     <Compile Include="Ui.cs" />
+    <Compile Include="Weapon\Weapon.cs" />
+    <Compile Include="Weapon\WeaponType.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BlueprintContent\BlueprintContent.contentproj">

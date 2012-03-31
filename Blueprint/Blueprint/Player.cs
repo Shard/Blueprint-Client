@@ -55,7 +55,7 @@ namespace Blueprint
             Inventory = new Inventory();
         }
 
-        public void Update(KeyboardState currentKeyboardState, KeyboardState previousKeyboardState, Map map)
+        public void Update(Control control, Map map, Chat chat)
         {
 
             // Collision
@@ -140,26 +140,26 @@ namespace Blueprint
             LastMovement = Vector2.Zero;
 
             // Movement
-
-            if (currentKeyboardState.IsKeyDown(Keys.A) && !stopLeft)
+            
+            if (control.currentKeyboard.IsKeyDown(Keys.A) && !stopLeft)
             {
                 LastMovement.X -= Speed;
                 Direction = "left";
             }
-            if (currentKeyboardState.IsKeyDown(Keys.D) && !stopRight)
+            if (control.currentKeyboard.IsKeyDown(Keys.D) && !stopRight)
             {
                 LastMovement.X += Speed;
                 Direction = "right";
             }
 
-            if (currentKeyboardState.IsKeyDown(Keys.Space))
+            if (control.currentKeyboard.IsKeyDown(Keys.Space))
             {
-                if (previousKeyboardState.IsKeyDown(Keys.Space) && Jumping) // Continue Jumping
+                if (control.previousKeyboard.IsKeyDown(Keys.Space) && Jumping) // Continue Jumping
                 {
                     AmountJumped += Speed;
                 }
 
-                if (!previousKeyboardState.IsKeyDown(Keys.Space) && !Falling && !Jumping) // Started Jumping
+                if (!control.previousKeyboard.IsKeyDown(Keys.Space) && !Falling && !Jumping) // Started Jumping
                 {
                     AmountJumped = Speed;
                     Jumping = true;
@@ -172,7 +172,7 @@ namespace Blueprint
                 Falling = true;
             }
 
-            if (previousKeyboardState.IsKeyDown(Keys.Space) && !currentKeyboardState.IsKeyDown(Keys.Space) && Jumping)
+            if (control.previousKeyboard.IsKeyDown(Keys.Space) && !control.currentKeyboard.IsKeyDown(Keys.Space) && Jumping)
             {
                 Falling = true;
                 Jumping = false;
@@ -193,7 +193,7 @@ namespace Blueprint
             }
 
             // Animation
-            if (currentKeyboardState.IsKeyDown(Keys.A) && previousKeyboardState.IsKeyDown(Keys.A) && !currentKeyboardState.IsKeyDown(Keys.D))
+            if (control.currentKeyboard.IsKeyDown(Keys.A) && control.previousKeyboard.IsKeyDown(Keys.A) && !control.currentKeyboard.IsKeyDown(Keys.D))
             {
                 FrameSkipUpto++;
                 if(FrameSkipUpto >= FrameSkipCount){
@@ -205,7 +205,7 @@ namespace Blueprint
                     }
                 }
             }
-            else if (currentKeyboardState.IsKeyDown(Keys.D) && previousKeyboardState.IsKeyDown(Keys.D) && !currentKeyboardState.IsKeyDown(Keys.A))
+            else if (control.currentKeyboard.IsKeyDown(Keys.D) && control.previousKeyboard.IsKeyDown(Keys.D) && !control.currentKeyboard.IsKeyDown(Keys.A))
             {
                 FrameSkipUpto++;
                 if (FrameSkipUpto >= FrameSkipCount)
@@ -226,7 +226,7 @@ namespace Blueprint
 
         }
 
-        public void Draw(SpriteBatch spriteBatch, Vector2 camera)
+        public void Draw(SpriteBatch spriteBatch, Camera camera)
         {
 
             int spriterow = 44;
@@ -245,7 +245,7 @@ namespace Blueprint
                 spriterow += (2 * 44);
             }
 
-            spriteBatch.Draw(PlayerTexture, Position + camera, new Rectangle(spritecol, spriterow, 32, 44), Color.White);
+            spriteBatch.Draw(PlayerTexture, Position + camera.ToVector2(), new Rectangle(spritecol, spriterow, 32, 44), Color.White);
 
         }
 
