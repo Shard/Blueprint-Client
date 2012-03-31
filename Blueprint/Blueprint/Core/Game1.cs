@@ -27,6 +27,8 @@ namespace Blueprint
         Client Client; //If client is joining, provides function to communicate with a server
         Package Package;
         Control Control;
+        WeaponPackage WeaponPackage;
+
 
         Camera Camera; // The camera position
 
@@ -66,7 +68,8 @@ namespace Blueprint
             Chat = new Chat();
             Package = new Package();
             ItemPackage = new ItemPackage();
-            ItemPackage.mock(Map.Types);
+            WeaponPackage = new WeaponPackage();
+            ItemPackage.mock(Map.Types, WeaponPackage.Weapons);
             Control = new Control();
 
             base.Initialize();
@@ -106,6 +109,7 @@ namespace Blueprint
             Player.Initialize(Content.Load<Texture2D>("player"), new Vector2(100, -100));
             ItemPackage.Initialize(Content.Load<Texture2D>("items"));
             Player.Inventory.Initialize(Content.Load<Texture2D>("inventory"), ItemPackage);
+            WeaponPackage.Initialize(Content.Load<Texture2D>("weapons"));
 
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
@@ -126,6 +130,7 @@ namespace Blueprint
             Player.Inventory.Update(Control);
             Player.Update(Control,  Map, Chat);
             Map.Update(Control, Player.Inventory.Quickbar);
+            WeaponPackage.Update(Control, Camera, Player);
 
             // Update Chat
             if (Server != null) { Chat.Add(Server.Messages); }
@@ -181,6 +186,7 @@ namespace Blueprint
             Map.Draw(spriteBatch, Camera);
             Player.Draw(spriteBatch, Camera);
             Player.Inventory.Draw(spriteBatch, Control, font, ItemPackage);
+            WeaponPackage.Draw(spriteBatch);
 
             foreach (DroppedItem item in Map.DroppedItems)
             {

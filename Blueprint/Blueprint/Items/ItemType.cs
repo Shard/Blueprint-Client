@@ -30,7 +30,7 @@ namespace Blueprint
 
             PlaceableBlock = null;
             PlaceableItem = null;
-
+            Weapon = null;
         }
 
         public ItemType(string name, Rectangle location, BlockType placeableBlock)
@@ -42,7 +42,19 @@ namespace Blueprint
 
             PlaceableBlock = placeableBlock;
             PlaceableItem = null;
+            Weapon = null;
+        }
 
+        public ItemType(string name, Rectangle location, Weapon weapon)
+        {
+            Name = name;
+            Description = "A default description";
+            Stacksize = 255;
+            Location = location;
+
+            PlaceableBlock = null;
+            PlaceableItem = null;
+            Weapon = weapon;
         }
     }
 }

@@ -72,15 +72,22 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="blocks.png">
-      <Name>blocks</Name>
+    <Compile Include="wallpaper.jpg">
+      <Name>wallpaper</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="wallpaper.jpg">
-      <Name>wallpaper</Name>
+    <Compile Include="weapons.png">
+      <Name>weapons</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="blocks.png">
+      <Name>blocks</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

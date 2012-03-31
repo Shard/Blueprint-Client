@@ -17,12 +17,12 @@ namespace Blueprint
 
         }
 
-        public void mock(BlockType[] blockTypes)
+        public void mock(BlockType[] blockTypes, Weapon[] weapons)
         {
             
             ItemTypes = new ItemType[10];
 
-            ItemTypes[0] = new ItemType("Sword", new Rectangle(0, 0, 40, 40));
+            ItemTypes[0] = new ItemType("Sword", new Rectangle(0, 0, 40, 40), weapons[0]);
             ItemTypes[1] = new ItemType("Food", new Rectangle(40, 0, 40, 40));
             ItemTypes[2] = new ItemType("Stone", new Rectangle(80, 0, 40, 40), blockTypes[0]);
             ItemTypes[3] = new ItemType("Shirt", new Rectangle(120, 0, 40, 40));

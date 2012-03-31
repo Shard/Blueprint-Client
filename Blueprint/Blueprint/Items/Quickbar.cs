@@ -27,6 +27,7 @@ namespace Blueprint
         // Using Items
         public BlockType AttemptPlace; // When a block is present, the player is attempting to place a block at the mouse cursor
         public Weapon UsingWeapon;
+        public bool SwingingWeapon; // If true, it means that the player is in the middle of a weapon swing
 
         public Quickbar( int size  )
         {
@@ -134,6 +135,8 @@ namespace Blueprint
             if (control.currentMouse.LeftButton == ButtonState.Pressed && control.MouseUi == false && Items.Items[Selected] != null && Items.Items[Selected].Type.Weapon != null)
             {
                 UsingWeapon = Items.Items[Selected].Type.Weapon;
+            } else {
+                UsingWeapon = null;
             }
         }
 

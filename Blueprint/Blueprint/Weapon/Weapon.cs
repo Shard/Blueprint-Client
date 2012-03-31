@@ -7,6 +7,13 @@ namespace Blueprint
     {
 
         public WeaponType Type;
+        public string Name;
+
+        public Weapon(WeaponType type, string name)
+        {
+            Type = type;
+            Name = name;
+        }
 
     }
 }
