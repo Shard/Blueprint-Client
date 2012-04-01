@@ -27,5 +27,10 @@ namespace Blueprint
             return new Vector2(X, Y);
         }
 
+        public Rectangle FromRectangle(Rectangle area)
+        {
+            return new Rectangle(area.X + (int)X, area.Y + (int)Y, area.Width, area.Height);
+        }
+
     }
 }

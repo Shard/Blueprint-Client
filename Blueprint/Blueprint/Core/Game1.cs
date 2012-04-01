@@ -140,7 +140,7 @@ namespace Blueprint
             Chat.Update();
 
             // Update Camera
-            Camera.Update(Player.LastMovement);
+            Camera.Update(Player.Movement.Moved);
 
             // Mine blocks
             if (Control.currentMouse.LeftButton == ButtonState.Pressed)

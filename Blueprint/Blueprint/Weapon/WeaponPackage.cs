@@ -43,7 +43,7 @@ namespace Blueprint
             {
                 if (player.Inventory.Quickbar.UsingWeapon.Type.Name == "Sword" && !player.Inventory.Quickbar.SwingingWeapon)
                 {
-                    LiveWeapons.Add(new LiveWeapon(player.Inventory.Quickbar.UsingWeapon, startingSwordPosition(camera,player, new Rectangle(0,0,47,79)), player.Direction));
+                    LiveWeapons.Add(new LiveWeapon(player.Inventory.Quickbar.UsingWeapon, startingSwordPosition(camera,player, new Rectangle(0,0,47,79)), player.Movement.Direction));
                     player.Inventory.Quickbar.SwingingWeapon = true;
                 }
             }
@@ -68,11 +68,11 @@ namespace Blueprint
 
         public Vector2 startingSwordPosition( Camera camera, Player player, Rectangle weaponArea )
         {
-            if (player.Direction == "right")
+            if (player.Movement.Direction == "right")
             {
-                return new Vector2(player.PlayerArea.Right, player.PlayerArea.Center.Y) + camera.ToVector2();
+                return new Vector2(player.Movement.Area.Right, player.Movement.Area.Center.Y) + camera.ToVector2();
             } else {
-                return new Vector2(player.PlayerArea.Left, player.PlayerArea.Center.Y) + camera.ToVector2();
+                return new Vector2(player.Movement.Area.Left, player.Movement.Area.Center.Y) + camera.ToVector2();
             }
 
         }
