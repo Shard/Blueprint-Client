@@ -14,12 +14,14 @@ namespace Blueprint
         public int UserId; // The User id of the playing user
         public string Argument; // The argument that was passed in
         public string IP;
+        public string Server; // Server that the client should be connecting to
+        public string DataFolder;
 
         public Config(string[] args)
         {
             if(args.Length < 1){
                 args = new string[1];
-                args[0] = "blueprint://map:17/host:true"; // Default
+                args[0] = "blueprint://map:17/host:false/local:true"; // Default
             }
 
             // Default Arguments
@@ -29,7 +31,8 @@ namespace Blueprint
             UserId = 1;
             Argument = "No Arguments";
             IP = this.getIP();
-
+            Server = "http://blueprintgame.com/";
+            DataFolder = System.IO.Path.GetFullPath(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\blueprint");
             if (args.Length < 1) { return; }
 
 
@@ -53,6 +56,9 @@ namespace Blueprint
                         break;
                     case "user":
                         UserId = Int32.Parse(bits[1]);
+                        break;
+                    case "local":
+                        if(Boolean.Parse(bits[1])){ Server = "http://local.blueprintgame.com:8888/"; }
                         break;
 
                 }

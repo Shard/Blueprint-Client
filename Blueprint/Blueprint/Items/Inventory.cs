@@ -69,5 +69,16 @@ namespace Blueprint
 
         }
 
+        /// <summary>
+        /// The player is attempting to pickup an item, this function finds a place to put the item
+        /// </summary>
+        /// <param name="item"></param>
+        public bool Pickup(Item item)
+        {
+            if (Quickbar.Items.AddItem(item)) { return true; }
+
+            return false;
+        }
+
     }
 }

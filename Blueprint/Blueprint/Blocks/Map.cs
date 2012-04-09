@@ -2,6 +2,7 @@
 using System.Xml;
 using System.Net;
 using System.IO;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -15,12 +16,13 @@ namespace Blueprint
         public BlockType[] Types;
         public Texture2D BlockTexture;
         public Texture2D BlockState;
-        public DroppedItem[] DroppedItems;
+        public DroppedItemCollection DroppedItems;
+        public Fluid.FluidCollection Fluids;
 
         public int SizeX;
         public int SizeY;
 
-        public Map(int mapId)
+        public Map(Config config)
         {
 
             // Init
@@ -28,13 +30,22 @@ namespace Blueprint
             SizeY = 100;
             Types = new BlockType[50];
             Blocks = new Block[SizeX, SizeY];
-            DroppedItems = new DroppedItem[255];
+            DroppedItems = new DroppedItemCollection();
+            Fluids = new Fluid.FluidCollection();
+
+        }
+
+        public void Initialize( Texture2D blockTexture, Texture2D blockState, Package package, Config config )
+        {
+
+            // Setup Liquids
+            Fluids.Initialize(SizeX, SizeY);
+
+            BlockTexture = blockTexture;
+            BlockState = blockState;
 
             // Gather Map Data
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://local.blueprintgame.com:8888/maps/manifest/" + mapId);
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            StreamReader reader = new StreamReader(response.GetResponseStream());
-            string data = reader.ReadToEnd();
+            string data = package.RemoteString("maps/manifest/" + config.MapId);
             XmlDocument xml = new XmlDocument();
             xml.LoadXml(data);
 
@@ -55,27 +66,11 @@ namespace Blueprint
                 {
                     foreach (XmlNode block in node.ChildNodes)
                     {
-                        Blocks[Int32.Parse(block.Attributes["x"].Value), Int32.Parse(block.Attributes["y"].Value)] = new Block( findBlockType(Int32.Parse(block.Attributes["type"].Value)) );
+                        Blocks[Int32.Parse(block.Attributes["x"].Value), Int32.Parse(block.Attributes["y"].Value)] = new Block(findBlockType(Int32.Parse(block.Attributes["type"].Value)));
                     }
                 }
             }
 
-
-        }
-
-        public BlockType findBlockType( int id )
-        {
-            for (int i = 0; i < Types.Length; i++)
-            {
-                if (id == Types[i].Id) { return Types[i]; }
-            }
-            return null;
-        }
-
-        public void Initialize( Texture2D blockTexture, Texture2D blockState )
-        {
-            BlockTexture = blockTexture;
-            BlockState = blockState;
         }
 
         public void Update( Control control, Quickbar quickbar )
@@ -118,11 +113,14 @@ namespace Blueprint
 
         }
 
-        public void spawnItem(Vector2 location, Item item)
+        public BlockType findBlockType(int id)
         {
-            DroppedItems[0] = new DroppedItem(location, item);
+            for (int i = 0; i < Types.Length; i++)
+            {
+                if (id == Types[i].Id) { return Types[i]; }
+            }
+            return null;
         }
-
 
         public bool inBounds(int x, int y)
         {

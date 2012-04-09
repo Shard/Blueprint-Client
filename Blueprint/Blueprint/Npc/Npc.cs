@@ -27,5 +27,15 @@ namespace Blueprint
             Health = Race.Health;
         }
 
+        public void Update()
+        {
+
+        }
+
+        public void Draw()
+        {
+
+        }
+
     }
 }

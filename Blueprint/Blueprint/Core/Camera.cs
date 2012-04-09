@@ -10,10 +10,11 @@ namespace Blueprint
         public float X;
         public float Y;
 
-        public Camera(GraphicsDevice graphics)
+        public Camera(GraphicsDevice graphics, Player player)
         {
-            X = graphics.Viewport.TitleSafeArea.X + graphics.Viewport.TitleSafeArea.Width / 2 - 100;
-            Y = graphics.Viewport.TitleSafeArea.Y + graphics.Viewport.TitleSafeArea.Height / 2 + 100;
+
+            X = (player.Movement.Area.Center.X * -1) + graphics.Viewport.Width / 2;
+            Y = (player.Movement.Area.Center.Y * -1) + graphics.Viewport.Height / 2;
         }
 
         public void Update( Vector2 movement )
@@ -31,6 +32,8 @@ namespace Blueprint
         {
             return new Rectangle(area.X + (int)X, area.Y + (int)Y, area.Width, area.Height);
         }
+
+        
 
     }
 }

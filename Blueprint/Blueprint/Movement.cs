@@ -23,6 +23,7 @@ namespace Blueprint
         public Vector2 Velocity; // The final value that determines where a user moves
         public Rectangle Area; // The area that the object occupies;
         public Vector2 Moved;
+        public float Bouncy; 
 
         // Intention
         public bool MovingLeft;
@@ -35,19 +36,20 @@ namespace Blueprint
         public bool Solid; // If the object has solid footing
         public string Direction; // The direction the object is facing
 
-        public Movement( Vector2 position)
+        public Movement( Vector2 position, int width, int height)
         {
-            Acceleration = 0.3f;
+            Acceleration = 0.25f;
             MaxSpeed = 4f;
-            TerminalSpeed = 8f;
-            Gravity = 0.3f;
-            Drag = 0.3f;
-            JumpPower = 8f;
-            MaxJumpPower = 8f;
-            JumpSpeed = 4f;
+            TerminalSpeed = 12f;
+            Gravity = .35f;
+            Drag = 0.2f; 
+            JumpPower = 7f;
+            MaxJumpPower = 7f;
+            JumpSpeed = 3f;
             Velocity = new Vector2();
-            Area = new Rectangle((int)position.X, (int)position.Y, 32, 44);
+            Area = new Rectangle((int)position.X, (int)position.Y, width, height);
             Moved = new Vector2();
+            Bouncy = 1f;
 
             Falling = true;
             MovingLeft = false;
@@ -106,16 +108,25 @@ namespace Blueprint
                 }
             }
 
-            if (Falling) { Velocity.Y += Gravity; }
+            if (Falling) {
+                if (Velocity.Y < 1)
+                { // Less gravity
+                    Velocity.Y += Gravity / 1.5f;
+                }
+                else
+                {
+                    Velocity.Y += Gravity;
+                }
+            }
 
             if (!MovingLeft && !MovingRight) // If not moving left or right, apply drag
             {
                 if(Velocity.X < 0)
                 {
-                    Velocity.X += Drag;
+                    if (Falling) { Velocity.X += Drag * 0.3f; } else { Velocity.X += Drag; }
                     if (Velocity.X > 0) { Velocity.X = 0; }
                 } else {
-                    Velocity.X -= Drag;
+                    if (Falling) { Velocity.X -= Drag * 0.3f; } else { Velocity.X -= Drag; }
                     if (Velocity.X < 0) { Velocity.X = 0; }
                 }
             }
@@ -127,8 +138,8 @@ namespace Blueprint
             if (Velocity.Y < TerminalSpeed * -1) { Velocity.Y = TerminalSpeed * -1; }
 
             // Direct
-            if (Velocity.X > 0) { Direction = "right"; }
-            if (Velocity.X < 0) { Direction = "left"; }
+            if (MovingLeft) { Direction = "left"; }
+            if (MovingRight) { Direction = "right"; }
 
             // Apply Movement
             Area.X += (int)Velocity.X;
@@ -141,16 +152,11 @@ namespace Blueprint
             {
                 collisionRuns++;
                 collisionSolved = SolveCollision(map);
-                if (collisionRuns > 20) { break; }
+                if (collisionRuns > 20) { Falling = false; break; }
             }
 
             Moved = new Vector2(Area.X, Area.Y) - originalPosition;
-            //Log();
-        }
 
-        public void Log()
-        {
-            Console.WriteLine("Falling: " + Falling.ToString() + ", Jumping: " + Jumping.ToString() + ", X: " + Area.X.ToString() + ", Y: " + Area.Y.ToString() + ", Footing: " + Solid.ToString());
         }
 
         public bool SolidFooting(Rectangle area, Map map)
@@ -200,6 +206,67 @@ namespace Blueprint
 
             return false;
 
+        }
+
+        public void PushbackFrom( Vector2 location, float force )
+        {
+
+            double angle = 0.0;
+            Vector2 apply = Vector2.Zero;
+
+            if (location.X > Area.Center.X) // To the right
+            {
+                if (location.Y > Area.Center.Y) // Lower 
+                {
+                    angle = Math.Atan2(location.Y - Area.Center.Y, location.X - Area.Center.X) * (180 / Math.PI) + 90;
+                }
+                else // Higher
+                {
+                    angle = (90 - Math.Atan2(Area.Center.Y - location.Y, location.X - Area.Center.X) * (180 / Math.PI));
+                }
+            }
+            else // To the left
+            {
+                if (location.Y > Area.Center.Y) // Lower 
+                {
+                    angle = (90 - Math.Atan2(location.Y - Area.Center.Y, Area.Center.X - location.X) * (180 / Math.PI)) + 180;
+                }
+                else // Higher
+                {
+                    angle = Math.Atan2(Area.Center.Y - location.Y, Area.Center.X - location.X) * (180 / Math.PI) + 270;
+                }
+            }
+
+            //Reverse Angle
+
+            // Apply angle and force
+            if (angle <= 90)
+            {
+                apply.Y = (float)angle / 90 -1;
+                apply.X = (float)angle / 90;
+            } else if (angle <= 180)
+            {
+                apply.X = 1 - (float)angle / 90 + 1;
+                apply.Y = (float)angle / 90 - 1;
+            }
+            else if (angle <= 270)
+            {
+                apply.X = (1 - (float)angle / 90 + 1);
+                apply.Y = (((float)angle / 90 - 2) * -1) + 1;
+            }
+            else
+            {
+                apply.X = (((float)angle / 90) - 4);
+                apply.Y = (((float)angle / 90) - 3) * -1;
+            }
+
+            Velocity -= apply * force;
+            Console.WriteLine(apply);
+        }
+
+        public void Pushback(Vector2 force)
+        {
+            Velocity += force;
         }
 
         public bool SolveCollision(Map map)

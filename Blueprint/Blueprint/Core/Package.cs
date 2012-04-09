@@ -11,10 +11,41 @@ namespace Blueprint
     class Package
     {
 
+        public string Server;
+        public string DataFolder;
+        public PackageCache Cache;
+
+        public Package(Config config)
+        {
+            
+            Server = config.Server;
+            DataFolder = config.DataFolder;
+            Cache = new PackageCache(config);
+
+        }
+
+        public string RemoteString(string path)
+        {
+
+            string cache = Cache.Read(path);
+            if (cache != null) { return cache; }
+
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(Server + path);
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            StreamReader reader = new StreamReader(response.GetResponseStream());
+            string data = reader.ReadToEnd();
+            reader.Close();
+            Cache.Write(path, data);
+            return data;
+        }
+
         public Texture2D RemoteTexture(string path, GraphicsDevice graphics)
         {
 
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://local.blueprintgame.com:8888/" + path);
+            Texture2D texture = Cache.Read(path, graphics);
+            if (texture != null) { return texture; }
+
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(Server + path);
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
 
             byte[] b = null;
@@ -32,6 +63,8 @@ namespace Blueprint
             }
 
             Texture2D mapTexture = Texture2D.FromStream(graphics, new MemoryStream(b));
+
+            Cache.Write(path, mapTexture);
 
             return mapTexture;
 

@@ -7,15 +7,26 @@ namespace Blueprint
     class DroppedItem
     {
 
-        public bool Falling;
         public Vector2 Location;
         public Item Item;
+        public Movement Movement;
 
         public DroppedItem(Vector2 location, Item item)
         {
-            Falling = true;
             Location = location;
             Item = item;
+            Movement = new Movement(location, 16, 16);
+        }
+
+        public bool AttemptPickup(Player player)
+        {
+            if (Rectangle.Intersect(Movement.Area, player.Movement.Area) != Rectangle.Empty)
+            {
+                Console.WriteLine(Movement.Area + " " + player.Movement.Area);
+                // Pickup Item
+                return player.Inventory.Pickup(Item);
+            }
+            return false;
         }
 
     }

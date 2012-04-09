@@ -27,7 +27,12 @@ namespace Blueprint
         public int FrameSkipCount; // How many frames to wait before an animation occurs.
         public int FrameSkipUpto; // How many skip frames the player is up to
 
-        public void Initialize(Texture2D playerTexture, Vector2 position)
+        public Player(Vector2 position)
+        {
+            Movement = new Movement(position, 32, 44);
+        }
+
+        public void Initialize(Texture2D playerTexture)
         {
 
             PlayerTexture = playerTexture;
@@ -41,7 +46,6 @@ namespace Blueprint
             Speed = 4f;
             Name = "Firebolt";
             Inventory = new Inventory();
-            Movement = new Movement(position);
 
         }
 

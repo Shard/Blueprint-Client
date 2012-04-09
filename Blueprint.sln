@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010 Express for Windows Phone
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blueprint", "Blueprint\Blueprint\Blueprint.csproj", "{A93B0DF0-28AE-4B28-B345-F1C554917C73}"
 EndProject
-Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "BlueprintContent", "Blueprint\BlueprintContent\BlueprintContent.contentproj", "{81631727-9778-47EA-BBAB-09F0E178FBF9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlueprintContent", "Blueprint\BlueprintContent\BlueprintContent.contentproj", "{81631727-9778-47EA-BBAB-09F0E178FBF9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
