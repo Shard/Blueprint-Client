@@ -21,7 +21,7 @@ namespace Blueprint
         {
             if(args.Length < 1){
                 args = new string[1];
-                args[0] = "blueprint://map:17/host:false/local:true"; // Default
+                args[0] = "blueprint://map:17/host:true/local:false"; // Default
             }
 
             // Default Arguments
@@ -67,6 +67,7 @@ namespace Blueprint
 
         public string getIP()
         {
+            
             IPHostEntry host;
             string localIP = "?";
             host = Dns.GetHostEntry(Dns.GetHostName());
@@ -78,37 +79,6 @@ namespace Blueprint
                 }
             }
             return localIP;
-        }
-
-        public void SetupRegistery()
-        {
-            // Registery
-            string gameLocation = System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase;
-            string fullLocation = System.IO.Path.GetDirectoryName(gameLocation);
-            fullLocation = "\"" + fullLocation.Replace("file:\\", "") + "\\blueprint.exe\" \"%1\"";
-
-            RegistryKey reg = Registry.ClassesRoot.OpenSubKey("blueprint");
-            if (reg == null)
-            {
-                // Need to initialize Registery
-                RegistryKey blueprint = Registry.ClassesRoot.CreateSubKey("blueprint");
-                Registry.ClassesRoot.OpenSubKey("blueprint", true)
-                    .SetValue("", "URL: Blueprint Protocol", RegistryValueKind.String);
-                Registry.ClassesRoot.OpenSubKey("blueprint", true)
-                    .SetValue("URL Protocol", "");
-
-                Registry.ClassesRoot.CreateSubKey("blueprint\\shell");
-                Registry.ClassesRoot.CreateSubKey("blueprint\\shell\\open");
-                RegistryKey commandKey = Registry.ClassesRoot.CreateSubKey("blueprint\\shell\\open\\command");
-
-                commandKey.SetValue("", fullLocation, RegistryValueKind.String);
-            }
-            else
-            {
-                //RegistryKey commandKey = Registry.ClassesRoot.CreateSubKey("blueprint\\shell\\open\\command");
-                //commandKey.SetValue("", fullLocation, RegistryValueKind.String);
-                // Make sure the path is ok, Send the server the update command if it needs updating
-            }
         }
 
     }

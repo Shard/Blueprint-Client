@@ -58,7 +58,7 @@ namespace Blueprint
                     int upto = 0;
                     foreach (XmlNode blocktype in node.ChildNodes)
                     {
-                        Types[upto] = new BlockType(blocktype.Attributes["name"].Value, Int32.Parse(blocktype.Attributes["id"].Value), new Rectangle(Int32.Parse(blocktype.Attributes["x"].Value) * 32, Int32.Parse(blocktype.Attributes["y"].Value) * 32, 32, 32), 100);
+                        Types[upto] = new BlockType(blocktype.Attributes["name"].Value, Int32.Parse(blocktype.Attributes["id"].Value), new Rectangle(Int32.Parse(blocktype.Attributes["x"].Value) * 24, Int32.Parse(blocktype.Attributes["y"].Value) * 24, 24, 24), 100);
                         upto++;
                     }
                 }
@@ -94,19 +94,19 @@ namespace Blueprint
                 for (int y = 0; y < 100; y++)
                 {
                     if (Blocks[x, y] == null) { continue; }
-                    Vector2 position = new Vector2(camera.X + x * 32, camera.Y + y * 32);
+                    Vector2 position = new Vector2(camera.X + x * 24, camera.Y + y * 24);
                     spriteBatch.Draw(BlockTexture, position, Blocks[x, y].Type.Location, Color.White);
                     if (Blocks[x, y].Health < 25)
                     {
-                        spriteBatch.Draw(BlockState, position, new Rectangle(64, 32, 32, 32), Color.White);
+                        spriteBatch.Draw(BlockState, position, new Rectangle(48, 24, 24, 24), Color.White);
                     }
                     else if (Blocks[x, y].Health < 50)
                     {
-                        spriteBatch.Draw(BlockState, position, new Rectangle(32, 32, 32, 32), Color.White);
+                        spriteBatch.Draw(BlockState, position, new Rectangle(24, 24, 24, 24), Color.White);
                     }
                     else if (Blocks[x, y].Health < 75)
                     {
-                        spriteBatch.Draw(BlockState, position, new Rectangle(0, 32, 32, 32), Color.White);
+                        spriteBatch.Draw(BlockState, position, new Rectangle(0, 24, 24, 24), Color.White);
                     }
                 }
             }

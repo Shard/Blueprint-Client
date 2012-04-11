@@ -38,7 +38,7 @@
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>50</ApplicationRevision>
+    <ApplicationRevision>53</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -118,6 +118,7 @@
     <Compile Include="Fluid\FluidBlock.cs" />
     <Compile Include="Fluid\FluidCollection.cs" />
     <Compile Include="Fluid\FluidWater.cs" />
+    <Compile Include="Intention.cs" />
     <Compile Include="Items\DroppedItemCollection.cs" />
     <Compile Include="Movement.cs" />
     <Compile Include="Net\Chat.cs" />
@@ -134,6 +135,8 @@
     <Compile Include="Items\ItemPackage.cs" />
     <Compile Include="Items\ItemType.cs" />
     <Compile Include="Items\Quickbar.cs" />
+    <Compile Include="Net\NetBase.cs" />
+    <Compile Include="Net\NetParser.cs" />
     <Compile Include="Npc\ActiveNpc.cs" />
     <Compile Include="Npc\Ai\NpcAiChase.cs" />
     <Compile Include="Npc\Ai\NpcAiDummy.cs" />

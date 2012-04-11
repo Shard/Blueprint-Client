@@ -17,6 +17,7 @@ namespace Blueprint
 
         // Positioning and movement
         public Movement Movement; // Handles movement and collisions
+        public bool PositionCamera;
 
         // Sprites
         public Texture2D PlayerTexture;
@@ -49,18 +50,37 @@ namespace Blueprint
 
         }
 
-        public void Update(Control control, Map map, Chat chat)
+        public void UpdateControls()
         {
-            Movement.HandleControls(control);
-            Movement.Update(map);
 
-            
+        }
+
+        public void UpdatePosition()
+        {
+
+        }
+
+        public void Update(Control control, Map map)
+        {
+            Movement.Update(map);
+            Animate(control);
+
+            // Killing
+            if (Movement.Area.Y > map.SizeY * 24)
+            {
+                Damage(5000);
+            }
+        }
+
+        public void Animate(Control control)
+        {
 
             // Animation
             if (control.currentKeyboard.IsKeyDown(Keys.A) && control.previousKeyboard.IsKeyDown(Keys.A) && !control.currentKeyboard.IsKeyDown(Keys.D))
             {
                 FrameSkipUpto++;
-                if(FrameSkipUpto >= FrameSkipCount){
+                if (FrameSkipUpto >= FrameSkipCount)
+                {
                     FrameSkipUpto = 1;
                     FrameUpto++;
                     if (FrameUpto >= FrameCount)
@@ -81,16 +101,23 @@ namespace Blueprint
                         FrameUpto = 1;
                     }
                 }
-            } else {
+            }
+            else
+            {
                 FrameUpto = 1;
                 FrameSkipUpto = 1;
             }
-
 
         }
 
         public void Draw(SpriteBatch spriteBatch, Camera camera)
         {
+
+            if (PositionCamera)
+            {
+                // TODO, recenter camera
+                PositionCamera = false;
+            }
 
             int spriterow = 44;
             if (Movement.Direction == "left")
@@ -101,7 +128,7 @@ namespace Blueprint
             int spritecol = (FrameUpto - 1) * 32;
 
 
-            if (Movement.Jumping)
+            if (Movement.Intention.Jumping)
             {
                 spriterow += (2 * 44);
             } else if (Movement.Falling)
@@ -113,5 +140,34 @@ namespace Blueprint
 
         }
 
+        /// <summary>
+        /// Generates a refresh command which is used by the net classes for communication
+        /// </summary>
+        /// <returns></returns>
+        public string NetCommand()
+        {
+            string command = "r:";
+
+            // Location
+            command += Movement.Area.X.ToString() + ',' + Movement.Area.Y.ToString();
+
+            return command + ";";
+        }
+
+        public bool Damage(int amount)
+        {
+
+            Health -= amount;
+            if (Health <= 0)
+            {
+                // Die
+                Health = 100;
+                Movement = new Movement(new Vector2(100, -100), 32, 44);
+                PositionCamera = true;
+                return true;
+            }
+
+            return false;
+        }
     }
 }

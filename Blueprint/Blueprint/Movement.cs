@@ -17,8 +17,8 @@ namespace Blueprint
         public float TerminalSpeed; // Basicially the absolute max speed the object can travel.
         public float Gravity; // The amount of downwards force that is being applied to the object.
         public float Drag; // The amount of force that is applied against the object when it is not trying to move
-        public float JumpSpeed; // The speed at which the object moves up when jumping
-        public float JumpPower; // The amount of jump power an object has left, is depleted while jumping and restored on grounding
+        public float JumpSpeed; // The speed at which the object moves up when Intention.Jumping
+        public float JumpPower; // The amount of jump power an object has left, is depleted while Intention.Jumping and restored on grounding
         public float MaxJumpPower; // The amount an object can jump before it looses power
         public Vector2 Velocity; // The final value that determines where a user moves
         public Rectangle Area; // The area that the object occupies;
@@ -26,10 +26,7 @@ namespace Blueprint
         public float Bouncy; 
 
         // Intention
-        public bool MovingLeft;
-        public bool MovingRight;
-        public bool Jumping;
-        public bool Sprinting;
+        public Intention Intention;
 
         // States
         public bool Falling; // When true, gravity is acting
@@ -52,10 +49,11 @@ namespace Blueprint
             Bouncy = 1f;
 
             Falling = true;
-            MovingLeft = false;
-            MovingRight = false;
-            Jumping = false;
-            Sprinting = false;
+            Intention = new Intention();
+            Intention.Left = false;
+            Intention.Right = false;
+            Intention.Jumping = false;
+            Intention.Sprinting = false;
             Solid = false;
             Direction = "right";
         }
@@ -65,10 +63,10 @@ namespace Blueprint
         public void HandleControls( Control control )
         {
 
-            if (control.currentKeyboard.IsKeyDown(Keys.A)) { MovingLeft = true; } else { MovingLeft = false; }
-            if (control.currentKeyboard.IsKeyDown(Keys.D)) { MovingRight = true; } else {MovingRight = false; }
-            if (control.currentKeyboard.IsKeyDown(Keys.D) && control.currentKeyboard.IsKeyDown(Keys.A)) { MovingRight = false; MovingLeft = false; }
-            if (control.currentKeyboard.IsKeyDown(Keys.Space)) { Jumping = true; } else { Jumping = false; }
+            if (control.currentKeyboard.IsKeyDown(Keys.A)) { Intention.Left = true; } else { Intention.Left = false; }
+            if (control.currentKeyboard.IsKeyDown(Keys.D)) { Intention.Right = true; } else {Intention.Right = false; }
+            if (control.currentKeyboard.IsKeyDown(Keys.D) && control.currentKeyboard.IsKeyDown(Keys.A)) { Intention.Right = false; Intention.Left = false; }
+            if (control.currentKeyboard.IsKeyDown(Keys.Space)) { Intention.Jumping = true; } else { Intention.Jumping = false; }
             if (control.currentKeyboard.IsKeyUp(Keys.Space) && control.previousKeyboard.IsKeyDown(Keys.Space)) { Falling = true; }
         }
 
@@ -78,17 +76,17 @@ namespace Blueprint
             Vector2 originalPosition = new Vector2(Area.X, Area.Y);
 
             // Turn intentions into changes in velocity
-            if (MovingLeft && Velocity.X > MaxSpeed * -1) // If moving left and not at the current max speed
+            if (Intention.Left && Velocity.X > MaxSpeed * -1) // If moving left and not at the current max speed
             {
                 Velocity.X -= Acceleration;
                 if (Velocity.X < MaxSpeed * -1) { Velocity.X = MaxSpeed * -1; } // If accelatred too fast, level it out to the max speed
             }
-            if (MovingRight && Velocity.X < MaxSpeed)  // If moving right and not at the current max speed
+            if (Intention.Right && Velocity.X < MaxSpeed)  // If moving right and not at the current max speed
             { 
                 Velocity.X += Acceleration;
                 if (Velocity.X > MaxSpeed) { Velocity.X = MaxSpeed; } // If accelatred too fast, level it out to the max speed
             }
-            if (Jumping && JumpPower >= 0) // If trying to jump and still has jump power left
+            if (Intention.Jumping && JumpPower >= 0) // If trying to jump and still has jump power left
             {
                 Velocity.Y -= JumpSpeed;
                 JumpPower -= JumpSpeed;
@@ -119,7 +117,7 @@ namespace Blueprint
                 }
             }
 
-            if (!MovingLeft && !MovingRight) // If not moving left or right, apply drag
+            if (!Intention.Left && !Intention.Right) // If not moving left or right, apply drag
             {
                 if(Velocity.X < 0)
                 {
@@ -138,8 +136,8 @@ namespace Blueprint
             if (Velocity.Y < TerminalSpeed * -1) { Velocity.Y = TerminalSpeed * -1; }
 
             // Direct
-            if (MovingLeft) { Direction = "left"; }
-            if (MovingRight) { Direction = "right"; }
+            if (Intention.Left) { Direction = "left"; }
+            if (Intention.Right) { Direction = "right"; }
 
             // Apply Movement
             Area.X += (int)Velocity.X;
@@ -161,8 +159,8 @@ namespace Blueprint
 
         public bool SolidFooting(Rectangle area, Map map)
         {
-            int BlockAtX = Area.Center.X / 32;
-            int BlockAtY = Area.Center.Y / 32;
+            int BlockAtX = Area.Center.X / 24;
+            int BlockAtY = Area.Center.Y / 24;
             int totalWidth = 0;
             int totalHeight = 0;
             Vector2 collisionCenter = Vector2.Zero;
@@ -174,7 +172,7 @@ namespace Blueprint
                 {
                     Block block = map.getBlock(x, y);
                     if (block == null) { continue; }
-                    Rectangle blockArea = new Rectangle(x * 32, y * 32, 32, 32);
+                    Rectangle blockArea = new Rectangle(x * 24, y * 24, 24, 24);
                     Rectangle intersection = Rectangle.Intersect(area, blockArea);
 
                     if (intersection != Rectangle.Empty)
@@ -272,8 +270,8 @@ namespace Blueprint
         public bool SolveCollision(Map map)
         {
 
-            int BlockAtX = Area.Center.X / 32;
-            int BlockAtY = Area.Center.Y / 32;
+            int BlockAtX = Area.Center.X / 24;
+            int BlockAtY = Area.Center.Y / 24;
             int totalWidth = 0;
             int totalHeight = 0;
             int averageWidthW = 0;
@@ -289,7 +287,7 @@ namespace Blueprint
                 {
                     Block block = map.getBlock(x, y);
                     if (block == null) { continue; }
-                    Rectangle blockArea = new Rectangle(x * 32, y * 32, 32, 32);
+                    Rectangle blockArea = new Rectangle(x * 24, y * 24, 24, 24);
                     Rectangle intersection = Rectangle.Intersect(Area, blockArea);
                     
                     if (intersection != Rectangle.Empty) // Only handle intersection if it exists

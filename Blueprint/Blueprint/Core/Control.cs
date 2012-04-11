@@ -38,8 +38,8 @@ namespace Blueprint
             previousMouse = currentMouse;
             currentMouse = mouse;
 
-            AtBlockX = (currentMouse.X - (int)camera.X) / 32;
-            AtBlockY = (currentMouse.Y - (int)camera.Y) / 32;
+            AtBlockX = (currentMouse.X - (int)camera.X) / 24;
+            AtBlockY = (currentMouse.Y - (int)camera.Y) / 24;
 
         }
 

@@ -61,10 +61,6 @@ namespace Blueprint
 
         protected override void Initialize()
         {
-            
-
-            if (Config.Hosting) { Server = new Server(Config); Server.Initialize(); } else { Server = null; }
-            if (Config.Join != null) { Client = new Client(Config); Client.Initialize(); } else { Client = null; }
 
             Player = new Player(new Vector2(100, -100) );
             Map = new Map(Config);
@@ -123,6 +119,9 @@ namespace Blueprint
 
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            if (Config.Hosting) { Server = new Server(Config); Server.Initialize(Content.Load<Texture2D>("player")); } else { Server = null; }
+            if (Config.Join != null) { Client = new Client(Config); Client.Initialize(Content.Load<Texture2D>("player")); } else { Client = null; }
+
         }
 
         protected override void UnloadContent()
@@ -136,9 +135,17 @@ namespace Blueprint
             Control.Update(Keyboard.GetState(), Mouse.GetState(), Camera);
 
             // Update Modules
-            if (Server != null) { Server.Update(gameTime); }
+            if (Server != null) { Server.Update(Control, Map, Player, gameTime); }
+            if (Client != null) { Client.Update(Control, Map, Player, gameTime); }
+
+            // Update Player
             Player.Inventory.Update(Control);
-            Player.Update(Control,  Map, Chat);
+            Player.Movement.HandleControls(Control);
+            Player.Update(Control,  Map);
+
+            // Updates Players
+            
+
             Map.Update(Control, Player.Inventory.Quickbar);
             Map.DroppedItems.Update(Map, Player);
             NpcPackage.Update(Map);
@@ -156,7 +163,7 @@ namespace Blueprint
             // Mine blocks
             if (Control.currentMouse.LeftButton == ButtonState.Pressed)
             {
-                Map.mineBlock((Control.currentMouse.X - (int)Camera.X) / 32, (Control.currentMouse.Y - (int)Camera.Y) / 32);
+                Map.mineBlock((Control.currentMouse.X - (int)Camera.X) / 24, (Control.currentMouse.Y - (int)Camera.Y) / 24);
             }
 
             // Drop Items
@@ -190,8 +197,10 @@ namespace Blueprint
             Chat.Draw(spriteBatch, font, gameTime);
 
             Player.Draw(spriteBatch, Camera);
+            if (Server != null) { Server.Draw(spriteBatch, Camera); }
+            if (Client != null) { Client.Draw(spriteBatch, Camera); }
             Ui.Draw(spriteBatch, Camera, font);
-            spriteBatch.Draw(Cursor, new Rectangle(Control.currentMouse.X, Control.currentMouse.Y, 20, 20), new Rectangle(0, 0, 32, 32), Color.White);
+            spriteBatch.Draw(Cursor, new Rectangle(Control.currentMouse.X, Control.currentMouse.Y, 20, 20), new Rectangle(0, 0, 24, 24), Color.White);
 
             spriteBatch.End();
             base.Draw(gameTime);

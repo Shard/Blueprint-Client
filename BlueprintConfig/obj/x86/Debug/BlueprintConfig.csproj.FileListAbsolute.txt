@@ -1,0 +1,6 @@
+C:\Users\Mark\Desktop\Blueprint\Blueprint\BlueprintConfig\bin\x86\Debug\BlueprintConfig.dll
+C:\Users\Mark\Desktop\Blueprint\Blueprint\BlueprintConfig\bin\x86\Debug\BlueprintConfig.pdb
+C:\Users\Mark\Desktop\Blueprint\Blueprint\BlueprintConfig\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\Mark\Desktop\Blueprint\Blueprint\BlueprintConfig\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+C:\Users\Mark\Desktop\Blueprint\Blueprint\BlueprintConfig\obj\x86\Debug\BlueprintConfig.dll
+C:\Users\Mark\Desktop\Blueprint\Blueprint\BlueprintConfig\obj\x86\Debug\BlueprintConfig.pdb

@@ -23,7 +23,7 @@ namespace Blueprint.Fluid
                 for (int y = 0; y < map.SizeY; y++)
                 {
                     if (Blocks[x, y] == null) { continue; }
-
+                    /*
                     bool MoveDown = false;
                     bool MoveLeft = false;
                     bool MoveRight = false;
@@ -44,7 +44,7 @@ namespace Blueprint.Fluid
                         if (Blocks[x + 1, y] != null && Blocks[x + 1, y].Height == 7) { MoveRight = false; }
                     }
 
-                    
+                    */
 
                     
 

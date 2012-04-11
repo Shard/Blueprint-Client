@@ -8,16 +8,15 @@ namespace Blueprint
 
         public void Update(Movement movement, Player player)
         {
-            Console.WriteLine("a");
             if (movement.Area.Center.X > player.Movement.Area.Center.X)
             {
-                movement.MovingLeft = true;
-                movement.MovingRight = false;
+                movement.Intention.Left = true;
+                movement.Intention.Right = false;
             }
             else
             {
-                movement.MovingLeft = false;
-                movement.MovingRight = true;
+                movement.Intention.Left = false;
+                movement.Intention.Right = true;
             }
 
         }
