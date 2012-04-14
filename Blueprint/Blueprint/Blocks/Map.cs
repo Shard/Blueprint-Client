@@ -22,12 +22,12 @@ namespace Blueprint
         public int SizeX;
         public int SizeY;
 
-        public Map(Config config)
+        public Map(int width = 700, int height = 100)
         {
 
             // Init
-            SizeX = 700;
-            SizeY = 100;
+            SizeX = width;
+            SizeY = height;
             Types = new BlockType[50];
             Blocks = new Block[SizeX, SizeY];
             DroppedItems = new DroppedItemCollection();
@@ -43,6 +43,7 @@ namespace Blueprint
 
             BlockTexture = blockTexture;
             BlockState = blockState;
+
 
             // Gather Map Data
             string data = package.RemoteString("maps/manifest/" + config.MapId);
@@ -71,6 +72,11 @@ namespace Blueprint
                 }
             }
 
+            // Autogenerate
+            MapGenerator generator = new MapGenerator();
+            generator.Setup(SizeX, SizeY);
+            generator.Generate(this);
+            
         }
 
         public void Update( Control control, Quickbar quickbar )

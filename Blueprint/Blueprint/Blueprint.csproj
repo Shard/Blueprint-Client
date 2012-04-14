@@ -38,7 +38,7 @@
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>53</ApplicationRevision>
+    <ApplicationRevision>54</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -111,6 +111,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Blocks\Block.cs" />
+    <Compile Include="Blocks\BlockArea.cs" />
+    <Compile Include="Blocks\Generation\BlockGenerationArea.cs" />
+    <Compile Include="Blocks\Generation\Blocks\BlockGenerator.cs" />
+    <Compile Include="Blocks\Generation\Blocks\FlatBlockGenerator.cs" />
+    <Compile Include="Blocks\Generation\Blocks\GeneralBlockGenerator.cs" />
+    <Compile Include="Blocks\Generation\MapGenerator.cs" />
     <Compile Include="Core\Helper.cs" />
     <Compile Include="Core\PackageCache.cs" />
     <Compile Include="Core\RotatedRectangle.cs" />
@@ -118,6 +124,8 @@
     <Compile Include="Fluid\FluidBlock.cs" />
     <Compile Include="Fluid\FluidCollection.cs" />
     <Compile Include="Fluid\FluidWater.cs" />
+    <Compile Include="Furniture\Furniture.cs" />
+    <Compile Include="Furniture\FurnitureType.cs" />
     <Compile Include="Intention.cs" />
     <Compile Include="Items\DroppedItemCollection.cs" />
     <Compile Include="Movement.cs" />
@@ -150,6 +158,7 @@
     <Compile Include="Npc\Shop.cs" />
     <Compile Include="Npc\ShopItem.cs" />
     <Compile Include="Player.cs" />
+    <Compile Include="Player\Team.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\Program.cs" />
     <Compile Include="Game1.cs" />

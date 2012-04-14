@@ -21,7 +21,7 @@ namespace Blueprint
         {
             if(args.Length < 1){
                 args = new string[1];
-                args[0] = "blueprint://map:17/host:true/local:false"; // Default
+                args[0] = "blueprint://map:20/host:true/local:false"; // Default
             }
 
             // Default Arguments

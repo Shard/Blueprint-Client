@@ -45,6 +45,9 @@ namespace Blueprint
             Texture2D texture = Cache.Read(path, graphics);
             if (texture != null) { return texture; }
 
+            // Hack
+            if (path == "/maps/sprite/0") { path = "/maps/sprite/20"; }
+
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(Server + path);
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
 

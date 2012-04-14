@@ -63,7 +63,7 @@ namespace Blueprint
         {
 
             Player = new Player(new Vector2(100, -100) );
-            Map = new Map(Config);
+            Map = new Map();
             Chat = new Chat();
             ItemPackage = new ItemPackage();
             WeaponPackage = new WeaponPackage();
