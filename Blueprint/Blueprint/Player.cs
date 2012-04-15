@@ -23,6 +23,7 @@ namespace Blueprint
         public Texture2D PlayerTexture;
 
         // Animation
+        Animations Animation;
         public int FrameCount; // How many frames are avaliable for looping
         public int FrameUpto; // What frame the player is up to
         public int FrameSkipCount; // How many frames to wait before an animation occurs.
@@ -47,6 +48,8 @@ namespace Blueprint
             Speed = 4f;
             Name = "Firebolt";
             Inventory = new Inventory();
+            
+            //
 
         }
 

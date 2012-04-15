@@ -158,6 +158,9 @@
     <Compile Include="Npc\Shop.cs" />
     <Compile Include="Npc\ShopItem.cs" />
     <Compile Include="Player.cs" />
+    <Compile Include="Player\Animation.cs" />
+    <Compile Include="Player\AnimationFrame.cs" />
+    <Compile Include="Player\Animations.cs" />
     <Compile Include="Player\Team.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\Program.cs" />
