@@ -24,10 +24,6 @@ namespace Blueprint
 
         // Animation
         Animations Animation;
-        public int FrameCount; // How many frames are avaliable for looping
-        public int FrameUpto; // What frame the player is up to
-        public int FrameSkipCount; // How many frames to wait before an animation occurs.
-        public int FrameSkipUpto; // How many skip frames the player is up to
 
         public Player(Vector2 position)
         {
@@ -39,12 +35,6 @@ namespace Blueprint
             
 
             PlayerTexture = playerTexture;
-
-
-
-            FrameCount = 4;
-            FrameSkipCount = 8;
-            FrameSkipUpto = 1;
 
             Health = 100;
             Mana = 100;
@@ -70,7 +60,6 @@ namespace Blueprint
         {
             Movement.Update(map);
             Animation.Update(Movement);
-            //Animate(control);
 
             // Killing
             if (Movement.Area.Y > map.SizeY * 24)
@@ -79,76 +68,9 @@ namespace Blueprint
             }
         }
 
-        public void Animate(Control control)
-        {
-
-            
-
-            // Animation
-            if (control.currentKeyboard.IsKeyDown(Keys.A) && control.previousKeyboard.IsKeyDown(Keys.A) && !control.currentKeyboard.IsKeyDown(Keys.D))
-            {
-                FrameSkipUpto++;
-                if (FrameSkipUpto >= FrameSkipCount)
-                {
-                    FrameSkipUpto = 1;
-                    FrameUpto++;
-                    if (FrameUpto >= FrameCount)
-                    {
-                        FrameUpto = 1;
-                    }
-                }
-            }
-            else if (control.currentKeyboard.IsKeyDown(Keys.D) && control.previousKeyboard.IsKeyDown(Keys.D) && !control.currentKeyboard.IsKeyDown(Keys.A))
-            {
-                FrameSkipUpto++;
-                if (FrameSkipUpto >= FrameSkipCount)
-                {
-                    FrameSkipUpto = 1;
-                    FrameUpto++;
-                    if (FrameUpto >= FrameCount)
-                    {
-                        FrameUpto = 1;
-                    }
-                }
-            }
-            else
-            {
-                FrameUpto = 1;
-                FrameSkipUpto = 1;
-            }
-            
-        }
-
         public void Draw(SpriteBatch spriteBatch, Camera camera)
         {
             Animation.Draw(spriteBatch, camera, PlayerTexture);
-            /*
-
-            if (PositionCamera)
-            {
-                // TODO, recenter camera
-                PositionCamera = false;
-            }
-
-            int spriterow = 44;
-            if (Movement.Direction == "left")
-            {
-                spriterow = 0;
-            }
-
-            int spritecol = (FrameUpto - 1) * 32;
-
-
-            if (Movement.Intention.Jumping)
-            {
-                spriterow += (2 * 44);
-            } else if (Movement.Falling)
-            {
-                spriterow += (4 * 44);
-            }
-            
-            spriteBatch.Draw(PlayerTexture, camera.FromRectangle(Movement.Area), new Rectangle(spritecol, spriterow, 32, 44), Color.White);
-            */
         }
 
         /// <summary>

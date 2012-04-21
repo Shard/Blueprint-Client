@@ -106,8 +106,9 @@ namespace Blueprint
             return null;
         }
 
-        public void UseAnimation(string name, string state = "loop")
+        public void UseAnimation(string name, string state = "loop", bool force_reset = false)
         {
+            if (name == CurrentAnimation.Name && !force_reset) { return; }
             CurrentAnimation = Get(name, state);
             FrameUpto = 0;
             TimeUpto = 0;
@@ -115,6 +116,20 @@ namespace Blueprint
 
         public void Update(Movement movement)
         {
+
+            if ( movement.Moved.Y < 0)
+            {
+                UseAnimation("jumping");
+            } else if (movement.Falling)
+            {
+                UseAnimation("falling");
+            }
+            else if (movement.Moved.X > 0 || movement.Moved.X < 0)
+            {
+                UseAnimation("running");
+            } else {
+                UseAnimation("default");
+            }
 
             if (movement.Direction != CurrentDirection)
             {
@@ -129,7 +144,7 @@ namespace Blueprint
                 FrameUpto++;
                 if (FrameUpto >= CurrentAnimation.Frames.Length)
                 {
-                    UseAnimation(CurrentAnimation.Name, "loop");
+                    UseAnimation(CurrentAnimation.Name, "loop", true);
                 }
 
             }
@@ -145,7 +160,6 @@ namespace Blueprint
             {
                 effects = SpriteEffects.FlipHorizontally;
             }
-
             spriteBatch.Draw(texture, camera.FromRectangle(CurrentLocation), CurrentAnimation.Frames[FrameUpto].ToRectangle(), Color.White, 0f, Vector2.Zero, effects, 0f);
         }
 

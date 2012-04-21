@@ -62,6 +62,7 @@ namespace Blueprint
 
         public void AutoGenerate(short amount)
         {
+            
             Frames = new AnimationFrame[amount];
             for (int i = 0; i < amount; i++)
             {
@@ -83,10 +84,10 @@ namespace Blueprint
                         frame.Height = Int16.Parse(attr.Value);
                         break;
                     case "x":
-                        frame.X = Int16.Parse(attr.Value);
+                        frame.X = (short)(Int16.Parse(attr.Value) + OffsetX);
                         break;
                     case "y":
-                        frame.Y = Int16.Parse(attr.Value);
+                        frame.Y = (short)(Int16.Parse(attr.Value) + OffsetY);
                         break;
                     case "hitboxwidth":
                         frame.HitboxWidth = Int16.Parse(attr.Value);

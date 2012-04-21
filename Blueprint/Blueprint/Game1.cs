@@ -17,6 +17,9 @@ namespace Blueprint
 
     public class Game1 : Microsoft.Xna.Framework.Game
     {
+
+        Loading Loading;
+
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
@@ -48,6 +51,9 @@ namespace Blueprint
             
             // Graphics Setup
             graphics = new GraphicsDeviceManager(this);
+            this.graphics.PreferredBackBufferWidth = 1280;
+            this.graphics.PreferredBackBufferHeight = 720;
+            
             Content.RootDirectory = "Content";
             this.Window.AllowUserResizing = true;
             this.Window.ClientSizeChanged += new EventHandler<EventArgs>(Window_ClientSizeChanged);
@@ -56,6 +62,7 @@ namespace Blueprint
             Config = new Config(args);
             Package = new Package(Config);
             krypton = new KryptonEngine(this, "KryptonEffect");
+            Loading = new Loading();
 
         }
 
@@ -115,7 +122,7 @@ namespace Blueprint
 
             // Initialize
             Wallpaper = Content.Load<Texture2D>("wallpaper");
-            Map.Initialize(mapTexture, Content.Load<Texture2D>("blocks"), Package, Config);
+            Map.Initialize(mapTexture, Content.Load<Texture2D>("blocks"), Content.Load<Texture2D>("furniture"), Package, Config);
             Player.Initialize( Package.LocalTexture("C:\\blueprint\\player.png", GraphicsDevice ), Package);
             WeaponPackage.Initialize(Content.Load<Texture2D>("weapons"));
             ItemPackage.mock(Map.Types, WeaponPackage.Weapons);
@@ -158,6 +165,14 @@ namespace Blueprint
 
         protected override void Update(GameTime gameTime)
         {
+
+            if (Loading.IsLoading)
+            {
+                Loading.Update(gameTime);
+                base.Update(gameTime);
+                return;
+            }
+
             // Update Input States
             Control.Update(Keyboard.GetState(), Mouse.GetState(), Camera);
 
@@ -211,6 +226,13 @@ namespace Blueprint
 
         protected override void Draw(GameTime gameTime)
         {
+
+            if (Loading.IsLoading)
+            {
+                Loading.Draw(spriteBatch, GraphicsDevice, font);
+                base.Draw(gameTime);
+                return;
+            }
 
             Matrix world = Matrix.Identity;
             Matrix view = Matrix.CreateTranslation(new Vector3(0, 0, 0) * -1f);

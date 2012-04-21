@@ -12,26 +12,56 @@ namespace Blueprint
         
 
         // Metrics
-        public float Acceleration; // How quickly the object through Running/Flying can speed up towards max speed.
-        public float MaxSpeed; // The max speed achievable through movement (Running/Flying).
-        public float TerminalSpeed; // Basicially the absolute max speed the object can travel.
-        public float Gravity; // The amount of downwards force that is being applied to the object.
-        public float Drag; // The amount of force that is applied against the object when it is not trying to move
-        public float JumpSpeed; // The speed at which the object moves up when Intention.Jumping
-        public float JumpPower; // The amount of jump power an object has left, is depleted while Intention.Jumping and restored on grounding
-        public float MaxJumpPower; // The amount an object can jump before it looses power
-        public Vector2 Velocity; // The final value that determines where a user moves
-        public Rectangle Area; // The area that the object occupies;
-        public Vector2 Moved;
-        public float Bouncy; 
 
-        // Intention
+        /// <summary>How quickly the object through Running/Flying can speed up towards max speed.</summary>
+        public float Acceleration;
+
+        /// <summary>The max speed achievable through movement (Running/Flying).</summary>
+        public float MaxSpeed;
+
+        /// <summary>Basicially the absolute max speed the object can travel.</summary>
+        public float TerminalSpeed;
+
+        /// <summary>The amount of downwards force that is being applied to the object.</summary>
+        public float Gravity;
+
+        /// <summary> The amount of force that is applied against the object when it is not trying to move</summary>
+        public float Drag;
+
+        /// <summary>The speed at which the object moves up when Intention.Jumping</summary>
+        public float JumpSpeed;
+
+        /// <summary>The amount of jump power an object has left, is depleted while Intention.Jumping and restored on grounding</summary>
+        public float JumpPower;
+
+        /// <summary>The amount an object can jump before it looses power</summary>
+        public float MaxJumpPower;
+
+        /// <summary>The final value that determines where a user moves</summary>
+        public Vector2 Velocity;
+
+        /// <summary>The area that the object occupies;</summary>
+        public Rectangle Area;
+
+        /// <summary>Not sure</summary>
+        public Vector2 Moved;
+
+        /// <summary>Defines how much bounceback the mover will recieve on collision</summary>
+        public float Bouncy;
+
+        // <summary>The intention that is linked to the movement object</summary>
         public Intention Intention;
 
         // States
-        public bool Falling; // When true, gravity is acting
-        public bool Solid; // If the object has solid footing
-        public string Direction; // The direction the object is facing
+
+        /// <summary>True is the mover is actually jumping upwards</summary>
+        public bool IsJumping;
+        /// <summary> When true, gravity is acting</summary>
+        public bool Falling;
+        /// <summary>If the object has solid footing</summary>
+        public bool Solid;
+        /// <summary>The direction the object is facing</summary>
+        public string Direction;
 
         public Movement( Vector2 position, int width, int height)
         {
@@ -48,28 +78,29 @@ namespace Blueprint
             Moved = new Vector2();
             Bouncy = 1f;
 
+            IsJumping = false;
             Falling = true;
             Intention = new Intention();
-            Intention.Left = false;
-            Intention.Right = false;
-            Intention.Jumping = false;
-            Intention.Sprinting = false;
             Solid = false;
             Direction = "right";
         }
 
-        
-        // Converts user controls into movement intentions
+
+        /// <summary>Converts user controls into movement intentions</summary>
         public void HandleControls( Control control )
         {
 
             if (control.currentKeyboard.IsKeyDown(Keys.A)) { Intention.Left = true; } else { Intention.Left = false; }
             if (control.currentKeyboard.IsKeyDown(Keys.D)) { Intention.Right = true; } else {Intention.Right = false; }
             if (control.currentKeyboard.IsKeyDown(Keys.D) && control.currentKeyboard.IsKeyDown(Keys.A)) { Intention.Right = false; Intention.Left = false; }
-            if (control.currentKeyboard.IsKeyDown(Keys.Space)) { Intention.Jumping = true; } else { Intention.Jumping = false; }
-            if (control.currentKeyboard.IsKeyUp(Keys.Space) && control.previousKeyboard.IsKeyDown(Keys.Space)) { Falling = true; }
+            if (control.previousKeyboard.IsKeyUp(Keys.Space) && control.currentKeyboard.IsKeyDown(Keys.Space)) { Intention.Jumping = true; }
+            if (control.currentKeyboard.IsKeyUp(Keys.Space)) { Intention.Jumping = false; }
+            if (control.currentKeyboard.IsKeyUp(Keys.Space) && control.previousKeyboard.IsKeyDown(Keys.Space) && !Intention.Jumping) { Falling = true; }
         }
 
+        /// <summary>
+        /// Standard Update Function
+        /// </summary>
         public void Update( Map map )
         {
 
@@ -153,10 +184,18 @@ namespace Blueprint
                 if (collisionRuns > 20) { Falling = false; break; }
             }
 
+            // Finishing Changes
             Moved = new Vector2(Area.X, Area.Y) - originalPosition;
+            
 
         }
 
+        /// <summary>
+        /// Checks to see if a rectangle has solid footing mover has solid footing
+        /// </summary>
+        /// <param name="area">The area which is being checked</param>
+        /// <param name="map">Checks against all collidables</param>
+        /// <returns>Returns whether the area has solid footing or not</returns>
         public bool SolidFooting(Rectangle area, Map map)
         {
             int BlockAtX = Area.Center.X / 24;
@@ -206,36 +245,41 @@ namespace Blueprint
 
         }
 
+        /// <summary>
+        /// Applies force on the mover from a location
+        /// </summary>
+        /// <param name="location">The location which the force is comming from</param>
+        /// <param name="force">How much force is being used</param>
         public void PushbackFrom( Vector2 location, float force )
         {
 
             double angle = 0.0;
             Vector2 apply = Vector2.Zero;
 
-            if (location.X > Area.Center.X) // To the right
+            if (location.X > Area.Center.X)
             {
-                if (location.Y > Area.Center.Y) // Lower 
+                if (location.Y > Area.Center.Y)
                 {
-                    angle = Math.Atan2(location.Y - Area.Center.Y, location.X - Area.Center.X) * (180 / Math.PI) + 90;
+                    angle = Math.Atan2(location.Y - Area.Center.Y, location.X - Area.Center.X) * (180 / Math.PI) + 90; // Bottom right
                 }
-                else // Higher
+                else
                 {
-                    angle = (90 - Math.Atan2(Area.Center.Y - location.Y, location.X - Area.Center.X) * (180 / Math.PI));
+                    angle = (90 - Math.Atan2(Area.Center.Y - location.Y, location.X - Area.Center.X) * (180 / Math.PI)); // Top right
                 }
             }
-            else // To the left
+            else
             {
-                if (location.Y > Area.Center.Y) // Lower 
+                if (location.Y > Area.Center.Y)
                 {
-                    angle = (90 - Math.Atan2(location.Y - Area.Center.Y, Area.Center.X - location.X) * (180 / Math.PI)) + 180;
+                    angle = (90 - Math.Atan2(location.Y - Area.Center.Y, Area.Center.X - location.X) * (180 / Math.PI)) + 180; // Bottom left
                 }
-                else // Higher
+                else
                 {
-                    angle = Math.Atan2(Area.Center.Y - location.Y, Area.Center.X - location.X) * (180 / Math.PI) + 270;
+                    angle = Math.Atan2(Area.Center.Y - location.Y, Area.Center.X - location.X) * (180 / Math.PI) + 270; // Top Left
                 }
             }
 
-            //Reverse Angle
+            // Option to reverse angle?
 
             // Apply angle and force
             if (angle <= 90)
@@ -259,14 +303,14 @@ namespace Blueprint
             }
 
             Velocity -= apply * force;
-            Console.WriteLine(apply);
+
         }
 
-        public void Pushback(Vector2 force)
-        {
-            Velocity += force;
-        }
-
+        /// <summary>
+        /// Solves a collision for the movement object.
+        /// </summary>
+        /// <param name="map">The Map</param>
+        /// <returns>Returns false if the collision was not fully solved</returns>
         public bool SolveCollision(Map map)
         {
 

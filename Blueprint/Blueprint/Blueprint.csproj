@@ -113,27 +113,31 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Blocks\BackgroundTile.cs" />
-    <Compile Include="Blocks\Block.cs" />
-    <Compile Include="Blocks\BlockArea.cs" />
-    <Compile Include="Blocks\Generation\BlockGenerationArea.cs" />
-    <Compile Include="Blocks\Generation\Blocks\BlockGenerator.cs" />
-    <Compile Include="Blocks\Generation\Blocks\FlatBlockGenerator.cs" />
-    <Compile Include="Blocks\Generation\Blocks\GeneralBlockGenerator.cs" />
-    <Compile Include="Blocks\Generation\MapGenerator.cs" />
+    <Compile Include="Map\Walls\Wall.cs" />
+    <Compile Include="Map\Walls\WallType.cs" />
+    <Compile Include="Map\Blocks\Block.cs" />
+    <Compile Include="Map\Blocks\BlockArea.cs" />
+    <Compile Include="Map\Generation\BlockGenerationArea.cs" />
+    <Compile Include="Map\Generation\Blocks\BlockGenerator.cs" />
+    <Compile Include="Map\Generation\Blocks\FlatBlockGenerator.cs" />
+    <Compile Include="Map\Generation\Blocks\GeneralBlockGenerator.cs" />
+    <Compile Include="Map\Generation\MapGenerator.cs" />
     <Compile Include="Core\Cache.cs" />
     <Compile Include="Core\Lib\Helper.cs" />
     <Compile Include="Core\Packages\PackageCache.cs" />
     <Compile Include="Core\Packages\PackageCollection.cs" />
     <Compile Include="Core\Lib\RotatedRectangle.cs" />
-    <Compile Include="Fluid\Fluid.cs" />
-    <Compile Include="Fluid\FluidCollection.cs" />
-    <Compile Include="Fluid\FluidWater.cs" />
-    <Compile Include="Furniture\Furniture.cs" />
-    <Compile Include="Furniture\FurnitureType.cs" />
-    <Compile Include="Intention.cs" />
-    <Compile Include="Items\Bag.cs" />
-    <Compile Include="Items\DroppedItemCollection.cs" />
+    <Compile Include="Map\Fluid\Fluid.cs" />
+    <Compile Include="Map\Fluid\FluidCollection.cs" />
+    <Compile Include="Map\Fluid\FluidWater.cs" />
+    <Compile Include="Map\Furniture\Furniture.cs" />
+    <Compile Include="Map\Furniture\FurniturePackage.cs" />
+    <Compile Include="Map\Furniture\FurnitureType.cs" />
+    <Compile Include="Loading.cs" />
+    <Compile Include="Player\Intention.cs" />
+    <Compile Include="Map\Items\Bag.cs" />
+    <Compile Include="Map\Items\DroppedItemCollection.cs" />
+    <Compile Include="Map\Items\ItemUse.cs" />
     <Compile Include="Movement.cs" />
     <Compile Include="Net\Chat.cs" />
     <Compile Include="Core\Camera.cs" />
@@ -142,14 +146,14 @@
     <Compile Include="Core\Config.cs" />
     <Compile Include="Core\Control.cs" />
     <Compile Include="Core\Packages\Package.cs" />
-    <Compile Include="Items\DroppedItem.cs" />
-    <Compile Include="Items\Inventory.cs" />
-    <Compile Include="Items\Item.cs" />
-    <Compile Include="Blocks\Map.cs" />
-    <Compile Include="Items\ItemCollection.cs" />
-    <Compile Include="Items\ItemPackage.cs" />
-    <Compile Include="Items\ItemType.cs" />
-    <Compile Include="Items\Quickbar.cs" />
+    <Compile Include="Map\Items\DroppedItem.cs" />
+    <Compile Include="Map\Items\Inventory.cs" />
+    <Compile Include="Map\Items\Item.cs" />
+    <Compile Include="Map\Map.cs" />
+    <Compile Include="Map\Items\ItemCollection.cs" />
+    <Compile Include="Map\Items\ItemPackage.cs" />
+    <Compile Include="Map\Items\ItemType.cs" />
+    <Compile Include="Map\Items\Quickbar.cs" />
     <Compile Include="Net\NetBase.cs" />
     <Compile Include="Net\NetParser.cs" />
     <Compile Include="Npc\ActiveNpc.cs" />
@@ -175,10 +179,10 @@
     <Compile Include="Net\Server.cs" />
     <Compile Include="Ui\Ui.cs" />
     <Compile Include="Ui\FloatingText.cs" />
-    <Compile Include="Weapon\LiveWeapon.cs" />
-    <Compile Include="Weapon\Weapon.cs" />
-    <Compile Include="Weapon\WeaponPackage.cs" />
-    <Compile Include="Weapon\WeaponType.cs" />
+    <Compile Include="Map\Weapons\LiveWeapon.cs" />
+    <Compile Include="Map\Weapons\Weapon.cs" />
+    <Compile Include="Map\Weapons\WeaponPackage.cs" />
+    <Compile Include="Map\Weapons\WeaponType.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BlueprintContent\BlueprintContent.contentproj">
@@ -223,7 +227,9 @@
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Map\Lighting\" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <!--
