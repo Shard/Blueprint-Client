@@ -52,7 +52,7 @@ namespace Blueprint
             Messages.Add(new ChatMessage(message, Time));
         }
 
-        public void Update(Control control, Map map, Player player, GameTime time)
+        public void Update(Control control, Map map, Player player, GameTime time, Package package)
         {
 
             UpdatePlayers(control, map);
@@ -75,7 +75,7 @@ namespace Blueprint
                         if (status == NetConnectionStatus.Connected)
                         {
                             Player newplayer = new Player(new Vector2(100, -100));
-                            newplayer.Initialize(PlayerTexture);
+                            newplayer.Initialize(PlayerTexture, package);
 
                             Players.Add(newplayer);
 

@@ -47,11 +47,11 @@ namespace Blueprint
  
         }
 
-        public void Update( Map map )
+        public void Update( Map map, Player player )
         {
             for (int i = 0; i < ActiveNpcs.Count; i++)
             {
-                //ActiveNpcs[i].Npc.Ai.Update(ActiveNpcs[i].Movement,);
+                ActiveNpcs[i].Npc.Ai.Update(ActiveNpcs[i].Movement, player);
                 ActiveNpcs[i].Movement.Update(map);
                 ActiveNpcs[i].Invunerable -= 1;
             }

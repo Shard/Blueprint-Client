@@ -11,9 +11,14 @@ namespace Blueprint
         public Texture2D InventoryTexture;
 
         // Player owned item management
-        public Item[] Bag; // Items in the players bag
+        public Bag Bag; // Items in the players bag
         public Quickbar Quickbar; // Just one quickbar
         public Item[] Bank; // Items in the players bank
+
+        /// <summary>
+        /// If not null, contains an item that is being held by the player
+        /// </summary>
+        public Item HeldItem;
 
         // Money
         public int Money;
@@ -21,8 +26,7 @@ namespace Blueprint
 
         public Inventory()
         {
-
-            Bag = new Item[40];
+            Bag = new Bag(40);
             Quickbar = new Quickbar(10);
             Bank = new Item[80];
             Money = 99999;
@@ -31,8 +35,7 @@ namespace Blueprint
 
         public Inventory(int bagSize, int quickbarSize, int bankSize, int money, int bankedMoney)
         {
-
-            Bag = new Item[bagSize];
+            Bag = new Bag(40);
             Quickbar = new Quickbar(quickbarSize);
             Bank = new Item[bankSize];
             Money = money;
@@ -44,27 +47,30 @@ namespace Blueprint
             InventoryTexture = inventoryTexture;
             Quickbar.Items.Items[0] = new Item(itemPackage.ItemTypes[0], 1, true);
             Quickbar.Items.Items[1] = new Item(itemPackage.ItemTypes[2], 255, false); 
+            Bag.Items.Items[0] = new Item(itemPackage.ItemTypes[3], 10, false);
         }
 
 
         public void Update(Control control)
         {
 
-            Quickbar.Update(control);
-
+            Quickbar.Update(control, ref HeldItem);
+            Bag.Update(control, ref HeldItem);
             
-
+            
         }
 
         public void Draw(SpriteBatch spriteBatch, Control control, SpriteFont font, ItemPackage itemPackage)
         {
 
             Quickbar.Draw(spriteBatch, InventoryTexture, itemPackage, font);
+            Bag.Draw(spriteBatch, InventoryTexture, itemPackage, font);
 
             // Dragging Item
-            if(Quickbar.Dragging > -1)
+            if(HeldItem != null)
             {
-                spriteBatch.Draw(itemPackage.ItemTexture, new Rectangle(control.currentMouse.X-30,control.currentMouse.Y-30,30,30), Quickbar.Items.Items[Quickbar.Dragging].Type.Location, Color.Orange);
+                spriteBatch.DrawString(font, "asdasd", Vector2.Zero, Color.White);
+                spriteBatch.Draw(itemPackage.ItemTexture, new Rectangle(control.currentMouse.X-30,control.currentMouse.Y-30,30,30), HeldItem.Type.Location, Color.Orange);
             }
 
         }

@@ -41,7 +41,7 @@ namespace Blueprint
            // Messages.Add("sent packet");
         }
 
-        public void Update(Control control, Map map, Player player, GameTime time)
+        public void Update(Control control, Map map, Player player, GameTime time, Package package)
         {
 
             UpdatePlayers(control, map);
@@ -60,7 +60,7 @@ namespace Blueprint
                         NetClient.Connect(msg.SenderEndpoint);
 
                         Player newplayer = new Player(new Vector2(100, -100));
-                        newplayer.Initialize(PlayerTexture);
+                        newplayer.Initialize(PlayerTexture, package);
                         Messages.Add("new player");
                         Players.Add(newplayer);
                         break;

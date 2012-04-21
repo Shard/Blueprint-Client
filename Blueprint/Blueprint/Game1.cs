@@ -9,6 +9,8 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Lidgren.Network;
+using Krypton;
+using Krypton.Lights;
 
 namespace Blueprint
 {
@@ -38,6 +40,9 @@ namespace Blueprint
         Texture2D Wallpaper;
         SoundEffect ShotgunSound;
 
+        KryptonEngine krypton;
+        Texture2D Light;
+
         public Game1(string[] args)
         {
             
@@ -50,7 +55,7 @@ namespace Blueprint
             // Parse url arguments and do registery stuff
             Config = new Config(args);
             Package = new Package(Config);
-
+            krypton = new KryptonEngine(this, "KryptonEffect");
 
         }
 
@@ -71,6 +76,7 @@ namespace Blueprint
             NpcPackage = new NpcPackage();
             Camera = new Camera(GraphicsDevice, Player);
             Ui = new Ui.Ui();
+            krypton.Initialize();
 
             base.Initialize();
         }
@@ -110,12 +116,33 @@ namespace Blueprint
             // Initialize
             Wallpaper = Content.Load<Texture2D>("wallpaper");
             Map.Initialize(mapTexture, Content.Load<Texture2D>("blocks"), Package, Config);
-            Player.Initialize(Content.Load<Texture2D>("player"));
+            Player.Initialize( Package.LocalTexture("C:\\blueprint\\player.png", GraphicsDevice ), Package);
             WeaponPackage.Initialize(Content.Load<Texture2D>("weapons"));
             ItemPackage.mock(Map.Types, WeaponPackage.Weapons);
             ItemPackage.Initialize(Content.Load<Texture2D>("items"));
             Player.Inventory.Initialize(Content.Load<Texture2D>("inventory"), ItemPackage);
             NpcPackage.Initialize(Content.Load<Texture2D>("npcs"));
+            Light = LightTextureBuilder.CreatePointLight(GraphicsDevice, 512);
+
+            // Create some lights
+            krypton.Lights.Add(new Light2D()
+            {
+                Texture = Light,
+                Range = 5f,
+                Color = new Color(255,100,100),
+                Intensity = 1f,
+                Angle = MathHelper.TwoPi,
+                X = 100f,
+                Y = 100f,
+                Fov = MathHelper.PiOver2
+            });
+
+            var hull = ShadowHull.CreateRectangle(Vector2.One);
+            hull.Position.X = 120;
+            hull.Position.Y = 120;
+            hull.Scale.X = 1f;
+            hull.Scale.Y = 1f;
+            krypton.Hulls.Add(hull);
 
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
@@ -135,8 +162,8 @@ namespace Blueprint
             Control.Update(Keyboard.GetState(), Mouse.GetState(), Camera);
 
             // Update Modules
-            if (Server != null) { Server.Update(Control, Map, Player, gameTime); }
-            if (Client != null) { Client.Update(Control, Map, Player, gameTime); }
+            if (Server != null) { Server.Update(Control, Map, Player, gameTime, Package); }
+            if (Client != null) { Client.Update(Control, Map, Player, gameTime, Package); }
 
             // Update Player
             Player.Inventory.Update(Control);
@@ -148,14 +175,14 @@ namespace Blueprint
 
             Map.Update(Control, Player.Inventory.Quickbar);
             Map.DroppedItems.Update(Map, Player);
-            NpcPackage.Update(Map);
+            NpcPackage.Update(Map, Player);
             WeaponPackage.Update(Control, Camera, Player, NpcPackage, Ui.FloatingTexts);
             Ui.Update();
 
             // Update Chat
             if (Server != null) { Chat.Add(Server.Messages); }
             if (Client != null) { Chat.Add(Client.Messages, gameTime); }
-            Chat.Update();
+            Chat.Update(Control, gameTime);
 
             // Update Camera
             Camera.Update(Player.Movement.Moved);
@@ -184,6 +211,15 @@ namespace Blueprint
 
         protected override void Draw(GameTime gameTime)
         {
+
+            Matrix world = Matrix.Identity;
+            Matrix view = Matrix.CreateTranslation(new Vector3(0, 0, 0) * -1f);
+            Matrix projection = Matrix.CreateOrthographic(50 * this.GraphicsDevice.Viewport.AspectRatio, 50, 0, 1);
+
+            this.krypton.Matrix = world * view * projection;
+            this.krypton.Bluriness = 3;
+            //this.krypton.LightMapPrepare();
+
             GraphicsDevice.Clear(Color.CornflowerBlue);
             
             spriteBatch.Begin();
@@ -200,7 +236,10 @@ namespace Blueprint
             if (Server != null) { Server.Draw(spriteBatch, Camera); }
             if (Client != null) { Client.Draw(spriteBatch, Camera); }
             Ui.Draw(spriteBatch, Camera, font);
+
             spriteBatch.Draw(Cursor, new Rectangle(Control.currentMouse.X, Control.currentMouse.Y, 20, 20), new Rectangle(0, 0, 24, 24), Color.White);
+            this.krypton.RenderHelper.Effect.CurrentTechnique = this.krypton.RenderHelper.Effect.Techniques["DebugDraw"];
+            krypton.Draw(gameTime);
 
             spriteBatch.End();
             base.Draw(gameTime);

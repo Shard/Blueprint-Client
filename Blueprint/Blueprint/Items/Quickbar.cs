@@ -21,7 +21,6 @@ namespace Blueprint
         public int Selected; // Which item is selected on the quickbar
         public int MouseOver; // What quickbar slot is currently being hovered
         public int MouseDown; // What quickbar slot has been mouse
-        public int Dragging; // Which Quickbar slot is being dragged
         public bool Locked; // If locked, dragging must be done with shift
 
         // Using Items
@@ -47,37 +46,27 @@ namespace Blueprint
             Selected = 0;
             MouseOver = -1;
             MouseDown = -1;
-            Dragging = -1;
         }
 
-        public void Update(Control control)
+        public void Update(Control control, ref Item held_item)
         {
 
 
             // Scroll
             if (control.currentMouse.ScrollWheelValue > control.previousMouse.ScrollWheelValue)
-            {
-                Selected++;
-                if (Selected > Size - 1) { Selected = 0; }
-            }
+            { Selected++; if (Selected > Size - 1) { Selected = 0; } }
             if (control.currentMouse.ScrollWheelValue < control.previousMouse.ScrollWheelValue)
-            {
-                Selected--;
-                if (Selected < 0) { Selected = Size - 1; }
-            }
+            { Selected--; if (Selected < 0) { Selected = Size - 1; } }
 
 
-
+            // Move Hover
             if (control.currentMouse.X >= 20 && control.currentMouse.X <= 60)
             {
                 int currentY = control.currentMouse.Y - 20;
                 MouseOver = currentY / 45;
                 // add more checks here
             }
-            else
-            {
-                MouseOver = -1;
-            }
+            else { MouseOver = -1; }
 
             // Mousedown on button
             if ( MouseOver > -1 && control.currentMouse.LeftButton == ButtonState.Pressed && control.previousMouse.LeftButton == ButtonState.Released)
@@ -88,43 +77,33 @@ namespace Blueprint
             // While hovering
             if (MouseDown > -1)
             {
-                if (MouseDown != MouseOver && Items.Items[MouseDown] != null)
+                if (MouseDown != MouseOver && Items.Items[MouseDown] != null) // If the player is now dragging the item
                 {
-                    Dragging = MouseDown;
+                    held_item = Items.Items[MouseDown];
+                    Items.Items[MouseDown] = null;
                 }
             }
 
             // Mouseup
             if (MouseDown > -1 && control.currentMouse.LeftButton == ButtonState.Released && control.previousMouse.LeftButton == ButtonState.Pressed)
             {
-                if (Dragging > -1 && MouseOver > -1) // Drop on quickbar, moving its position
+                if (held_item != null && MouseOver > -1) // Drop on quickbar, moving its position
                 {
-
-                    Item tmpItem = Items.Items[MouseOver];
-
-                    Items.Items[MouseOver] = Items.Items[Dragging];
-
-                    if (tmpItem != null) // Commit swap
-                    {
-                        Items.Items[Dragging] = tmpItem;
-                    }
-
-                    Items.Items[Dragging] = null;
-                    Dragging = -1;
-
+                    Item swapItem = Items.Items[MouseOver];
+                    Items.Items[MouseOver] = held_item;
+                    held_item = swapItem;
                 }
-                else if (Dragging == -1)
+                else if (held_item != null)
                 {
                     Selected = MouseOver;
                 }
-
                 MouseDown = -1;
             }
 
             // Using Items
 
             // Place blocks
-            if (control.currentMouse.LeftButton == ButtonState.Pressed && control.MouseUi == false && Items.Items[Selected] != null && Items.Items[Selected].Type.PlaceableBlock != null)
+            if (Selected > -1 && control.currentMouse.LeftButton == ButtonState.Pressed && control.MouseUi == false && Items.Items[Selected] != null && Items.Items[Selected].Type.PlaceableBlock != null)
             {
                 AttemptPlace = Items.Items[Selected].Type.PlaceableBlock;
             } else {
@@ -132,7 +111,7 @@ namespace Blueprint
             }
 
             // Use Weapon
-            if (control.currentMouse.LeftButton == ButtonState.Pressed && control.MouseUi == false && Items.Items[Selected] != null && Items.Items[Selected].Type.Weapon != null)
+            if (Selected > -1 && control.currentMouse.LeftButton == ButtonState.Pressed && control.MouseUi == false && Items.Items[Selected] != null && Items.Items[Selected].Type.Weapon != null)
             {
                 UsingWeapon = Items.Items[Selected].Type.Weapon;
             } else {

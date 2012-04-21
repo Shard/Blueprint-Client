@@ -8,7 +8,9 @@ namespace Blueprint.Fluid
 
         public FluidWater()
         {
-            MaxSkip = 5;
+            MaxSkip = 3;
+            MaxMove = 1;
+            MaxDownMove = 3;
             CurrentSkip = 0;
         }
 

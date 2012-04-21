@@ -94,6 +94,9 @@
       <ExecutableExtension>.exe</ExecutableExtension>
       <HintPath>..\..\..\Setup\BlueprintSetup\bin\Release\BlueprintSetup.exe</HintPath>
     </Reference>
+    <Reference Include="Krypton">
+      <HintPath>..\..\..\Lib\Krypton v2.0\Krypton\bin\x86\Debug\Krypton.dll</HintPath>
+    </Reference>
     <Reference Include="Lidgren.Network">
       <HintPath>..\..\..\..\net\Lidgren-network-gen3\Lidgren.Network\bin\Debug\Lidgren.Network.dll</HintPath>
     </Reference>
@@ -110,6 +113,7 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Blocks\BackgroundTile.cs" />
     <Compile Include="Blocks\Block.cs" />
     <Compile Include="Blocks\BlockArea.cs" />
     <Compile Include="Blocks\Generation\BlockGenerationArea.cs" />
@@ -117,24 +121,27 @@
     <Compile Include="Blocks\Generation\Blocks\FlatBlockGenerator.cs" />
     <Compile Include="Blocks\Generation\Blocks\GeneralBlockGenerator.cs" />
     <Compile Include="Blocks\Generation\MapGenerator.cs" />
-    <Compile Include="Core\Helper.cs" />
-    <Compile Include="Core\PackageCache.cs" />
-    <Compile Include="Core\RotatedRectangle.cs" />
+    <Compile Include="Core\Cache.cs" />
+    <Compile Include="Core\Lib\Helper.cs" />
+    <Compile Include="Core\Packages\PackageCache.cs" />
+    <Compile Include="Core\Packages\PackageCollection.cs" />
+    <Compile Include="Core\Lib\RotatedRectangle.cs" />
     <Compile Include="Fluid\Fluid.cs" />
-    <Compile Include="Fluid\FluidBlock.cs" />
     <Compile Include="Fluid\FluidCollection.cs" />
     <Compile Include="Fluid\FluidWater.cs" />
     <Compile Include="Furniture\Furniture.cs" />
     <Compile Include="Furniture\FurnitureType.cs" />
     <Compile Include="Intention.cs" />
+    <Compile Include="Items\Bag.cs" />
     <Compile Include="Items\DroppedItemCollection.cs" />
     <Compile Include="Movement.cs" />
     <Compile Include="Net\Chat.cs" />
     <Compile Include="Core\Camera.cs" />
+    <Compile Include="Net\ChatWriter.cs" />
     <Compile Include="Net\Client.cs" />
     <Compile Include="Core\Config.cs" />
     <Compile Include="Core\Control.cs" />
-    <Compile Include="Core\Package.cs" />
+    <Compile Include="Core\Packages\Package.cs" />
     <Compile Include="Items\DroppedItem.cs" />
     <Compile Include="Items\Inventory.cs" />
     <Compile Include="Items\Item.cs" />
@@ -163,7 +170,7 @@
     <Compile Include="Player\Animations.cs" />
     <Compile Include="Player\Team.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Core\Program.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Net\Server.cs" />
     <Compile Include="Ui\Ui.cs" />

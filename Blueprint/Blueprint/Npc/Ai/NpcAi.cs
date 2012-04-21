@@ -5,13 +5,10 @@ using System.Text;
 
 namespace Blueprint
 {
-    class NpcAi
+    abstract class NpcAi
     {
         public string Name;
 
-        public void Update(Movement movement, Player player)
-        {
-
-        }
+        public abstract void Update(Movement movement, Player player);
     }
 }

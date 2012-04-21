@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Blueprint
 {
@@ -10,15 +12,15 @@ namespace Blueprint
     class AnimationFrame
     {
 
-        public Int16 Width;
-        public Int16 Height;
-        public Int16 HitboxWidth;
-        public Int16 HitboxHeight;
-        public Int16 X;
-        public Int16 Y;
-        public Int16 Time;
+        public short Width;
+        public short Height;
+        public short HitboxWidth;
+        public short HitboxHeight;
+        public short X;
+        public short Y;
+        public short Time;
 
-        public AnimationFrame(Int16 width, Int16 height, Int16 x, Int16 y, Int16 time)
+        public AnimationFrame(short width, short height, short x, short y, short time)
         {
             Width = width;
             Height = height;
@@ -27,6 +29,11 @@ namespace Blueprint
             Time = time;
             HitboxHeight = height;
             HitboxWidth = width;
+        }
+
+        public Rectangle ToRectangle()
+        {
+            return new Rectangle(X,Y,Width,Height);
         }
 
     }

@@ -39,7 +39,7 @@ namespace Blueprint
         {
 
             // Setup Liquids
-            Fluids.Initialize(SizeX, SizeY);
+            Fluids.Initialize(SizeX, SizeY, blockState);
 
             BlockTexture = blockTexture;
             BlockState = blockState;
@@ -81,6 +81,16 @@ namespace Blueprint
 
         public void Update( Control control, Quickbar quickbar )
         {
+            if (control.currentKeyboard.IsKeyDown(Keys.O) && control.previousKeyboard.IsKeyUp(Keys.O))
+            {
+                Fluids.Water.Blocks[30, 1] = 9;
+                Fluids.Water.Blocks[29, 1] = 9;
+                Fluids.Water.Blocks[26, 1] = 9;
+                Fluids.Water.Blocks[30, 0] = 9;
+                Fluids.Water.Blocks[25, 1] = 9;
+            }
+
+            Fluids.Update(this);
 
             if (quickbar.AttemptPlace != null)
             {
@@ -94,6 +104,8 @@ namespace Blueprint
 
         public void Draw(SpriteBatch spriteBatch, Camera camera)
         {
+
+            Fluids.Draw(spriteBatch, camera);
 
             for (int x = 0; x < 100; x++)
             {

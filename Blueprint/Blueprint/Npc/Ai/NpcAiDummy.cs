@@ -12,5 +12,11 @@ namespace Blueprint
             Name = "Chase Ai";
         }
 
+        public override void Update(Movement movement, Player player)
+        {
+            
+
+        }
+
     }
 }

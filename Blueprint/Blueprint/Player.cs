@@ -34,10 +34,13 @@ namespace Blueprint
             Movement = new Movement(position, 32, 44);
         }
 
-        public void Initialize(Texture2D playerTexture)
+        public void Initialize(Texture2D playerTexture, Package package)
         {
+            
 
             PlayerTexture = playerTexture;
+
+
 
             FrameCount = 4;
             FrameSkipCount = 8;
@@ -49,8 +52,8 @@ namespace Blueprint
             Name = "Firebolt";
             Inventory = new Inventory();
             
-            //
-
+            // Animation
+            Animation = new Animations(package.LocalString("C:\\blueprint\\player.xml", false));
         }
 
         public void UpdateControls()
@@ -66,7 +69,8 @@ namespace Blueprint
         public void Update(Control control, Map map)
         {
             Movement.Update(map);
-            Animate(control);
+            Animation.Update(Movement);
+            //Animate(control);
 
             // Killing
             if (Movement.Area.Y > map.SizeY * 24)
@@ -77,6 +81,8 @@ namespace Blueprint
 
         public void Animate(Control control)
         {
+
+            
 
             // Animation
             if (control.currentKeyboard.IsKeyDown(Keys.A) && control.previousKeyboard.IsKeyDown(Keys.A) && !control.currentKeyboard.IsKeyDown(Keys.D))
@@ -110,11 +116,13 @@ namespace Blueprint
                 FrameUpto = 1;
                 FrameSkipUpto = 1;
             }
-
+            
         }
 
         public void Draw(SpriteBatch spriteBatch, Camera camera)
         {
+            Animation.Draw(spriteBatch, camera, PlayerTexture);
+            /*
 
             if (PositionCamera)
             {
@@ -140,7 +148,7 @@ namespace Blueprint
             }
             
             spriteBatch.Draw(PlayerTexture, camera.FromRectangle(Movement.Area), new Rectangle(spritecol, spriterow, 32, 44), Color.White);
-
+            */
         }
 
         /// <summary>

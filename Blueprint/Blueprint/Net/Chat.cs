@@ -12,17 +12,94 @@ namespace Blueprint
         public List<ChatMessage> Log;
         public int Max; // Maximun amount of messages at one time
         public int FadeAt;
+        private List<Keys> TypedKeys;
+
+        // States
+        public bool IsTyping;
+        public ChatWriter Writer;
 
         public Chat()
         {
             Log = new List<ChatMessage>();
             Max = 10;
             FadeAt = 3;
+            IsTyping = false;
+            Writer = new ChatWriter();
+
+            TypedKeys = new List<Keys>();
+            TypedKeys.Add((Keys.A));
+            TypedKeys.Add((Keys.B));
+            TypedKeys.Add((Keys.C));
+            TypedKeys.Add((Keys.D));
+            TypedKeys.Add((Keys.E));
+            TypedKeys.Add((Keys.F));
+            TypedKeys.Add((Keys.G));
+            TypedKeys.Add((Keys.H));
+            TypedKeys.Add((Keys.I));
+            TypedKeys.Add((Keys.J));
+            TypedKeys.Add((Keys.K));
+            TypedKeys.Add((Keys.L));
+            TypedKeys.Add((Keys.M));
+            TypedKeys.Add((Keys.N));
+            TypedKeys.Add((Keys.O));
+            TypedKeys.Add((Keys.P));
+            TypedKeys.Add((Keys.Q));
+            TypedKeys.Add((Keys.R));
+            TypedKeys.Add((Keys.S));
+            TypedKeys.Add((Keys.T));
+            TypedKeys.Add((Keys.U));
+            TypedKeys.Add((Keys.V));
+            TypedKeys.Add((Keys.W));
+            TypedKeys.Add((Keys.X));
+            TypedKeys.Add((Keys.Y));
+            TypedKeys.Add((Keys.Z));
         }
 
-        public void Update(  )
+        public void Update( Control control, GameTime time  )
         {
+            if (control.previousKeyboard.IsKeyUp(Keys.Enter) && control.currentKeyboard.IsKeyDown(Keys.Enter))
+            {
+                if (IsTyping)
+                {
+                    IsTyping = false;
+                    if (Writer.Message.Length > 0)
+                    {
+                        Add(Writer.Message.ToString(), time);
+                        Writer.Clear();
+                    }
+                }
+                else
+                {
+                    IsTyping = true;
+                }
+            }
 
+            if (IsTyping)
+            {
+                foreach (Keys key in TypedKeys)
+                {
+                    if (control.previousKeyboard.IsKeyUp(key) && control.currentKeyboard.IsKeyDown(key))
+                    {
+                        Writer.Type(key.ToString());
+                    }
+                }
+                if (control.previousKeyboard.IsKeyUp(Keys.Back) && control.currentKeyboard.IsKeyDown(Keys.Back))
+                {
+                    Writer.Backspace();
+                }
+                if (control.previousKeyboard.IsKeyUp(Keys.Delete) && control.currentKeyboard.IsKeyDown(Keys.Delete))
+                {
+                    Writer.Delete();
+                }
+                if (control.previousKeyboard.IsKeyUp(Keys.Left) && control.currentKeyboard.IsKeyDown(Keys.Left))
+                {
+                    Writer.MoveCursor(-1);
+                }
+                if (control.previousKeyboard.IsKeyUp(Keys.Right) && control.currentKeyboard.IsKeyDown(Keys.Right))
+                {
+                    Writer.MoveCursor(1);
+                }
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch, SpriteFont font, GameTime time)
@@ -40,6 +117,13 @@ namespace Blueprint
                 upto++;
                 if (upto > Max) { break; }
             }
+
+            if (IsTyping)
+            {
+                spriteBatch.DrawString(font, Writer.Message.ToString(), new Vector2(100,100), Color.White);
+                spriteBatch.DrawString(font, "|", new Vector2(96 + (11 * Writer.Cursor), 100), Color.Red);
+            }
+
         }
 
         public bool Add(List<ChatMessage> Messages)
