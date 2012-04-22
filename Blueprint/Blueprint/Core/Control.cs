@@ -20,7 +20,15 @@ namespace Blueprint
 
         public bool Typing; // If true, the player is typing and actions such as movement should be locked
         public bool MouseUi; // If true, the mouse is affecting ui and thus should no propogate to the game canvas
-
+        public enum CursorStates
+        {
+            Default,
+            Interact,
+            Mine,
+            Chop,
+            Hammer
+        };
+        public CursorStates State;
 
         public Control()
         {
@@ -41,6 +49,16 @@ namespace Blueprint
             AtBlockX = (currentMouse.X - (int)camera.X) / 24;
             AtBlockY = (currentMouse.Y - (int)camera.Y) / 24;
 
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+
+        }
+
+        public void ChangeCursor(CursorStates state)
+        {
+            State = state;
         }
 
     }

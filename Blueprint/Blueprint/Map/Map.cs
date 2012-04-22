@@ -25,7 +25,7 @@ namespace Blueprint
         public WallType[] WallTypes;
 
         /// <summary>Contains Furniture</summary>
-        public FurniturePackage Furniture;
+        public EntityPackage Furniture;
 
         /// <summary>Collection of all dropped items on the map</summary>
         public DroppedItemCollection DroppedItems;
@@ -54,7 +54,7 @@ namespace Blueprint
             Walls = new Wall[SizeX, SizeY];
             DroppedItems = new DroppedItemCollection();
             Fluids = new Fluid.FluidCollection();
-            Furniture = new FurniturePackage();
+            Furniture = new EntityPackage();
 
             WallTypes[0] = new WallType(1, "Standard Wall", new Rectangle(0,0,24,24));
 
@@ -116,7 +116,7 @@ namespace Blueprint
             }
 
             Fluids.Update(this);
-            Furniture.Update();
+            Furniture.Update(control);
 
             // Use Items
 

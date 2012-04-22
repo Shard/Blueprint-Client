@@ -113,6 +113,10 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Event\Event.cs" />
+    <Compile Include="Event\EventAction.cs" />
+    <Compile Include="Event\EventCondition.cs" />
+    <Compile Include="Event\EventTrigger.cs" />
     <Compile Include="Map\Walls\Wall.cs" />
     <Compile Include="Map\Walls\WallType.cs" />
     <Compile Include="Map\Blocks\Block.cs" />
@@ -130,9 +134,9 @@
     <Compile Include="Map\Fluid\Fluid.cs" />
     <Compile Include="Map\Fluid\FluidCollection.cs" />
     <Compile Include="Map\Fluid\FluidWater.cs" />
-    <Compile Include="Map\Furniture\Furniture.cs" />
-    <Compile Include="Map\Furniture\FurniturePackage.cs" />
-    <Compile Include="Map\Furniture\FurnitureType.cs" />
+    <Compile Include="Map\Entities\Entity.cs" />
+    <Compile Include="Map\Entities\EntityPackage.cs" />
+    <Compile Include="Map\Entities\EntityType.cs" />
     <Compile Include="Loading.cs" />
     <Compile Include="Player\Intention.cs" />
     <Compile Include="Map\Items\Bag.cs" />

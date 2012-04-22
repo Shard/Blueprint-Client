@@ -10,7 +10,7 @@ namespace Blueprint.Fluid
         {
             MaxSkip = 3;
             MaxMove = 1;
-            MaxDownMove = 3;
+            MaxDownMove = 10;
             CurrentSkip = 0;
         }
 

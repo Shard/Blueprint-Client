@@ -96,7 +96,7 @@ namespace Blueprint.Fluid
             if (!forced && Blocks[sourcex, sourcey] <= Blocks[destx, desty]) { return; }
 
             byte amount_moving = Blocks[sourcex, sourcey];
-            if (amount_moving > MaxMove) { amount_moving = MaxMove; }
+            if (amount_moving > max) { amount_moving = max; }
             if (amount_moving + Blocks[destx, desty] > 9) { amount_moving -= (byte)(Blocks[destx, desty] + amount_moving - 9); }
 
             Blocks[sourcex, sourcey] -= amount_moving;
