@@ -49,17 +49,18 @@ namespace Blueprint
         /// <summary>Defines how much bounceback the mover will recieve on collision</summary>
         public float Bouncy;
 
-        // <summary>The intention that is linked to the movement object</summary>
+        /// <summary>The intention that is linked to the movement object</summary>
         public Intention Intention;
-
-        // States
 
         /// <summary>True is the mover is actually jumping upwards</summary>
         public bool IsJumping;
+
         /// <summary> When true, gravity is acting</summary>
         public bool Falling;
+
         /// <summary>If the object has solid footing</summary>
         public bool Solid;
+
         /// <summary>The direction the object is facing</summary>
         public string Direction;
 
@@ -96,6 +97,7 @@ namespace Blueprint
             if (control.previousKeyboard.IsKeyUp(Keys.Space) && control.currentKeyboard.IsKeyDown(Keys.Space)) { Intention.Jumping = true; }
             if (control.currentKeyboard.IsKeyUp(Keys.Space)) { Intention.Jumping = false; }
             if (control.currentKeyboard.IsKeyUp(Keys.Space) && control.previousKeyboard.IsKeyDown(Keys.Space) && !Intention.Jumping) { Falling = true; }
+            if (Moved.Y > 0 && Intention.Jumping) { Intention.Jumping = false; }
         }
 
         /// <summary>

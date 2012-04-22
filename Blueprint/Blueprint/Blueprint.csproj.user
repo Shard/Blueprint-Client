@@ -2,7 +2,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <PublishUrlHistory>C:\Users\Mark\Dropbox\Build\|C:\Users\Mark\Desktop\Build\|publish\</PublishUrlHistory>
-    <InstallUrlHistory>http://local.blueprintgame.com:8888/build/|http://blueprintgame.com/build/|http://local.blueprintgame.com:8888/client/setup.exe/|http://local.blueprintgame.com:8888/client/</InstallUrlHistory>
+    <InstallUrlHistory>http://blueprintgame.com/build/|http://local.blueprintgame.com:8888/build/|http://local.blueprintgame.com:8888/client/setup.exe/|http://local.blueprintgame.com:8888/client/</InstallUrlHistory>
     <SupportUrlHistory />
     <UpdateUrlHistory />
     <BootstrapperUrlHistory />

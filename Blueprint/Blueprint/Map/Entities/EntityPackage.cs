@@ -33,10 +33,11 @@ namespace Blueprint
             Texture = texture;
         }
 
-        public void Update(Control control)
+        public void Update(Control control, Camera camera)
         {
             foreach (Entity item in Entities)
             {
+                if (item == null) { continue; }
                 foreach (Event e in item.Events)
                 {
 
@@ -44,9 +45,9 @@ namespace Blueprint
                     switch (e.Trigger)
                     {
                         case Event.Triggers.PlayerInteract:
-                            if (control.previousMouse.RightButton == ButtonState.Released && control.previousMouse.RightButton == ButtonState.Pressed)
+                            if (control.previousMouse.RightButton == ButtonState.Released && control.currentMouse.RightButton == ButtonState.Pressed)
                             {
-                                if(Rectangle.Intersect(item.Area, new Rectangle(control.currentMouse.X,control.currentMouse.Y,1,1)) != null)
+                                if(Rectangle.Intersect(item.Area, camera.FromRectangle(new Rectangle(control.currentMouse.X,control.currentMouse.Y,1,1))) != Rectangle.Empty)
                                 {
                                     e.TriggerEvent();
                                 }
@@ -68,9 +69,10 @@ namespace Blueprint
                                 }
                                 break;
                             case Event.Actions.Animation:
-                                
+                                if (item.AltSprite) { item.AltSprite = false; } else { item.AltSprite = true; }
                                 break;
                         }
+                        e.Active = false; // Finish Firing Event
                     }
 
 
@@ -84,7 +86,12 @@ namespace Blueprint
             foreach (Entity item in Entities)
             {
                 if (item == null) { continue; }
-                spriteBatch.Draw(Texture, camera.FromRectangle(item.Area), item.Type.Sprite, Color.White);
+                Rectangle sprite = item.Type.Sprite;
+                if (item.AltSprite)
+                {
+                    sprite = item.Type.AltSprite;
+                }
+                spriteBatch.Draw(Texture, camera.FromRectangle(item.Area), sprite, Color.White);
             }
 
         }

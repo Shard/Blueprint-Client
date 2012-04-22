@@ -56,6 +56,7 @@ namespace Blueprint
                 if (LiveWeapons[i].Weapon.Type.Name == "Sword")
                 {
                     LiveWeapons[i].Rotation += LiveWeapons[i].Speed;
+                    LiveWeapons[i].Location += player.Movement.Moved;
                     if ((LiveWeapons[i].SwingEnd > 0 && LiveWeapons[i].Rotation > LiveWeapons[i].SwingEnd) || (LiveWeapons[i].SwingEnd < 0 && LiveWeapons[i].Rotation < LiveWeapons[i].SwingEnd))
                     {
                         LiveWeapons.RemoveAt(i);

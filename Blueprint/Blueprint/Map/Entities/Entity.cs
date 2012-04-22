@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Blueprint.Events;
+using Krypton.Lights;
 
 namespace Blueprint
 {
@@ -34,12 +35,18 @@ namespace Blueprint
         /// </summary>
         public List<Event> Events;
 
+        public Light2D Light;
+
+        public bool AltSprite;
+
         public Entity(EntityType type, int x, int y)
         {
             Type = type;
             Health = 100;
             Area = new Rectangle(x * 24, y * 24, Type.Width * 24, Type.Height * 24);
             Solid = type.Solid;
+            Events = new List<Event>();
+            AltSprite = false;
         }
 
     }

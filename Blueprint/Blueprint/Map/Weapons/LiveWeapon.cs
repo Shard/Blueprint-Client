@@ -11,7 +11,7 @@ namespace Blueprint
         public Weapon Weapon;
         public float Rotation;
         public string Direction; // The direction of the player when the weapon was created
-        
+
         public float SwingStart;
         public float SwingEnd;
         public float Speed;

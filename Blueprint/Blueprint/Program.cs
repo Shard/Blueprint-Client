@@ -17,7 +17,7 @@ namespace Blueprint
 
             if (!Program.setupReg()) { return; }
 
-            using (Game1 game = new Game1(args))
+            using (BlueprintGame game = new BlueprintGame(args))
             {
                 game.Run();
             }

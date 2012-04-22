@@ -104,7 +104,7 @@ namespace Blueprint
             
         }
 
-        public void Update( Control control, Quickbar quickbar )
+        public void Update( Control control, Quickbar quickbar, Camera camera, Lighting lighting )
         {
             if (control.currentKeyboard.IsKeyDown(Keys.O) && control.previousKeyboard.IsKeyUp(Keys.O))
             {
@@ -116,13 +116,13 @@ namespace Blueprint
             }
 
             Fluids.Update(this);
-            Furniture.Update(control);
+            Furniture.Update(control, camera);
 
             // Use Items
 
             if (quickbar.UsingItem.Type == "Block")
             {
-                if (placeBlock(control.AtBlockX, control.AtBlockY, Types[quickbar.UsingItem.IntValue]))
+                if (placeBlock(control.AtBlockX, control.AtBlockY, GetBlockType(quickbar.UsingItem.IntValue)))
                 {
                     quickbar.useItem(quickbar.Selected);
                 }
@@ -133,6 +133,19 @@ namespace Blueprint
                 if (placeWall(control.AtBlockX, control.AtBlockY, GetWallType(quickbar.UsingItem.IntValue)))
                 {
                     quickbar.useItem(quickbar.Selected);
+                }
+            }
+
+            lighting.ClearShadows();
+
+            for (int x = 0; x < 100; x++)
+            {
+                for (int y = 0; y < 100; y++)
+                {
+                    if (Blocks[x, y] != null)
+                    {
+                        lighting.AddShadow(camera.FromRectangle(new Rectangle(x * 24, y * 24,24,24)));
+                    }
                 }
             }
         }
@@ -170,6 +183,11 @@ namespace Blueprint
                     }
                 }
             }
+
+        }
+
+        public void Pathfind(Vector2 from, Vector2 to)
+        {
 
         }
 

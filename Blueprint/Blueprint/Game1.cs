@@ -15,13 +15,14 @@ using Krypton.Lights;
 namespace Blueprint
 {
 
-    public class Game1 : Microsoft.Xna.Framework.Game
+    public class BlueprintGame : Microsoft.Xna.Framework.Game
     {
 
         Loading Loading;
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        SpriteBatch altBatch;
 
         Player Player; // The play that is currently being played
         Map Map; // The current map the player is on
@@ -43,10 +44,9 @@ namespace Blueprint
         Texture2D Wallpaper;
         SoundEffect ShotgunSound;
 
-        KryptonEngine krypton;
-        Texture2D Light;
+        Lighting Lighting;
 
-        public Game1(string[] args)
+        public BlueprintGame(string[] args)
         {
             
             // Graphics Setup
@@ -61,7 +61,7 @@ namespace Blueprint
             // Parse url arguments and do registery stuff
             Config = new Config(args);
             Package = new Package(Config);
-            krypton = new KryptonEngine(this, "KryptonEffect");
+            Lighting = new Lighting(this);
             Loading = new Loading();
 
         }
@@ -83,7 +83,7 @@ namespace Blueprint
             NpcPackage = new NpcPackage();
             Camera = new Camera(GraphicsDevice, Player);
             Ui = new Ui.Ui();
-            krypton.Initialize();
+            Lighting.Initialize();
 
             base.Initialize();
         }
@@ -129,29 +129,11 @@ namespace Blueprint
             ItemPackage.Initialize(Content.Load<Texture2D>("items"));
             Player.Inventory.Initialize(Content.Load<Texture2D>("inventory"), ItemPackage);
             NpcPackage.Initialize(Content.Load<Texture2D>("npcs"));
-            Light = LightTextureBuilder.CreatePointLight(GraphicsDevice, 512);
 
-            // Create some lights
-            krypton.Lights.Add(new Light2D()
-            {
-                Texture = Light,
-                Range = 5f,
-                Color = new Color(255,100,100),
-                Intensity = 1f,
-                Angle = MathHelper.TwoPi,
-                X = 100f,
-                Y = 100f,
-                Fov = MathHelper.PiOver2
-            });
-
-            var hull = ShadowHull.CreateRectangle(Vector2.One);
-            hull.Position.X = 120;
-            hull.Position.Y = 120;
-            hull.Scale.X = 1f;
-            hull.Scale.Y = 1f;
-            krypton.Hulls.Add(hull);
+            Lighting.LoadContent(GraphicsDevice);
 
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            altBatch = new SpriteBatch(GraphicsDevice);
 
             if (Config.Hosting) { Server = new Server(Config); Server.Initialize(Content.Load<Texture2D>("player")); } else { Server = null; }
             if (Config.Join != null) { Client = new Client(Config); Client.Initialize(Content.Load<Texture2D>("player")); } else { Client = null; }
@@ -184,11 +166,12 @@ namespace Blueprint
             Player.Inventory.Update(Control);
             Player.Movement.HandleControls(Control);
             Player.Update(Control,  Map);
+            Camera.Update(Player.Movement.Moved);
 
             // Updates Players
             
 
-            Map.Update(Control, Player.Inventory.Quickbar);
+            Map.Update(Control, Player.Inventory.Quickbar, Camera, Lighting);
             Map.DroppedItems.Update(Map, Player);
             NpcPackage.Update(Map, Player);
             WeaponPackage.Update(Control, Camera, Player, NpcPackage, Ui.FloatingTexts);
@@ -199,8 +182,7 @@ namespace Blueprint
             if (Client != null) { Chat.Add(Client.Messages, gameTime); }
             Chat.Update(Control, gameTime);
 
-            // Update Camera
-            Camera.Update(Player.Movement.Moved);
+            Lighting.Update(gameTime, Control, Camera, Map.Furniture);
 
             // Mine blocks
             if (Control.currentMouse.LeftButton == ButtonState.Pressed)
@@ -216,8 +198,8 @@ namespace Blueprint
 
             if (Control.currentMouse.RightButton == ButtonState.Pressed && !Player.Movement.Falling)
             {
-                Player.Movement.PushbackFrom(new Vector2(Control.currentMouse.X - Camera.X, Control.currentMouse.Y - Camera.Y), 10f);
-                ShotgunSound.Play();
+               // Player.Movement.PushbackFrom(new Vector2(Control.currentMouse.X - Camera.X, Control.currentMouse.Y - Camera.Y), 10f);
+                //ShotgunSound.Play();
             }
 
 
@@ -226,7 +208,7 @@ namespace Blueprint
 
         protected override void Draw(GameTime gameTime)
         {
-
+            // Loading
             if (Loading.IsLoading)
             {
                 Loading.Draw(spriteBatch, GraphicsDevice, font);
@@ -234,36 +216,36 @@ namespace Blueprint
                 return;
             }
 
-            Matrix world = Matrix.Identity;
-            Matrix view = Matrix.CreateTranslation(new Vector3(0, 0, 0) * -1f);
-            Matrix projection = Matrix.CreateOrthographic(50 * this.GraphicsDevice.Viewport.AspectRatio, 50, 0, 1);
-
-            this.krypton.Matrix = world * view * projection;
-            this.krypton.Bluriness = 3;
-            //this.krypton.LightMapPrepare();
-
+            // Setup
+            Lighting.Draw(GraphicsDevice);
             GraphicsDevice.Clear(Color.CornflowerBlue);
-            
             spriteBatch.Begin();
+            
+            // Before Shadows
             spriteBatch.Draw(Wallpaper, GraphicsDevice.Viewport.TitleSafeArea, Color.White);
-            Map.Draw(spriteBatch, Camera);
             Map.DroppedItems.Draw(spriteBatch, Camera, ItemPackage);
-            Player.Inventory.Draw(spriteBatch, Control, font, ItemPackage);
             WeaponPackage.Draw(spriteBatch, Camera);
             NpcPackage.Draw(spriteBatch, Camera);
-
-            Chat.Draw(spriteBatch, font, gameTime);
-
+            Map.Draw(spriteBatch, Camera);
             Player.Draw(spriteBatch, Camera);
-            if (Server != null) { Server.Draw(spriteBatch, Camera); }
-            if (Client != null) { Client.Draw(spriteBatch, Camera); }
-            Ui.Draw(spriteBatch, Camera, font);
 
-            spriteBatch.Draw(Cursor, new Rectangle(Control.currentMouse.X, Control.currentMouse.Y, 20, 20), new Rectangle(0, 0, 24, 24), Color.White);
-            this.krypton.RenderHelper.Effect.CurrentTechnique = this.krypton.RenderHelper.Effect.Techniques["DebugDraw"];
-            krypton.Draw(gameTime);
-
+            // Shadows
             spriteBatch.End();
+            Lighting.PostDraw(gameTime, GraphicsDevice);
+            altBatch.Begin();
+
+            // After Shadows
+            
+            Player.Inventory.Draw(altBatch, Control, font, ItemPackage);
+            Chat.Draw(altBatch, font, gameTime);
+            if (Server != null) { Server.Draw(altBatch, Camera); }
+            if (Client != null) { Client.Draw(altBatch, Camera); }
+            Ui.Draw(altBatch, Camera, font);
+            altBatch.Draw(Cursor, new Rectangle(Control.currentMouse.X, Control.currentMouse.Y, 20, 20), new Rectangle(0, 0, 24, 24), Color.White);
+            
+            altBatch.End();
+
+            
             base.Draw(gameTime);
         }
     }

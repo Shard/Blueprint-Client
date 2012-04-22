@@ -13,6 +13,7 @@ namespace Blueprint
         public string Name;
         public string Description;
         public Rectangle Sprite;
+        public Rectangle AltSprite;
         public int Width;
         public int Height;
         public List<Event> Events;
@@ -26,6 +27,7 @@ namespace Blueprint
             Name = name;
             Description = "Stub";
             Sprite = sprite;
+            AltSprite = new Rectangle(sprite.X + sprite.Width, sprite.Y, sprite.Width, sprite.Height);
             Solid = solid;
             Width = width;
             Height = height;
