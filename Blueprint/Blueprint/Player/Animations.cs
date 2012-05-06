@@ -155,10 +155,10 @@ namespace Blueprint
 
         public void Draw(SpriteBatch spriteBatch, Camera camera, Texture2D texture)
         {
-            SpriteEffects effects = SpriteEffects.None;
+            SpriteEffects effects = SpriteEffects.FlipHorizontally;
             if (CurrentDirection == "right")
             {
-                effects = SpriteEffects.FlipHorizontally;
+                effects = SpriteEffects.None;
             }
             spriteBatch.Draw(texture, camera.FromRectangle(CurrentLocation), CurrentAnimation.Frames[FrameUpto].ToRectangle(), Color.White, 0f, Vector2.Zero, effects, 0f);
         }

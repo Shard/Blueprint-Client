@@ -25,7 +25,7 @@ namespace Blueprint
         public WallType[] WallTypes;
 
         /// <summary>Contains Furniture</summary>
-        public EntityPackage Furniture;
+        public EntityPackage Entities;
 
         /// <summary>Collection of all dropped items on the map</summary>
         public DroppedItemCollection DroppedItems;
@@ -35,6 +35,7 @@ namespace Blueprint
 
         public Texture2D BlockTexture;
         public Texture2D BlockState;
+        public Texture2D WallTexture;
 
         /// <summary>Defines how wide the map is in terms of blocks</summary>
         public int SizeX;
@@ -42,7 +43,12 @@ namespace Blueprint
         /// <summary>Defines how high the map is in terms of blocks</summary>
         public int SizeY;
 
-        public Map(int width = 700, int height = 100)
+        /// <summary>
+        /// Spawn Location
+        /// </summary>
+        public Vector2 Spawn;
+
+        public Map(int width = 1000, int height = 500)
         {
 
             // Init
@@ -54,13 +60,13 @@ namespace Blueprint
             Walls = new Wall[SizeX, SizeY];
             DroppedItems = new DroppedItemCollection();
             Fluids = new Fluid.FluidCollection();
-            Furniture = new EntityPackage();
+            Entities = new EntityPackage();
 
             WallTypes[0] = new WallType(1, "Standard Wall", new Rectangle(0,0,24,24));
 
         }
 
-        public void Initialize( Texture2D blockTexture, Texture2D blockState, Texture2D furnitureTexture, Package package, Config config )
+        public void Initialize( Texture2D blockTexture, Texture2D blockState, Texture2D furnitureTexture, Texture2D wallTexture, Package package, Config config, GraphicsDevice graphics )
         {
 
             // Setup Liquids
@@ -68,7 +74,8 @@ namespace Blueprint
 
             BlockTexture = blockTexture;
             BlockState = blockState;
-            Furniture.Initialize(furnitureTexture);
+            WallTexture = wallTexture;
+            Entities.Initialize(furnitureTexture);
 
             // Gather Map Data
             string data = package.RemoteString("maps/manifest/" + config.MapId);
@@ -77,6 +84,10 @@ namespace Blueprint
 
 
             // Parse Map Data into types and blocks
+
+            Spawn = new Vector2(Int32.Parse(xml.DocumentElement.Attributes["spawnx"].Value) * 24, Int32.Parse(xml.DocumentElement.Attributes["spawny"].Value) * 24);
+            
+
             foreach (XmlNode node in xml.DocumentElement.ChildNodes)
             {
                 if (node.Name == "BlockType")
@@ -84,7 +95,11 @@ namespace Blueprint
                     int upto = 0;
                     foreach (XmlNode blocktype in node.ChildNodes)
                     {
-                        Types[upto] = new BlockType(blocktype.Attributes["name"].Value, Int32.Parse(blocktype.Attributes["id"].Value), new Rectangle(Int32.Parse(blocktype.Attributes["x"].Value) * 24, Int32.Parse(blocktype.Attributes["y"].Value) * 24, 24, 24), 100);
+                        Types[upto] = new BlockType(blocktype.Attributes["name"].Value, Int32.Parse(blocktype.Attributes["id"].Value), 100);
+                        foreach (XmlNode slice in blocktype.ChildNodes)
+                        {
+                            Types[upto].Slices[int.Parse(slice.Attributes["i"].Value)] = new Rectangle(int.Parse(slice.Attributes["x"].Value) * 24, int.Parse(slice.Attributes["y"].Value) * 24, 24, 24);
+                        }
                         upto++;
                     }
                 }
@@ -95,28 +110,68 @@ namespace Blueprint
                         Blocks[Int32.Parse(block.Attributes["x"].Value), Int32.Parse(block.Attributes["y"].Value)] = new Block(GetBlockType(Int32.Parse(block.Attributes["type"].Value)));
                     }
                 }
+                else if (node.Name == "Liquid")
+                {
+                    foreach (XmlNode liquid in node.ChildNodes)
+                    {
+                        if(byte.Parse(liquid.Attributes["type"].Value) == 1){
+                            Fluids.Water.Blocks[Int32.Parse(liquid.Attributes["x"].Value), int.Parse(liquid.Attributes["y"].Value)] = 24;
+                        }
+                        else if (byte.Parse(liquid.Attributes["type"].Value) == 1)
+                        {
+                            // lava
+                        }
+                    }
+                }
+                else if (node.Name == "EntityType")
+                {
+                    Entities.Types = new EntityType[node.ChildNodes.Count];
+                    
+                    int i = 0;
+                    foreach (XmlNode entitytype in node.ChildNodes)
+                    {
+                        Entities.Types[i] = new EntityType(
+                            int.Parse(entitytype.Attributes["id"].Value),
+                            entitytype.Attributes["name"].Value,
+                            package.RemoteTexture(entitytype.Attributes["sprite"].Value, graphics),
+                            int.Parse(entitytype.Attributes["width"].Value),
+                            int.Parse(entitytype.Attributes["height"].Value),
+                            true
+                        );
+                        i++;
+                    }
+                } 
+                else if (node.Name == "Entity")
+                {
+                    foreach (XmlNode entity in node.ChildNodes)
+                    {
+                        //EntityType type = Entities.getType();
+                        EntityType type = Entities.getType(int.Parse(entity.Attributes["type"].Value));
+                        // int.Parse(entity.Attributes["width"].Value)
+                        Entities.Entities.Add(
+                            new Entity(type, int.Parse(entity.Attributes["x"].Value), int.Parse(entity.Attributes["y"].Value))
+                        );
+                    }
+                }
             }
 
             // Autogenerate
-            MapGenerator generator = new MapGenerator();
-            generator.Setup(SizeX, SizeY);
-            generator.Generate(this);
+            //MapGenerator generator = new MapGenerator();
+            //generator.Setup(SizeX, SizeY);
+            //generator.Generate(this);
             
+        }
+
+        public void LoadContent()
+        {
+
         }
 
         public void Update( Control control, Quickbar quickbar, Camera camera, Lighting lighting )
         {
-            if (control.currentKeyboard.IsKeyDown(Keys.O) && control.previousKeyboard.IsKeyUp(Keys.O))
-            {
-                Fluids.Water.Blocks[30, 1] = 9;
-                Fluids.Water.Blocks[29, 1] = 9;
-                Fluids.Water.Blocks[26, 1] = 9;
-                Fluids.Water.Blocks[30, 0] = 9;
-                Fluids.Water.Blocks[25, 1] = 9;
-            }
 
             Fluids.Update(this);
-            Furniture.Update(control, camera);
+            Entities.Update(control, camera);
 
             // Use Items
 
@@ -152,38 +207,112 @@ namespace Blueprint
 
         public void Draw(SpriteBatch spriteBatch, Camera camera)
         {
+            Entities.Draw(spriteBatch, camera);
 
-            Fluids.Draw(spriteBatch, camera);
-            Furniture.Draw(spriteBatch, camera);
-
-            for (int x = 0; x < 100; x++)
+            // Draw Blocks
+            int startx = (int)MathHelper.Clamp(camera.X * -1 / 24f, 0, this.SizeX);
+            int endx = startx + camera.Width / 24;
+            int starty = (int)MathHelper.Clamp(camera.Y * -1 / 24f, 0, this.SizeY);
+            int endy = starty + camera.Height / 24;
+            
+            for (int x = startx; x < endx + 2; x++)
             {
-                for (int y = 0; y < 100; y++)
+                for (int y = starty; y < endy + 2; y++)
                 {
                     if (Walls[x, y] != null)
                     {
                         Vector2 position = new Vector2(camera.X + x * 24, camera.Y + y * 24);
-                        spriteBatch.Draw(BlockTexture, position, Walls[x, y].Type.Sprite, Color.White);
+                        spriteBatch.Draw(WallTexture, position, Walls[x, y].Type.Sprite, Color.White);
                     }
                     if (Blocks[x, y] != null) {
                         Vector2 position = new Vector2(camera.X + x * 24, camera.Y + y * 24);
-                        spriteBatch.Draw(BlockTexture, position, Blocks[x, y].Type.Location, Color.White);
-                        if (Blocks[x, y].Health < 25)
-                        {
-                            spriteBatch.Draw(BlockState, position, new Rectangle(48, 24, 24, 24), Color.White);
-                        }
-                        else if (Blocks[x, y].Health < 50)
-                        {
-                            spriteBatch.Draw(BlockState, position, new Rectangle(24, 24, 24, 24), Color.White);
-                        }
-                        else if (Blocks[x, y].Health < 75)
-                        {
-                            spriteBatch.Draw(BlockState, position, new Rectangle(0, 24, 24, 24), Color.White);
-                        }
+                        BlockFrame frame = GetSpriteIndex(x,y);
+                        spriteBatch.Draw(BlockTexture, new Rectangle((int)position.X + 12, (int)position.Y + 12, 24,24), Blocks[x, y].Type.Slices[frame.Index], Color.White, frame.Rotate, new Vector2(12,12), SpriteEffects.None, 0);
+
+
+                        if (Blocks[x, y].Health < 10) { spriteBatch.Draw(BlockState, position, new Rectangle(8 * 24, 24, 24, 24), Color.Gray); } else
+                        if (Blocks[x, y].Health < 20) { spriteBatch.Draw(BlockState, position, new Rectangle(7 * 24, 24, 24, 24), Color.Gray); } else
+                        if (Blocks[x, y].Health < 30) { spriteBatch.Draw(BlockState, position, new Rectangle(6 * 24, 24, 24, 24), Color.Gray); } else
+                        if (Blocks[x, y].Health < 40) { spriteBatch.Draw(BlockState, position, new Rectangle(5 * 24, 24, 24, 24), Color.Gray); } else
+                        if (Blocks[x, y].Health < 50) { spriteBatch.Draw(BlockState, position, new Rectangle(4 * 24, 24, 24, 24), Color.Gray); } else
+                        if (Blocks[x, y].Health < 60) { spriteBatch.Draw(BlockState, position, new Rectangle(3 * 24, 24, 24, 24), Color.Gray); } else
+                        if (Blocks[x, y].Health < 70) { spriteBatch.Draw(BlockState, position, new Rectangle(2 * 24, 24, 24, 24), Color.Gray); } else
+                        if (Blocks[x, y].Health < 80) { spriteBatch.Draw(BlockState, position, new Rectangle(1 * 24, 24, 24, 24), Color.Gray); } else
+                        if (Blocks[x, y].Health < 90) { spriteBatch.Draw(BlockState, position, new Rectangle(0, 24, 24, 24), Color.Gray); }
+
+
                     }
                 }
             }
 
+            
+
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public BlockFrame GetSpriteIndex( int x, int y )
+        {
+
+            bool top = true;
+            bool right = true;
+            bool bottom = true;
+            bool left = true;
+            byte frame;
+            float rotate = 0;
+
+            if (getBlock(x, y - 1) != null) { top = false; }
+            if (getBlock(x + 1, y) != null) { right = false; }
+            if (getBlock(x, y + 1) != null) { bottom = false; }
+            if (getBlock(x - 1, y) != null) { left = false; }
+
+            if(top == true && right == false && bottom == false && left == false){
+				frame = 1;
+			} else if(top == false && right == true && bottom == false && left == false){
+				frame = 1;
+				rotate = 90;
+			} else if(top == false && right == false && bottom == true && left == false){
+                frame = 1;
+				rotate = 180;
+			} else if(top == false && right == false && bottom == false && left == true){
+                frame = 1;
+				rotate = 270;
+			} else if(top == false && right == true && bottom == false && left == true){
+                frame = 2;
+			} else if(top == true && right == false && bottom == true && left == false){
+                frame = 2;
+				rotate = 90;
+			} else if(top == true && right == false && bottom == false && left == true){
+                frame = 3;
+			} else if(top == true && right == true && bottom == false && left == false){
+                frame = 3;
+				rotate = 90;
+			} else if(top == false && right == true && bottom == true && left == false){
+                frame = 3;
+				rotate = 180;
+			} else if(top == false && right == false && bottom == true && left == true){
+                frame = 3;
+				rotate = 270;
+			} else if(top == true && right == true && bottom == false && left == true){
+                frame = 4;
+				rotate = 180;
+			} else if(top == true && right == true && bottom == true && left == false){
+                frame = 4;
+				rotate = 270;
+			} else if(top == false && right == true && bottom == true && left == true){
+                frame = 4;
+			} else if(top == true && right == false && bottom == true && left == true){
+                frame = 4;
+				rotate = 90;
+			} else if(top == true && right == true && bottom == true && left == true){
+                frame = 5;
+			} else if(top == false && right == false && bottom == false && left == false){
+                frame = 6;
+			} else { frame = 1; }
+
+            return new BlockFrame(frame, rotate);
         }
 
         public void Pathfind(Vector2 from, Vector2 to)
@@ -295,7 +424,7 @@ namespace Blueprint
 
             if (Blocks[x, y] == null) { return; }
 
-            Blocks[x, y].Health --;
+            Blocks[x, y].Health -= 2;
             if (Blocks[x, y].Health < 1)
             {
                 Blocks[x, y] = null;

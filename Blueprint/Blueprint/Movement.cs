@@ -375,7 +375,7 @@ namespace Blueprint
             }
 
             if(totalWidth > 0 || totalHeight > 0){
-                if (totalWidth > totalHeight) // Horizontal
+                if (totalWidth > totalHeight ) // Horizontal
                 {
                     if (collisionCenterW.Y < Area.Center.Y) // Colliding from the top
                     { Area.Y += averageHeightW; Velocity.Y = 0; }

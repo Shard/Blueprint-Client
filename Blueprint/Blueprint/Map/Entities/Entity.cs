@@ -26,9 +26,9 @@ namespace Blueprint
         public Rectangle Area;
 
         /// <summary>
-        /// The type that belongs to the entitiy
+        /// The id of the entity type
         /// </summary>
-        public EntityType Type;
+        public int Type;
 
         /// <summary>
         /// The events binded to the entitiy
@@ -41,9 +41,9 @@ namespace Blueprint
 
         public Entity(EntityType type, int x, int y)
         {
-            Type = type;
+            Type = type.Id;
             Health = 100;
-            Area = new Rectangle(x * 24, y * 24, Type.Width * 24, Type.Height * 24);
+            Area = new Rectangle(x * 24, y * 24 - ((type.Height - 1) * 24), type.Width * 24, type.Height * 24);
             Solid = type.Solid;
             Events = new List<Event>();
             AltSprite = false;

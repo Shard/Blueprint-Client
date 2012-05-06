@@ -25,12 +25,7 @@ namespace Blueprint
         // Animation
         Animations Animation;
 
-        public Player(Vector2 position)
-        {
-            Movement = new Movement(position, 32, 44);
-        }
-
-        public void Initialize(Texture2D playerTexture, Package package)
+        public void Initialize(Texture2D playerTexture, Package package, Vector2 position)
         {
             
 
@@ -44,16 +39,7 @@ namespace Blueprint
             
             // Animation
             Animation = new Animations(package.LocalString("C:\\blueprint\\player.xml", false));
-        }
-
-        public void UpdateControls()
-        {
-
-        }
-
-        public void UpdatePosition()
-        {
-
+            Movement = new Movement(position, 32, 44);
         }
 
         public void Update(Control control, Map map)

@@ -29,14 +29,14 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>http://blueprintgame.com/build/</InstallUrl>
+    <InstallUrl>http://local.blueprintgame.com:8888/build/</InstallUrl>
     <ProductName>Project Blueprint Client</ProductName>
     <PublisherName>Shard Design</PublisherName>
     <SuiteName>Project Blueprint</SuiteName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>54</ApplicationRevision>
+    <ApplicationRevision>55</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -117,6 +117,7 @@
     <Compile Include="Events\EventCondition.cs" />
     <Compile Include="Events\EventTrigger.cs" />
     <Compile Include="Lighting.cs" />
+    <Compile Include="Map\Fluid\FluidLava.cs" />
     <Compile Include="Map\Walls\Wall.cs" />
     <Compile Include="Map\Walls\WallType.cs" />
     <Compile Include="Map\Blocks\Block.cs" />
@@ -139,9 +140,9 @@
     <Compile Include="Map\Entities\EntityType.cs" />
     <Compile Include="Loading.cs" />
     <Compile Include="Player\Intention.cs" />
-    <Compile Include="Map\Items\Bag.cs" />
-    <Compile Include="Map\Items\DroppedItemCollection.cs" />
-    <Compile Include="Map\Items\ItemUse.cs" />
+    <Compile Include="Items\Bag.cs" />
+    <Compile Include="Items\DroppedItemCollection.cs" />
+    <Compile Include="Items\ItemUse.cs" />
     <Compile Include="Movement.cs" />
     <Compile Include="Net\Chat.cs" />
     <Compile Include="Core\Camera.cs" />
@@ -150,14 +151,14 @@
     <Compile Include="Core\Config.cs" />
     <Compile Include="Core\Control.cs" />
     <Compile Include="Core\Packages\Package.cs" />
-    <Compile Include="Map\Items\DroppedItem.cs" />
-    <Compile Include="Map\Items\Inventory.cs" />
-    <Compile Include="Map\Items\Item.cs" />
+    <Compile Include="Items\DroppedItem.cs" />
+    <Compile Include="Items\Inventory.cs" />
+    <Compile Include="Items\Item.cs" />
     <Compile Include="Map\Map.cs" />
-    <Compile Include="Map\Items\ItemCollection.cs" />
-    <Compile Include="Map\Items\ItemPackage.cs" />
-    <Compile Include="Map\Items\ItemType.cs" />
-    <Compile Include="Map\Items\Quickbar.cs" />
+    <Compile Include="Items\ItemCollection.cs" />
+    <Compile Include="Items\ItemPackage.cs" />
+    <Compile Include="Items\ItemType.cs" />
+    <Compile Include="Items\Quickbar.cs" />
     <Compile Include="Net\NetBase.cs" />
     <Compile Include="Net\NetParser.cs" />
     <Compile Include="Npc\ActiveNpc.cs" />
@@ -183,10 +184,10 @@
     <Compile Include="Net\Server.cs" />
     <Compile Include="Ui\Ui.cs" />
     <Compile Include="Ui\FloatingText.cs" />
-    <Compile Include="Map\Weapons\LiveWeapon.cs" />
-    <Compile Include="Map\Weapons\Weapon.cs" />
-    <Compile Include="Map\Weapons\WeaponPackage.cs" />
-    <Compile Include="Map\Weapons\WeaponType.cs" />
+    <Compile Include="Weapons\LiveWeapon.cs" />
+    <Compile Include="Weapons\Weapon.cs" />
+    <Compile Include="Weapons\WeaponPackage.cs" />
+    <Compile Include="Weapons\WeaponType.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BlueprintContent\BlueprintContent.contentproj">

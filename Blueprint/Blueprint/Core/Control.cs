@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Xna;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -16,8 +16,12 @@ namespace Blueprint
 
         // Tells which block the cursor is at
         public int AtBlockX; 
-        public int AtBlockY; 
+        public int AtBlockY;
 
+        public bool IsLocked
+        {
+            get { return Typing; }
+        }
         public bool Typing; // If true, the player is typing and actions such as movement should be locked
         public bool MouseUi; // If true, the mouse is affecting ui and thus should no propogate to the game canvas
         public enum CursorStates
@@ -30,12 +34,13 @@ namespace Blueprint
         };
         public CursorStates State;
 
+        public Rectangle MousePos { get { return new Rectangle(currentMouse.X, currentMouse.Y, 1, 1); } }
+
         public Control()
         {
 
             Typing = false;
             MouseUi = false;
-
         }
 
         public void Update(KeyboardState keyboard, MouseState mouse, Camera camera )

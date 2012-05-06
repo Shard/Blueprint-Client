@@ -14,12 +14,20 @@ namespace Blueprint
         public string Server;
         public string DataFolder;
         public PackageCache Cache;
+        public List<string> Queued;
 
         public Package(Config config)
         {
             Server = config.Server;
             DataFolder = config.DataFolder;
             Cache = new PackageCache(config);
+            Queued = new List<string>();
+        }
+
+
+        public void Register(string path)
+        {
+            Queued.Add(path);
         }
 
         public string RemoteString(string path)

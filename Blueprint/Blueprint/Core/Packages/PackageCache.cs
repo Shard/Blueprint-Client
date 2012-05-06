@@ -38,7 +38,6 @@ namespace Blueprint
 
         public bool Write(string path, Texture2D texture)
         {
-
             if (!File.Exists(DataFolder + "\\data"))
             {
                 Helper.mkdir(DataFolder + "\\data");

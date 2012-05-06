@@ -59,8 +59,8 @@ namespace Blueprint
                     case NetIncomingMessageType.DiscoveryResponse:
                         NetClient.Connect(msg.SenderEndpoint);
 
-                        Player newplayer = new Player(new Vector2(100, -100));
-                        newplayer.Initialize(PlayerTexture, package);
+                        Player newplayer = new Player();
+                        newplayer.Initialize(PlayerTexture, package, map.Spawn);
                         Messages.Add("new player");
                         Players.Add(newplayer);
                         break;

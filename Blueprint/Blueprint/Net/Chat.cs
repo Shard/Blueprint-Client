@@ -15,15 +15,16 @@ namespace Blueprint
         private List<Keys> TypedKeys;
 
         // States
-        public bool IsTyping;
+        private byte BackspaceHold;
+        private byte BackspaceHold2;
         public ChatWriter Writer;
+        private bool Typing;
 
         public Chat()
         {
             Log = new List<ChatMessage>();
             Max = 10;
             FadeAt = 3;
-            IsTyping = false;
             Writer = new ChatWriter();
 
             TypedKeys = new List<Keys>();
@@ -55,13 +56,13 @@ namespace Blueprint
             TypedKeys.Add((Keys.Z));
         }
 
-        public void Update( Control control, GameTime time  )
+        public void Update( ref Control control, GameTime time  )
         {
             if (control.previousKeyboard.IsKeyUp(Keys.Enter) && control.currentKeyboard.IsKeyDown(Keys.Enter))
             {
-                if (IsTyping)
+                if (control.Typing)
                 {
-                    IsTyping = false;
+                    control.Typing = false;
                     if (Writer.Message.Length > 0)
                     {
                         Add(Writer.Message.ToString(), time);
@@ -70,11 +71,11 @@ namespace Blueprint
                 }
                 else
                 {
-                    IsTyping = true;
+                    control.Typing = true;
                 }
             }
 
-            if (IsTyping)
+            if (control.Typing)
             {
                 foreach (Keys key in TypedKeys)
                 {
@@ -86,6 +87,20 @@ namespace Blueprint
                 if (control.previousKeyboard.IsKeyUp(Keys.Back) && control.currentKeyboard.IsKeyDown(Keys.Back))
                 {
                     Writer.Backspace();
+                    BackspaceHold = 0;
+                }
+                if (control.currentKeyboard.IsKeyDown(Keys.Back))
+                {
+                    BackspaceHold++;
+                    if (BackspaceHold > 30)
+                    {
+                        BackspaceHold2++;
+                        if (BackspaceHold2 >= 2)
+                        {
+                            Writer.Backspace();
+                            BackspaceHold2 = 0;
+                        }
+                    }
                 }
                 if (control.previousKeyboard.IsKeyUp(Keys.Delete) && control.currentKeyboard.IsKeyDown(Keys.Delete))
                 {
@@ -100,6 +115,8 @@ namespace Blueprint
                     Writer.MoveCursor(1);
                 }
             }
+
+            Typing = control.Typing;
         }
 
         public void Draw(SpriteBatch spriteBatch, SpriteFont font, GameTime time)
@@ -118,7 +135,7 @@ namespace Blueprint
                 if (upto > Max) { break; }
             }
 
-            if (IsTyping)
+            if (Typing)
             {
                 spriteBatch.DrawString(font, Writer.Message.ToString(), new Vector2(100,100), Color.White);
                 spriteBatch.DrawString(font, "|", new Vector2(96 + (11 * Writer.Cursor), 100), Color.Red);

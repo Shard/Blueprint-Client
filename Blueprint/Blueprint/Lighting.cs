@@ -58,7 +58,7 @@ namespace Blueprint
             Sun.X = 100 * 24;
             Sun.Y = -500 * 24;
 
-            for (int i = 0; i < entities.Entities.Length; i++)
+            for (int i = 0; i < entities.Entities.Count; i++)
             {
                 if (entities.Entities[i] == null) { continue; }
                 if (entities.Entities[i].Light == null)
@@ -90,6 +90,7 @@ namespace Blueprint
             this.krypton.SpriteBatchCompatablityEnabled = true;
             this.krypton.CullMode = CullMode.CullClockwiseFace;
             this.krypton.Bluriness = 20;
+            this.krypton.AmbientColor = new Color(50,50,50);
             this.krypton.LightMapPrepare();
             
         }

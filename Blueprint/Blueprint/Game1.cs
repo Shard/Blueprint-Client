@@ -58,7 +58,7 @@ namespace Blueprint
             this.Window.AllowUserResizing = true;
             this.Window.ClientSizeChanged += new EventHandler<EventArgs>(Window_ClientSizeChanged);
 
-            // Parse url arguments and do registery stuff
+            // Setup a few classes
             Config = new Config(args);
             Package = new Package(Config);
             Lighting = new Lighting(this);
@@ -66,6 +66,7 @@ namespace Blueprint
 
         }
 
+        /// <summary>Called on window resize</summary>
         void Window_ClientSizeChanged(object sender, EventArgs e)
         {
             Camera = new Camera(GraphicsDevice, Player);
@@ -74,14 +75,13 @@ namespace Blueprint
         protected override void Initialize()
         {
 
-            Player = new Player(new Vector2(100, -100) );
+            Player = new Player();
             Map = new Map();
             Chat = new Chat();
             ItemPackage = new ItemPackage();
             WeaponPackage = new WeaponPackage();
             Control = new Control();
             NpcPackage = new NpcPackage();
-            Camera = new Camera(GraphicsDevice, Player);
             Ui = new Ui.Ui();
             Lighting.Initialize();
 
@@ -122,12 +122,13 @@ namespace Blueprint
 
             // Initialize
             Wallpaper = Content.Load<Texture2D>("wallpaper");
-            Map.Initialize(mapTexture, Content.Load<Texture2D>("blocks"), Content.Load<Texture2D>("furniture"), Package, Config);
-            Player.Initialize( Package.LocalTexture("C:\\blueprint\\player.png", GraphicsDevice ), Package);
+            Map.Initialize(mapTexture, Content.Load<Texture2D>("blocks"), Content.Load<Texture2D>("furniture"), Content.Load<Texture2D>("wall"), Package, Config, GraphicsDevice);
+            Player.Initialize( Package.LocalTexture("C:\\blueprint\\player.png", GraphicsDevice ), Package, Map.Spawn);
+            Camera = new Camera(GraphicsDevice, Player);
             WeaponPackage.Initialize(Content.Load<Texture2D>("weapons"));
             ItemPackage.mock(Map.Types, WeaponPackage.Weapons);
             ItemPackage.Initialize(Content.Load<Texture2D>("items"));
-            Player.Inventory.Initialize(Content.Load<Texture2D>("inventory"), ItemPackage);
+            Player.Inventory.Initialize(Content.Load<Texture2D>("buttons"), ItemPackage);
             NpcPackage.Initialize(Content.Load<Texture2D>("npcs"));
 
             Lighting.LoadContent(GraphicsDevice);
@@ -163,8 +164,10 @@ namespace Blueprint
             if (Client != null) { Client.Update(Control, Map, Player, gameTime, Package); }
 
             // Update Player
-            Player.Inventory.Update(Control);
-            Player.Movement.HandleControls(Control);
+            Player.Inventory.Update(Camera, Control);
+            if(!Control.IsLocked){
+                Player.Movement.HandleControls(Control);
+            }
             Player.Update(Control,  Map);
             Camera.Update(Player.Movement.Moved);
 
@@ -180,9 +183,9 @@ namespace Blueprint
             // Update Chat
             if (Server != null) { Chat.Add(Server.Messages); }
             if (Client != null) { Chat.Add(Client.Messages, gameTime); }
-            Chat.Update(Control, gameTime);
+            Chat.Update(ref Control, gameTime);
 
-            Lighting.Update(gameTime, Control, Camera, Map.Furniture);
+            Lighting.Update(gameTime, Control, Camera, Map.Entities);
 
             // Mine blocks
             if (Control.currentMouse.LeftButton == ButtonState.Pressed)
@@ -198,8 +201,8 @@ namespace Blueprint
 
             if (Control.currentMouse.RightButton == ButtonState.Pressed && !Player.Movement.Falling)
             {
-               // Player.Movement.PushbackFrom(new Vector2(Control.currentMouse.X - Camera.X, Control.currentMouse.Y - Camera.Y), 10f);
-                //ShotgunSound.Play();
+                Player.Movement.PushbackFrom(new Vector2(Control.currentMouse.X - Camera.X, Control.currentMouse.Y - Camera.Y), 10f);
+               ShotgunSound.Play();
             }
 
 
@@ -222,13 +225,13 @@ namespace Blueprint
             spriteBatch.Begin();
             
             // Before Shadows
-            spriteBatch.Draw(Wallpaper, GraphicsDevice.Viewport.TitleSafeArea, Color.White);
+            spriteBatch.Draw(Wallpaper, GraphicsDevice.Viewport.TitleSafeArea, GraphicsDevice.Viewport.TitleSafeArea, Color.White);
             Map.DroppedItems.Draw(spriteBatch, Camera, ItemPackage);
             WeaponPackage.Draw(spriteBatch, Camera);
             NpcPackage.Draw(spriteBatch, Camera);
             Map.Draw(spriteBatch, Camera);
             Player.Draw(spriteBatch, Camera);
-
+            Map.Fluids.Draw(spriteBatch, Camera);
             // Shadows
             spriteBatch.End();
             Lighting.PostDraw(gameTime, GraphicsDevice);

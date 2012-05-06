@@ -74,8 +74,8 @@ namespace Blueprint
                         NetConnectionStatus status = (NetConnectionStatus)msg.ReadByte();
                         if (status == NetConnectionStatus.Connected)
                         {
-                            Player newplayer = new Player(new Vector2(100, -100));
-                            newplayer.Initialize(PlayerTexture, package);
+                            Player newplayer = new Player();
+                            newplayer.Initialize(PlayerTexture, package, map.Spawn);
 
                             Players.Add(newplayer);
 

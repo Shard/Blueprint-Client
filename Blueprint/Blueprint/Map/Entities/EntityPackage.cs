@@ -12,20 +12,20 @@ namespace Blueprint
 
         public Texture2D Texture;
 
-        public Entity[] Entities;
+        public List<Entity> Entities;
         public EntityType[] Types;
 
         public EntityPackage()
         {
-            Types = new EntityType[10];
-            Types[0] = new EntityType(1, "flower", new Rectangle(0, 0, 24, 24), false, 1,1);
-            Types[1] = new EntityType(2, "door", new Rectangle(24, 0, 24, 48), true, 1, 2);
+            //Types = new EntityType[10];
+            //Types[0] = new EntityType(1, "flower", new Rectangle(0, 0, 24, 24), false, 1,1);
+            //Types[1] = new EntityType(2, "door", new Rectangle(24, 0, 24, 48), true, 1, 2);
 
-            Entities = new Entity[10];
-            Entities[0] = new Entity(Types[0], 7, 7);
-            Entities[1] = new Entity(Types[1], 5, 6);
-            Entities[1].Events.Add(new Event(Event.Triggers.PlayerInteract, Event.Actions.Solid, "toggle"));
-            Entities[1].Events.Add(new Event(Event.Triggers.PlayerInteract, Event.Actions.Animation, "toggle"));
+            Entities = new List<Entity>();
+            //Entities[0] = new Entity(Types[0], 7, 7);
+            //Entities[1] = new Entity(Types[1], 5, 6);
+            //Entities[1].Events.Add(new Event(Event.Triggers.PlayerInteract, Event.Actions.Solid, "toggle"));
+            //Entities[1].Events.Add(new Event(Event.Triggers.PlayerInteract, Event.Actions.Animation, "toggle"));
         }
 
         public void Initialize(Texture2D texture)
@@ -83,18 +83,24 @@ namespace Blueprint
         public void Draw(SpriteBatch spriteBatch, Camera camera)
         {
 
-            foreach (Entity item in Entities)
+            foreach (Entity entity in Entities)
             {
-                if (item == null) { continue; }
-                Rectangle sprite = item.Type.Sprite;
-                if (item.AltSprite)
-                {
-                    sprite = item.Type.AltSprite;
-                }
-                spriteBatch.Draw(Texture, camera.FromRectangle(item.Area), sprite, Color.White);
+                if (entity == null) { continue; }
+                spriteBatch.Draw(getType(entity.Type).Sprite, camera.FromRectangle(entity.Area), Color.White);
             }
 
         }
+
+        public EntityType getType(int id)
+        {
+            foreach (EntityType type in Types)
+            {
+                if (type.Id == id) { return type; }
+            }
+            return null;
+        }
+
+        
 
     }
 }
