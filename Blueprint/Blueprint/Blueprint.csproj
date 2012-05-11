@@ -99,6 +99,7 @@
     <Reference Include="Lidgren.Network">
       <HintPath>..\..\..\..\net\Lidgren-network-gen3\Lidgren.Network\bin\Debug\Lidgren.Network.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="Microsoft.Xna.Framework.Game, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="Microsoft.Xna.Framework.Graphics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
@@ -112,11 +113,23 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\Geometry.cs" />
+    <Compile Include="Core\TextHelper.cs" />
     <Compile Include="Events\Event.cs" />
     <Compile Include="Events\EventAction.cs" />
     <Compile Include="Events\EventCondition.cs" />
     <Compile Include="Events\EventTrigger.cs" />
+    <Compile Include="Items\Crafting\Recipie.cs" />
+    <Compile Include="Items\Crafting\RecipieCollection.cs" />
+    <Compile Include="Items\Crafting\RecipiePackage.cs" />
+    <Compile Include="Items\Crafting\RecipieRequirement.cs" />
+    <Compile Include="Items\Weapons\LiveWeapons\LiveProjectile.cs" />
+    <Compile Include="Items\Weapons\LiveWeapons\LiveSword.cs" />
     <Compile Include="Lighting.cs" />
+    <Compile Include="Map\Blocks\BlockZone.cs" />
+    <Compile Include="Map\Flora\Flora.cs" />
+    <Compile Include="Map\Flora\FloraPackage.cs" />
+    <Compile Include="Map\Flora\FloraType.cs" />
     <Compile Include="Map\Fluid\FluidLava.cs" />
     <Compile Include="Map\Walls\Wall.cs" />
     <Compile Include="Map\Walls\WallType.cs" />
@@ -139,6 +152,8 @@
     <Compile Include="Map\Entities\EntityPackage.cs" />
     <Compile Include="Map\Entities\EntityType.cs" />
     <Compile Include="Loading.cs" />
+    <Compile Include="Net\ChatMessage.cs" />
+    <Compile Include="Npc\Ai\NpcAiVillager.cs" />
     <Compile Include="Player\Intention.cs" />
     <Compile Include="Items\Bag.cs" />
     <Compile Include="Items\DroppedItemCollection.cs" />
@@ -184,10 +199,10 @@
     <Compile Include="Net\Server.cs" />
     <Compile Include="Ui\Ui.cs" />
     <Compile Include="Ui\FloatingText.cs" />
-    <Compile Include="Weapons\LiveWeapon.cs" />
-    <Compile Include="Weapons\Weapon.cs" />
-    <Compile Include="Weapons\WeaponPackage.cs" />
-    <Compile Include="Weapons\WeaponType.cs" />
+    <Compile Include="Items\Weapons\LiveWeapon.cs" />
+    <Compile Include="Items\Weapons\Weapon.cs" />
+    <Compile Include="Items\Weapons\WeaponPackage.cs" />
+    <Compile Include="Items\Weapons\WeaponType.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BlueprintContent\BlueprintContent.contentproj">
@@ -233,6 +248,7 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Buffs\" />
     <Folder Include="Map\Lighting\" />
   </ItemGroup>
   <ItemGroup>

@@ -39,6 +39,7 @@ namespace Blueprint
 
         public bool AltSprite;
 
+
         public Entity(EntityType type, int x, int y)
         {
             Type = type.Id;

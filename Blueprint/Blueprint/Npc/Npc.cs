@@ -14,6 +14,7 @@ namespace Blueprint
         public NpcRace Race; // The Npc's race
         public NpcAi Ai; // The Npc's AI
         public List<DropChance> Drops; // Possible Items that an NPC can drop
+        public bool Friendly;
 
         public Npc(string name, NpcRace race, NpcAi ai)
         {
@@ -23,18 +24,8 @@ namespace Blueprint
             Weapon = null;
             Shop = null;
             Drops = new List<DropChance>();
-
+            Friendly = true;
             Health = Race.Health;
-        }
-
-        public void Update()
-        {
-
-        }
-
-        public void Draw()
-        {
-
         }
 
     }

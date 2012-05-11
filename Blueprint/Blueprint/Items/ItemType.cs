@@ -26,7 +26,7 @@ namespace Blueprint
             Stacksize = 255;
             Location = location;
 
-            Use = "block:1";
+            Use = "placeblock:1";
         }
 
         public ItemType(string name, Rectangle location, BlockType placeableBlock)
@@ -36,7 +36,7 @@ namespace Blueprint
             Stacksize = 255;
             Location = location;
 
-            Use = "block:" + placeableBlock.Id;
+            Use = "placeblock:" + placeableBlock.Id;
         }
 
         public ItemType(string name, Rectangle location, Weapon weapon)
@@ -46,7 +46,7 @@ namespace Blueprint
             Stacksize = 255;
             Location = location;
 
-            Use = "weapon:" + weapon.Id;
+            Use = "useweapon:" + weapon.Id;
         }
 
         public ItemType(string name, Rectangle location, string raw_use)

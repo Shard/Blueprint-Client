@@ -18,11 +18,11 @@ namespace Blueprint
         public LiveProjectile(Weapon weapon, Vector2 location, float force, Control control, Camera camera)
             : base(weapon, location)
         {
-            Movement = new Movement(location, 50, 2);
+            Movement = new Movement(location, 24, 6);
             Movement.Gravity = 0.15f;
             Movement.Drag = 0.06f;
             Movement.PushbackFrom(new Vector2(control.currentMouse.X - camera.X, control.currentMouse.Y - camera.Y), force);
-            TimeToLive = 50;
+            TimeToLive = 250;
         }
 
     }

@@ -9,8 +9,6 @@ namespace Blueprint
     class Movement
     {
 
-        
-
         // Metrics
 
         /// <summary>How quickly the object through Running/Flying can speed up towards max speed.</summary>
@@ -255,31 +253,8 @@ namespace Blueprint
         public void PushbackFrom( Vector2 location, float force )
         {
 
-            double angle = 0.0;
+            double angle = Geometry.Angle(location, Area);
             Vector2 apply = Vector2.Zero;
-
-            if (location.X > Area.Center.X)
-            {
-                if (location.Y > Area.Center.Y)
-                {
-                    angle = Math.Atan2(location.Y - Area.Center.Y, location.X - Area.Center.X) * (180 / Math.PI) + 90; // Bottom right
-                }
-                else
-                {
-                    angle = (90 - Math.Atan2(Area.Center.Y - location.Y, location.X - Area.Center.X) * (180 / Math.PI)); // Top right
-                }
-            }
-            else
-            {
-                if (location.Y > Area.Center.Y)
-                {
-                    angle = (90 - Math.Atan2(location.Y - Area.Center.Y, Area.Center.X - location.X) * (180 / Math.PI)) + 180; // Bottom left
-                }
-                else
-                {
-                    angle = Math.Atan2(Area.Center.Y - location.Y, Area.Center.X - location.X) * (180 / Math.PI) + 270; // Top Left
-                }
-            }
 
             // Option to reverse angle?
 
@@ -308,6 +283,128 @@ namespace Blueprint
 
         }
 
+        public void CalculateCollision()
+        {
+
+        }
+
+        #region Pathfinding
+
+        private int PathfindEstimate(Point from, Point to)
+        {
+            int x = from.X + to.X;
+            int y = from.Y + to.Y;
+            if (x < 0) { x *= -1; }
+            if (y < 0) { y *= -1; }
+            return x + y ;
+        }
+
+        private Point[] PathfindNeighbours(Point loc, Map map)
+        {
+
+            Point[] points = new Point[4];
+            if (map.getBlock(loc.X, loc.Y - 1) == null) { points[0] = new Point(loc.X, loc.Y - 1); } else { points[0] = Point.Zero; }
+            if (map.getBlock(loc.X, loc.Y + 1) == null) { points[1] = new Point(loc.X, loc.Y + 1); } else { points[1] = Point.Zero; }
+            if (map.getBlock(loc.X - 1, loc.Y) == null) { points[2] = new Point(loc.X - 1, loc.Y); } else { points[2] = Point.Zero; }
+            if (map.getBlock(loc.X + 1, loc.Y) == null) { points[3] = new Point(loc.X + 1, loc.Y); } else { points[3] = Point.Zero; }
+            return points;
+        }
+
+        public void Pathfind(Vector2 from, Vector2 to, Map map)
+        {
+            Pathfind(new Point((int)from.X, (int)from.Y), new Point((int)to.X, (int)to.Y), map);
+        }
+
+        public Stack<Point> Pathfind(Point from, Point goal, Map map)
+        {
+
+            int search_limit = 2000;
+            List<Point> closed = new List<Point>();
+            List<Point> open = new List<Point>();
+            Point[,] movements = new Point[map.SizeX, map.SizeY];
+            open.Add( from );
+
+            int[,] g_score = new int[map.SizeX, map.SizeY];
+            int[,] h_score = new int[map.SizeX, map.SizeY];
+            int[,] f_score = new int[map.SizeX, map.SizeY];
+            g_score[from.X, from.Y] = 0;
+            h_score[from.X, from.Y] = PathfindEstimate(from, goal);
+            f_score[from.X, from.Y] = h_score[from.X, from.Y] + g_score[from.X, from.Y];
+
+
+            while (open.Count > 0 && search_limit > 0)
+            {
+                search_limit--;
+                // Get node with lowest f score
+                int lowest_score = 0;
+                int lowest_score_index = 0;
+                for (int i = 0; i < open.Count; i++)
+                {
+                    if (lowest_score == 0 || f_score[ open[i].X, open[i].Y ] < lowest_score) {
+                        lowest_score = f_score[open[i].X, open[i].Y];
+                        lowest_score_index = i;
+                    }
+                }
+                Point current = open[lowest_score_index];
+
+                if (current == goal)
+                    return PathfindConstruct(movements, goal);
+
+                open.Remove(current);
+                closed.Add(current);
+                Point[] neighbours = PathfindNeighbours(current, map);
+                foreach (Point neighbour in neighbours)
+                {
+                    if (closed.Contains(neighbour) || neighbour.X < 0 || neighbour.Y < 0 || neighbour == Point.Zero) { continue; }
+                    int tmp_g_score = g_score[current.X, current.Y] + PathfindEstimate(neighbour, goal);
+                    bool tmp_is_better = false;
+
+                    if (!open.Contains(neighbour))
+                    {
+                        open.Add(neighbour);
+                        h_score[neighbour.X, neighbour.Y] = PathfindEstimate(neighbour, goal);
+                        tmp_is_better = true;
+                    }
+                    else if (tmp_g_score < g_score[neighbour.X, neighbour.Y])
+                    {
+                        tmp_is_better = true;
+                    }
+
+                    if (tmp_is_better)
+                    {
+                        movements[neighbour.X, neighbour.Y] = current;
+                        g_score[neighbour.X, neighbour.Y] = tmp_g_score;
+                        f_score[neighbour.X, neighbour.Y] = g_score[neighbour.X, neighbour.Y] + h_score[neighbour.X, neighbour.Y];
+                    }
+                }
+
+            }
+            return null;
+
+        }
+
+        private Stack<Point> PathfindConstruct(Point[,] movements, Point node)
+        {
+            Stack<Point> path = new Stack<Point>();
+
+            Point current_node = node;
+            while (true)
+            {
+                if (movements[current_node.X, current_node.Y] != Point.Zero)
+                {
+                    path.Push(movements[current_node.X, current_node.Y]);
+                    current_node = movements[current_node.X, current_node.Y];
+                    continue;
+                }
+                else
+                {
+                    return path;
+                }
+            }
+        }
+
+        #endregion
+
         /// <summary>
         /// Solves a collision for the movement object.
         /// </summary>
@@ -327,6 +424,8 @@ namespace Blueprint
             Vector2 collisionCenterH = Vector2.Zero;
             Vector2 collisionCenterW = Vector2.Zero;
 
+            #region Block Collisions
+
             for (int x = BlockAtX - 5; x < BlockAtX + 5; x++)
             {
                 for (int y = BlockAtY - 5; y < BlockAtY + 5; y++)
@@ -338,6 +437,7 @@ namespace Blueprint
                     
                     if (intersection != Rectangle.Empty) // Only handle intersection if it exists
                     {
+
                         totalHeight += intersection.Height;
                         totalWidth += intersection.Width;
                         if (totalWidth > totalHeight)
@@ -374,7 +474,54 @@ namespace Blueprint
                 }
             }
 
-            if(totalWidth > 0 || totalHeight > 0){
+            #endregion
+
+            #region Entity Collisions
+
+            foreach (Entity entity in map.Entities.Entities)
+            {
+                if (!entity.Solid) { continue; }
+                Rectangle intersection = Rectangle.Intersect(Area, entity.Area);
+                if (intersection != new Rectangle())
+                {
+                    totalHeight += intersection.Height;
+                    totalWidth += intersection.Width;
+                    if (totalWidth > totalHeight)
+                    {
+                        if (collisionCenterW == Vector2.Zero)
+                        {
+                            averageWidthW += intersection.Width;
+                            averageHeightW += intersection.Height;
+                            collisionCenterW = new Vector2(entity.Area.Center.X, entity.Area.Center.Y);
+                        }
+                        else
+                        {
+                            averageWidthW = (averageWidthW + intersection.Width) / 2;
+                            averageHeightW = (averageHeightW + intersection.Height) / 2;
+                            collisionCenterW = new Vector2((collisionCenterW.X + entity.Area.Center.X) / 2, (collisionCenterW.Y + entity.Area.Center.Y) / 2);
+                        }
+                    }
+                    else
+                    {
+                        if (collisionCenterH == Vector2.Zero)
+                        {
+                            averageWidthH += intersection.Width;
+                            averageHeightH += intersection.Height;
+                            collisionCenterH = new Vector2(entity.Area.Center.X, entity.Area.Center.Y);
+                        }
+                        else
+                        {
+                            averageWidthH = (averageWidthH + intersection.Width) / 2;
+                            averageHeightH = (averageHeightH + intersection.Height) / 2;
+                            collisionCenterH = new Vector2((collisionCenterH.X + entity.Area.Center.X) / 2, (collisionCenterH.Y + entity.Area.Center.Y) / 2);
+                        }
+                    }
+                }
+            }
+
+            #endregion
+
+            if (totalWidth > 0 || totalHeight > 0){
                 if (totalWidth > totalHeight ) // Horizontal
                 {
                     if (collisionCenterW.Y < Area.Center.Y) // Colliding from the top

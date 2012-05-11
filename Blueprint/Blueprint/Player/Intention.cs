@@ -56,5 +56,16 @@ namespace Blueprint
             return builder.ToString();
         }
 
+        /// <summary>
+        /// Stop all movement aspirations
+        /// </summary>
+        public void Stop()
+        {
+            Left = false;
+            Right = false;
+            Jumping = false;
+            Sprinting = false;
+        }
+
     }
 }

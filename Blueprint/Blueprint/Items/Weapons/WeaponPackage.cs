@@ -13,6 +13,7 @@ namespace Blueprint
         public WeaponType[] Types;
         public List<dynamic> LiveWeapons;
         public Texture2D WeaponTexture;
+        public Texture2D ArrowTexture;
 
         public WeaponPackage()
         {
@@ -33,20 +34,22 @@ namespace Blueprint
 
         }
 
-        public void Initialize(Texture2D weaponTexture)
+        public void Initialize(Texture2D weaponTexture, Texture2D arrowTexture)
         {
             WeaponTexture = weaponTexture;
+            ArrowTexture = arrowTexture;
             Weapons[0] = new Weapon(11, Types[0], "Big Stick", new Rectangle(0, 0, WeaponTexture.Bounds.Width, WeaponTexture.Bounds.Height));
             Weapons[1] = new Weapon(12, Types[2], "Bow", new Rectangle(0, 0, WeaponTexture.Bounds.Width, WeaponTexture.Bounds.Height));
             Weapons[2] = new Weapon(13, Types[3], "Wooden Arrow", new Rectangle(0, 0, WeaponTexture.Bounds.Width, WeaponTexture.Bounds.Height));
+          
         }
 
-        public void Update(Control control, Camera camera, Player player, NpcPackage npcs, Ui.FloatingTextCollection floatingText, Map map)
+        public void Update(Control control, Camera camera, Player player, NpcPackage npcs, Ui.FloatingTextCollection floatingText, ref Map map)
         {
 
             #region Initialize Weapons
 
-            if (player.Inventory.Quickbar.UsingItem.Type == "Weapon")
+            if (player.Inventory.Quickbar.UsingItem.Type == "useweapon")
             {
                 ItemUse use = player.Inventory.Quickbar.UsingItem;
                 Weapon weapon = GetWeaponById(int.Parse(use.Value));
@@ -72,7 +75,6 @@ namespace Blueprint
                         LiveWeapons.Add(liveWeapon);
                         player.Inventory.Quickbar.IsUsingItem = false;
                     }
-                    Console.WriteLine(use.Charge);
                 }
             }
 
@@ -112,8 +114,11 @@ namespace Blueprint
 
             #region Check for weapon collisions
 
-            foreach (var weapon in LiveWeapons)
+            // Npc Collisions
+            for (int w = 0; w < LiveWeapons.Count; w++)
             {
+
+                var weapon = LiveWeapons[w];
                 for (int i = 0; i < npcs.ActiveNpcs.Count; i++)
                 {
 
@@ -136,11 +141,42 @@ namespace Blueprint
                             if (npcs.Damage(npcs.ActiveNpcs[i], 10, weapon.Location))
                             {
                                 floatingText.Add("10", new Vector2(projectile.Movement.Area.Center.X, projectile.Movement.Area.Center.Y));
+                                LiveWeapons.RemoveAt(w);
                             }
                         }
                     }
                 }
+
+                // X/Y Collisions
+                int startx = (int)MathHelper.Clamp(camera.X * -1 / 24f, 0, map.SizeX);
+                int endx = startx + camera.Width / 24;
+                int starty = (int)MathHelper.Clamp(camera.Y * -1 / 24f, 0, map.SizeY);
+                int endy = starty + camera.Height / 24;
+
+                for (int x = startx; x < endx; x++)
+                {
+                    for (int y = starty; y < endy; y++)
+                    {
+
+                        Rectangle area = new Rectangle(x * 24, y * 24, 24,24);
+
+                        if (map.Flora.Flora[x, y] != null)
+                        {
+                            if (weapon.Weapon.Type.Name == "Sword")
+                            {
+                                if (weapon.currentLocation.Intersects(area)) { map.Flora.Flora[x, y] = null; }
+                            }
+                            else if (weapon.Weapon.Type.Name == "Arrow")
+                            {
+                                if (weapon.Movement.Area.Intersects(area)) { map.Flora.Flora[x, y] = null; }
+                            }
+                        }
+
+                    }
+                }
+
             }
+
             #endregion
 
 
@@ -174,7 +210,8 @@ namespace Blueprint
                 else if (weapon.Weapon.Type.Name == "Arrow")
                 {
                     float angle = (float)Geometry.Angle(Vector2.Zero, weapon.Movement.Velocity);
-                    spriteBatch.Draw(WeaponTexture, camera.FromRectangle(weapon.Movement.Area), WeaponTexture.Bounds, Color.White, MathHelper.ToRadians(angle + 90f), new Vector2(weapon.Movement.Area.Width / 2, weapon.Movement.Area.Height / 2), SpriteEffects.None, 0);
+                    spriteBatch.Draw(ArrowTexture, camera.FromRectangle(weapon.Movement.Area), ArrowTexture.Bounds, Color.White, MathHelper.ToRadians(angle + 90f), new Vector2(weapon.Movement.Area.Width / 2, weapon.Movement.Area.Height / 2), SpriteEffects.None, 0);
+
                 }
             }
 

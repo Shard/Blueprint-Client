@@ -28,10 +28,10 @@ namespace Blueprint
             ItemTypes[2] = new ItemType("Stone", new Rectangle(80, 0, 40, 40), blockTypes[0]);
             ItemTypes[3] = new ItemType("Shirt", new Rectangle(120, 0, 40, 40));
             ItemTypes[4] = new ItemType("Health Potion", new Rectangle(160, 0, 40, 40));
-            ItemTypes[5] = new ItemType("Mana Potion", new Rectangle(200, 0, 40, 40), "wall:1");
+            ItemTypes[5] = new ItemType("Mana Potion", new Rectangle(200, 0, 40, 40), "placewall:1");
             ItemTypes[6] = new ItemType("Pants", new Rectangle(240, 0, 40, 40));
             ItemTypes[7] = new ItemType("Gun", new Rectangle(280, 0, 40, 40));
-            ItemTypes[8] = new ItemType("Copper Ore", new Rectangle(320, 0, 40, 40));
+            ItemTypes[8] = new ItemType("Copper Ore", new Rectangle(320, 0, 40, 40), "placeentity:1");
             ItemTypes[9] = new ItemType("Bow", new Rectangle(360, 0, 40, 40), weapons[2]);
 
         }

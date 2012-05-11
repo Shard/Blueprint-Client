@@ -45,21 +45,7 @@ namespace Blueprint
         {
             Use = raw_data;
             Value = Use.Substring(Use.IndexOf(':') + 1);
-            switch (Use.Substring(0, Use.IndexOf(':')))
-            {
-                case "block":
-                    Type = "Block";break;
-                case "weapon":
-                    Type = "Weapon";break;
-                case "wall":
-                    Type = "BackgroundTile";break;
-                case "mine":
-                    Type = "Mine";break;
-                case "placeentity":
-                    Type = "Entity";break;
-                default:
-                    Type = null;break;
-            }
+            Type = Use.Substring(0, Use.IndexOf(':'));
         }
 
     }

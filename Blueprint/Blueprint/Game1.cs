@@ -46,6 +46,8 @@ namespace Blueprint
 
         Lighting Lighting;
 
+        List<Point> points;
+
         public BlueprintGame(string[] args)
         {
             
@@ -110,34 +112,35 @@ namespace Blueprint
         {
 
             // Loading Screen
-            font = Content.Load<SpriteFont>("system");
+            font = Content.Load<SpriteFont>("Misc/system");
+            //font = Content.Load<SpriteFont>("Font");
 
             // Load Remote Texutres
             Texture2D mapTexture = Package.RemoteTexture("/maps/sprite/" + Config.MapId, GraphicsDevice);
 
-            ShotgunSound = Content.Load<SoundEffect>("shotgun");
+            ShotgunSound = Content.Load<SoundEffect>("Sounds/shotgun");
 
             // Load Local Textures
-            Cursor = Content.Load<Texture2D>("cursor");
+            Cursor = Content.Load<Texture2D>("Ui/cursor");
 
             // Initialize
-            Wallpaper = Content.Load<Texture2D>("wallpaper");
-            Map.Initialize(mapTexture, Content.Load<Texture2D>("blocks"), Content.Load<Texture2D>("furniture"), Content.Load<Texture2D>("wall"), Package, Config, GraphicsDevice);
-            Player.Initialize( Package.LocalTexture("C:\\blueprint\\player.png", GraphicsDevice ), Package, Map.Spawn);
+            Wallpaper = Content.Load<Texture2D>("Wallpaper/wallpaper");
+            Map.Initialize(mapTexture, Content.Load<Texture2D>("Blocks/blocks"), Content.Load<Texture2D>("furniture"), Content.Load<Texture2D>("Blocks/wall"), Content.Load<Texture2D>("flora"), Package, Config, GraphicsDevice);
+            Player.Initialize(Package.LocalTexture("C:\\blueprint\\player.png", GraphicsDevice), Content.Load<Texture2D>("Ui/bars"), Package, Map.Spawn);
             Camera = new Camera(GraphicsDevice, Player);
-            WeaponPackage.Initialize(Content.Load<Texture2D>("weapons"));
+            WeaponPackage.Initialize(Content.Load<Texture2D>("Weapons/weapons"),Content.Load<Texture2D>("Weapons/arrow"));
             ItemPackage.mock(Map.Types, WeaponPackage.Weapons);
             ItemPackage.Initialize(Content.Load<Texture2D>("items"));
-            Player.Inventory.Initialize(Content.Load<Texture2D>("buttons"), ItemPackage);
+            Player.Inventory.Initialize(Content.Load<Texture2D>("Ui/buttons"), ItemPackage);
             NpcPackage.Initialize(Content.Load<Texture2D>("npcs"));
-
+            Chat.Initialize(Content.Load<Texture2D>("Ui/chat"));
             Lighting.LoadContent(GraphicsDevice);
 
             spriteBatch = new SpriteBatch(GraphicsDevice);
             altBatch = new SpriteBatch(GraphicsDevice);
 
-            if (Config.Hosting) { Server = new Server(Config); Server.Initialize(Content.Load<Texture2D>("player")); } else { Server = null; }
-            if (Config.Join != null) { Client = new Client(Config); Client.Initialize(Content.Load<Texture2D>("player")); } else { Client = null; }
+            if (Config.Hosting) { Server = new Server(Config); Server.Initialize(Content.Load<Texture2D>("player"), Content.Load<Texture2D>("Ui/bars")); } else { Server = null; }
+            if (Config.Join != null) { Client = new Client(Config); Client.Initialize(Content.Load<Texture2D>("player"), Content.Load<Texture2D>("Ui/bars")); } else { Client = null; }
 
         }
 
@@ -177,7 +180,7 @@ namespace Blueprint
             Map.Update(Control, Player.Inventory.Quickbar, Camera, Lighting);
             Map.DroppedItems.Update(Map, Player);
             NpcPackage.Update(Map, Player);
-            WeaponPackage.Update(Control, Camera, Player, NpcPackage, Ui.FloatingTexts);
+            WeaponPackage.Update(Control, Camera, Player, NpcPackage, Ui.FloatingTexts, ref Map);
             Ui.Update();
 
             // Update Chat
@@ -190,7 +193,7 @@ namespace Blueprint
             // Mine blocks
             if (Control.currentMouse.LeftButton == ButtonState.Pressed)
             {
-                Map.mineBlock((Control.currentMouse.X - (int)Camera.X) / 24, (Control.currentMouse.Y - (int)Camera.Y) / 24);
+                //Map.mineBlock((Control.currentMouse.X - (int)Camera.X) / 24, (Control.currentMouse.Y - (int)Camera.Y) / 24);
             }
 
             // Drop Items
@@ -201,8 +204,17 @@ namespace Blueprint
 
             if (Control.currentMouse.RightButton == ButtonState.Pressed && !Player.Movement.Falling)
             {
-                Player.Movement.PushbackFrom(new Vector2(Control.currentMouse.X - Camera.X, Control.currentMouse.Y - Camera.Y), 10f);
-               ShotgunSound.Play();
+                //Player.Movement.PushbackFrom(new Vector2(Control.currentMouse.X - Camera.X, Control.currentMouse.Y - Camera.Y), 10f);
+                //ShotgunSound.Play();
+            }
+
+            // Test
+            if (Control.currentKeyboard.IsKeyDown(Keys.P) && Control.previousKeyboard.IsKeyUp(Keys.P))
+            {
+                // Pathfind
+                Point npc = new Point(NpcPackage.ActiveNpcs[0].Movement.Area.X / 24, NpcPackage.ActiveNpcs[0].Movement.Area.Y / 24);
+                NpcPackage.ActiveNpcs[0].CurrentPath = Player.Movement.Pathfind(npc, new Point(Control.AtBlockX, Control.AtBlockY), Map);
+                NpcPackage.ActiveNpcs[0].CurrentDestination = Point.Zero;
             }
 
 
@@ -238,14 +250,23 @@ namespace Blueprint
             altBatch.Begin();
 
             // After Shadows
-            
+            Player.DrawUi(altBatch, font);
             Player.Inventory.Draw(altBatch, Control, font, ItemPackage);
             Chat.Draw(altBatch, font, gameTime);
             if (Server != null) { Server.Draw(altBatch, Camera); }
             if (Client != null) { Client.Draw(altBatch, Camera); }
             Ui.Draw(altBatch, Camera, font);
             altBatch.Draw(Cursor, new Rectangle(Control.currentMouse.X, Control.currentMouse.Y, 20, 20), new Rectangle(0, 0, 24, 24), Color.White);
-            
+
+            if (NpcPackage.ActiveNpcs[0].CurrentPath != null)
+            {
+                foreach (Point point in NpcPackage.ActiveNpcs[0].CurrentPath)
+                {
+                    altBatch.Draw(Wallpaper, Camera.FromRectangle(new Rectangle(point.X * 24, point.Y * 24, 24, 24)), Color.Green);
+                }
+                altBatch.Draw(Wallpaper, Camera.FromRectangle(new Rectangle(NpcPackage.ActiveNpcs[0].CurrentDestination.X * 24,  NpcPackage.ActiveNpcs[0].CurrentDestination.Y * 24, 24,24)), Color.Red);
+            }
+
             altBatch.End();
 
             

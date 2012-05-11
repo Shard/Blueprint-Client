@@ -11,12 +11,14 @@ namespace Blueprint
         public string Message;
         public string Type;
         public int Created;
-        public float Opacity;
+        public byte Opacity;
+        public string Author;
 
-        public ChatMessage(string message, GameTime time)
+        public ChatMessage(string message, GameTime time, string author = null)
         {
             Message = message;
             Type = "normal";
+            Author = author;
             Created = time.TotalGameTime.Seconds;
             Opacity = 255;
         }

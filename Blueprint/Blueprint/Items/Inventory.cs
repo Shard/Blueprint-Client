@@ -49,6 +49,7 @@ namespace Blueprint
             Quickbar.Items.Items[1] = new Item(itemPackage.ItemTypes[2], 255, false);
             Quickbar.Items.Items[2] = new Item(itemPackage.ItemTypes[5], 255, false);
             Quickbar.Items.Items[3] = new Item(itemPackage.ItemTypes[9], 1, true);
+            Quickbar.Items.Items[4] = new Item(itemPackage.ItemTypes[8], 20, false);
             Bag.Items.Items[0] = new Item(itemPackage.ItemTypes[3], 10, false);
         }
 

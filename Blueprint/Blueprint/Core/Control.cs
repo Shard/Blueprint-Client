@@ -17,6 +17,8 @@ namespace Blueprint
         // Tells which block the cursor is at
         public int AtBlockX; 
         public int AtBlockY;
+        public Vector2 AtBlock { get { return new Vector2(AtBlockX, AtBlockY); } }
+        public Rectangle MousePos { get { return new Rectangle(currentMouse.X, currentMouse.Y, 1, 1); } }
 
         public bool IsLocked
         {
@@ -33,8 +35,6 @@ namespace Blueprint
             Hammer
         };
         public CursorStates State;
-
-        public Rectangle MousePos { get { return new Rectangle(currentMouse.X, currentMouse.Y, 1, 1); } }
 
         public Control()
         {

@@ -17,6 +17,7 @@ namespace Blueprint
 
         // Other
         Texture2D PlayerTexture;
+        Texture2D BarsTexture;
 
         public Client(Config config)
         {
@@ -29,10 +30,11 @@ namespace Blueprint
             Players = new List<Player>();
         }
 
-        public void Initialize(Texture2D playerTexture)
+        public void Initialize(Texture2D playerTexture, Texture2D barsTexture)
         {
             NetClient.DiscoverLocalPeers(8877);
             PlayerTexture = playerTexture;
+            BarsTexture = barsTexture;
             //NetClient.Connect(Config.Join, 8877);
 
            // NetOutgoingMessage msg = NetClient.CreateMessage();
@@ -60,7 +62,7 @@ namespace Blueprint
                         NetClient.Connect(msg.SenderEndpoint);
 
                         Player newplayer = new Player();
-                        newplayer.Initialize(PlayerTexture, package, map.Spawn);
+                        newplayer.Initialize(PlayerTexture, BarsTexture, package, map.Spawn);
                         Messages.Add("new player");
                         Players.Add(newplayer);
                         break;

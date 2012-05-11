@@ -21,7 +21,7 @@ namespace Blueprint.Ui
             for (int i = 0; i < Texts.Count; i++)
             {
                 Texts[i].FramesLeft -= 1;
-                Texts[i].Color = new Color((byte)(255 * Texts[i].FramesLeft / 100), (byte)0, (byte)0, (byte)Texts[i].FramesLeft);
+                Texts[i].Color = new Color((byte)(255 * Texts[i].FramesLeft / 100), (byte)50, (byte)50, (byte)Texts[i].FramesLeft);
                 Texts[i].Location.Y -= 1;
 
                 if (Texts[i].FramesLeft <= 0)
@@ -36,7 +36,7 @@ namespace Blueprint.Ui
 
             foreach (FloatingText text in Texts)
             {
-                spriteBatch.DrawString(font, text.Message, text.Location + camera.ToVector2(), text.Color);
+                TextHelper.DrawString(spriteBatch, font, text.Message, text.Location + camera.ToVector2(), text.Color);
             }
 
         }

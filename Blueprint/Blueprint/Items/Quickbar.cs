@@ -96,16 +96,18 @@ namespace Blueprint
             if (control.currentMouse.ScrollWheelValue < control.previousMouse.ScrollWheelValue)
             { Selected--; if (Selected < 0) { Selected = 0; } }
 
-            if (control.currentKeyboard.IsKeyDown(Keys.D1) && control.previousKeyboard.IsKeyUp(Keys.D1) && Size >= 1){ Selected = 0; }
-            if (control.currentKeyboard.IsKeyDown(Keys.D2) && control.previousKeyboard.IsKeyUp(Keys.D2) && Size >= 2) { Selected = 1; }
-            if (control.currentKeyboard.IsKeyDown(Keys.D3) && control.previousKeyboard.IsKeyUp(Keys.D3) && Size >= 3) { Selected = 2; }
-            if (control.currentKeyboard.IsKeyDown(Keys.D4) && control.previousKeyboard.IsKeyUp(Keys.D4) && Size >= 4) { Selected = 3; }
-            if (control.currentKeyboard.IsKeyDown(Keys.D5) && control.previousKeyboard.IsKeyUp(Keys.D5) && Size >= 5) { Selected = 4; }
-            if (control.currentKeyboard.IsKeyDown(Keys.D6) && control.previousKeyboard.IsKeyUp(Keys.D6) && Size >= 6) { Selected = 5; }
-            if (control.currentKeyboard.IsKeyDown(Keys.D7) && control.previousKeyboard.IsKeyUp(Keys.D7) && Size >= 7) { Selected = 6; }
-            if (control.currentKeyboard.IsKeyDown(Keys.D8) && control.previousKeyboard.IsKeyUp(Keys.D8) && Size >= 8) { Selected = 7; }
-            if (control.currentKeyboard.IsKeyDown(Keys.D9) && control.previousKeyboard.IsKeyUp(Keys.D9) && Size >= 9) { Selected = 8; }
-            if (control.currentKeyboard.IsKeyDown(Keys.D0) && control.previousKeyboard.IsKeyUp(Keys.D0) && Size >= 10) { Selected = 9; }
+            if (!control.Typing){
+                if (control.currentKeyboard.IsKeyDown(Keys.D1) && control.previousKeyboard.IsKeyUp(Keys.D1) && Size >= 1){ Selected = 0; }
+                if (control.currentKeyboard.IsKeyDown(Keys.D2) && control.previousKeyboard.IsKeyUp(Keys.D2) && Size >= 2) { Selected = 1; }
+                if (control.currentKeyboard.IsKeyDown(Keys.D3) && control.previousKeyboard.IsKeyUp(Keys.D3) && Size >= 3) { Selected = 2; }
+                if (control.currentKeyboard.IsKeyDown(Keys.D4) && control.previousKeyboard.IsKeyUp(Keys.D4) && Size >= 4) { Selected = 3; }
+                if (control.currentKeyboard.IsKeyDown(Keys.D5) && control.previousKeyboard.IsKeyUp(Keys.D5) && Size >= 5) { Selected = 4; }
+                if (control.currentKeyboard.IsKeyDown(Keys.D6) && control.previousKeyboard.IsKeyUp(Keys.D6) && Size >= 6) { Selected = 5; }
+                if (control.currentKeyboard.IsKeyDown(Keys.D7) && control.previousKeyboard.IsKeyUp(Keys.D7) && Size >= 7) { Selected = 6; }
+                if (control.currentKeyboard.IsKeyDown(Keys.D8) && control.previousKeyboard.IsKeyUp(Keys.D8) && Size >= 8) { Selected = 7; }
+                if (control.currentKeyboard.IsKeyDown(Keys.D9) && control.previousKeyboard.IsKeyUp(Keys.D9) && Size >= 9) { Selected = 8; }
+                if (control.currentKeyboard.IsKeyDown(Keys.D0) && control.previousKeyboard.IsKeyUp(Keys.D0) && Size >= 10) { Selected = 9; }
+            }
 
             #endregion
 

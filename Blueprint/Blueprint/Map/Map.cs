@@ -27,6 +27,8 @@ namespace Blueprint
         /// <summary>Contains Furniture</summary>
         public EntityPackage Entities;
 
+        public FloraPackage Flora;
+
         /// <summary>Collection of all dropped items on the map</summary>
         public DroppedItemCollection DroppedItems;
 
@@ -48,6 +50,8 @@ namespace Blueprint
         /// </summary>
         public Vector2 Spawn;
 
+        private int GrowCounter;
+
         public Map(int width = 1000, int height = 500)
         {
 
@@ -61,12 +65,12 @@ namespace Blueprint
             DroppedItems = new DroppedItemCollection();
             Fluids = new Fluid.FluidCollection();
             Entities = new EntityPackage();
-
+            Flora = new FloraPackage();
             WallTypes[0] = new WallType(1, "Standard Wall", new Rectangle(0,0,24,24));
 
         }
 
-        public void Initialize( Texture2D blockTexture, Texture2D blockState, Texture2D furnitureTexture, Texture2D wallTexture, Package package, Config config, GraphicsDevice graphics )
+        public void Initialize( Texture2D blockTexture, Texture2D blockState, Texture2D furnitureTexture, Texture2D wallTexture, Texture2D floraTexture, Package package, Config config, GraphicsDevice graphics )
         {
 
             // Setup Liquids
@@ -76,7 +80,7 @@ namespace Blueprint
             BlockState = blockState;
             WallTexture = wallTexture;
             Entities.Initialize(furnitureTexture);
-
+            Flora.Initialize(this, floraTexture);
             // Gather Map Data
             string data = package.RemoteString("maps/manifest/" + config.MapId);
             XmlDocument xml = new XmlDocument();
@@ -86,7 +90,8 @@ namespace Blueprint
             // Parse Map Data into types and blocks
 
             Spawn = new Vector2(Int32.Parse(xml.DocumentElement.Attributes["spawnx"].Value) * 24, Int32.Parse(xml.DocumentElement.Attributes["spawny"].Value) * 24);
-            
+
+            #region Xml Parsing
 
             foreach (XmlNode node in xml.DocumentElement.ChildNodes)
             {
@@ -125,19 +130,19 @@ namespace Blueprint
                 }
                 else if (node.Name == "EntityType")
                 {
-                    Entities.Types = new EntityType[node.ChildNodes.Count];
+                    //Entities.Types = new EntityType[node.ChildNodes.Count];
                     
                     int i = 0;
                     foreach (XmlNode entitytype in node.ChildNodes)
                     {
-                        Entities.Types[i] = new EntityType(
+                        /*Entities.Types[i] = new EntityType(
                             int.Parse(entitytype.Attributes["id"].Value),
                             entitytype.Attributes["name"].Value,
                             package.RemoteTexture(entitytype.Attributes["sprite"].Value, graphics),
                             int.Parse(entitytype.Attributes["width"].Value),
                             int.Parse(entitytype.Attributes["height"].Value),
                             true
-                        );
+                        );*/
                         i++;
                     }
                 } 
@@ -146,14 +151,17 @@ namespace Blueprint
                     foreach (XmlNode entity in node.ChildNodes)
                     {
                         //EntityType type = Entities.getType();
-                        EntityType type = Entities.getType(int.Parse(entity.Attributes["type"].Value));
+                        //EntityType type = Entities.getType(int.Parse(entity.Attributes["type"].Value));
                         // int.Parse(entity.Attributes["width"].Value)
+                        /*
                         Entities.Entities.Add(
                             new Entity(type, int.Parse(entity.Attributes["x"].Value), int.Parse(entity.Attributes["y"].Value))
-                        );
+                        );*/
                     }
                 }
             }
+
+            #endregion
 
             // Autogenerate
             //MapGenerator generator = new MapGenerator();
@@ -162,34 +170,65 @@ namespace Blueprint
             
         }
 
-        public void LoadContent()
-        {
-
-        }
-
         public void Update( Control control, Quickbar quickbar, Camera camera, Lighting lighting )
         {
 
             Fluids.Update(this);
             Entities.Update(control, camera);
 
-            // Use Items
+            #region Flora
 
-            if (quickbar.UsingItem.Type == "Block")
+            // Grow Flora
+            GrowCounter++;
+            if (GrowCounter > 500)
+            {
+                Flora.Update(this);
+                GrowCounter = 0;
+            }
+
+            #endregion
+
+            #region Using Items
+
+            if (quickbar.UsingItem.Type == "placeblock")
             {
                 if (placeBlock(control.AtBlockX, control.AtBlockY, GetBlockType(quickbar.UsingItem.IntValue)))
-                {
-                    quickbar.useItem(quickbar.Selected);
-                }
+                    { quickbar.useItem(quickbar.Selected); }
             }
 
-            if (quickbar.UsingItem.Type == "BackgroundTile")
+            if (quickbar.UsingItem.Type == "placewall")
             {
                 if (placeWall(control.AtBlockX, control.AtBlockY, GetWallType(quickbar.UsingItem.IntValue)))
-                {
-                    quickbar.useItem(quickbar.Selected);
-                }
+                    { quickbar.useItem(quickbar.Selected); }
             }
+
+            if (quickbar.UsingItem.Type == "mineblock")
+            {
+                if (mineBlock(control.AtBlockX, control.AtBlockY))
+                    { quickbar.useItem(quickbar.Selected); }
+            }
+
+            if (quickbar.UsingItem.Type == "removewall")
+            {
+                if (RemoveWall(control.AtBlockX, control.AtBlockY))
+                { quickbar.useItem(quickbar.Selected); }
+            }
+
+            if(quickbar.UsingItem.Type == "placeentity")
+            {
+                if( Entities.Add(control.AtBlockX, control.AtBlockY, quickbar.UsingItem.IntValue) )
+                    { quickbar.useItem(quickbar.Selected); }
+            }
+
+            if (quickbar.UsingItem.Type == "removeentity")
+            {
+                if( Entities.Damage(control.AtBlockX, control.AtBlockY))
+                    { quickbar.useItem(quickbar.Selected); }
+            }
+
+            #endregion
+
+            #region Lighting
 
             lighting.ClearShadows();
 
@@ -201,13 +240,20 @@ namespace Blueprint
                     {
                         lighting.AddShadow(camera.FromRectangle(new Rectangle(x * 24, y * 24,24,24)));
                     }
+                    if (Fluids.Water.Blocks[x, y] > 18)
+                    {
+                        lighting.AddShadow(camera.FromRectangle(new Rectangle(x * 24, y * 24, 24, 24)));
+                    }
                 }
             }
+
+            #endregion
+
         }
 
         public void Draw(SpriteBatch spriteBatch, Camera camera)
         {
-            Entities.Draw(spriteBatch, camera);
+            
 
             // Draw Blocks
             int startx = (int)MathHelper.Clamp(camera.X * -1 / 24f, 0, this.SizeX);
@@ -219,17 +265,16 @@ namespace Blueprint
             {
                 for (int y = starty; y < endy + 2; y++)
                 {
+                    Vector2 position = new Vector2(camera.X + x * 24, camera.Y + y * 24);
                     if (Walls[x, y] != null)
                     {
-                        Vector2 position = new Vector2(camera.X + x * 24, camera.Y + y * 24);
                         spriteBatch.Draw(WallTexture, position, Walls[x, y].Type.Sprite, Color.White);
                     }
                     if (Blocks[x, y] != null) {
-                        Vector2 position = new Vector2(camera.X + x * 24, camera.Y + y * 24);
                         BlockFrame frame = GetSpriteIndex(x,y);
                         spriteBatch.Draw(BlockTexture, new Rectangle((int)position.X + 12, (int)position.Y + 12, 24,24), Blocks[x, y].Type.Slices[frame.Index], Color.White, frame.Rotate, new Vector2(12,12), SpriteEffects.None, 0);
 
-
+                        // Draw Block Damage
                         if (Blocks[x, y].Health < 10) { spriteBatch.Draw(BlockState, position, new Rectangle(8 * 24, 24, 24, 24), Color.Gray); } else
                         if (Blocks[x, y].Health < 20) { spriteBatch.Draw(BlockState, position, new Rectangle(7 * 24, 24, 24, 24), Color.Gray); } else
                         if (Blocks[x, y].Health < 30) { spriteBatch.Draw(BlockState, position, new Rectangle(6 * 24, 24, 24, 24), Color.Gray); } else
@@ -242,15 +287,87 @@ namespace Blueprint
 
 
                     }
+                    if (Flora.Flora[x, y] != null)
+                    {
+                        spriteBatch.Draw(Flora.Sprite, position, Flora.Flora[x, y].Type.Sprite, Color.White);
+                    }
                 }
             }
+
+            Entities.Draw(spriteBatch, camera);
 
             
 
         }
 
+        public void DiscoverAreas(int x, int y)
+        {
+
+            List<Vector2> blocks = new List<Vector2>();
+            List<Vector2> ground = new List<Vector2>();
+            bool found_room = false;
+            int checks_left = 1000;
+            string current_direction = "left";
+            Vector2 starting_position = new Vector2(x, y);
+
+            // Find the ground
+            while (true)
+                { if (getBlock(x, y + 1) == null) { y += 1; } else { break; } }
+
+
+            // Go around and around
+            while (checks_left > 0)
+            {
+                
+                // Find best block to move to
+                if (current_direction == "left") { current_direction = "down"; }
+                if (current_direction == "top") { current_direction = "left"; }
+                if (current_direction == "right") { current_direction = "top"; }
+                if (current_direction == "bottom") { current_direction = "right"; }
+                while (true)
+                {
+                    if (current_direction == "left")
+                    {
+                        if (getBlock(x - 1, y) == null) { x -= 1; break; } else { current_direction = "top"; }
+                    }
+                    if (current_direction == "top")
+                    {
+                        if (getBlock(x, y - 1) == null) { y -= 1; break; } else { current_direction = "right"; }
+                    }
+                    if (current_direction == "right")
+                    {
+                        if (getBlock(x + 1, y) == null) { x += 1; break; } else { current_direction = "bottom"; }
+                    }
+                    if (current_direction == "bottom")
+                    {
+                        if (getBlock(x, y + 1) == null) { y+=1; break; } else { current_direction = "left"; }
+                    }
+                }
+
+                // Checks
+                if (new Vector2(x, y) == starting_position) { found_room = true; break; }
+                blocks.Add(new Vector2(x, y));
+                if (getBlock(x, y + 1) != null) { ground.Add(new Vector2(x, y)); }
+
+                checks_left--;
+            }
+
+
+            // Did we make it around? If we did, gather the rest of the blocks by looking upwards from each ground block
+            if (found_room)
+            {
+                foreach (Vector2 item in ground)
+                {
+                    // do stuff
+                }
+            }
+
+            // Finish Up
+
+        }
+
         /// <summary>
-        /// 
+        /// Returns a block frame for a block on the map
         /// </summary>
         /// <returns></returns>
         public BlockFrame GetSpriteIndex( int x, int y )
@@ -392,7 +509,6 @@ namespace Blueprint
             }
 
             // Check range from player
-
             Blocks[x, y] = new Block(type);
             return true;
         }
@@ -414,21 +530,39 @@ namespace Blueprint
         }
 
         /// <summary>
-        /// Does damage to a block
+        /// Does damage to a block, returns true if broken
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        public void mineBlock(int x, int y)
+        public bool mineBlock(int x, int y)
         {
-            if (x < 0 || y < 0) { return; }
+            if (!inBounds(x, y)) { return false; }
 
-            if (Blocks[x, y] == null) { return; }
+            if (Blocks[x, y] == null) { return false; }
 
             Blocks[x, y].Health -= 2;
             if (Blocks[x, y].Health < 1)
             {
                 Blocks[x, y] = null;
+                return true;
             }
+            return false;
+            
+        }
+
+        public bool RemoveWall(int x, int y)
+        {
+
+            if (!inBounds(x, y)) { return false; }
+            if (Walls[x, y] == null) { return false; }
+
+            Walls[x, y].Health -= 2;
+            if (Walls[x, y].Health < 1)
+            {
+                Walls[x, y] = null;
+                return true;
+            }
+            return false;
         }
 
     }

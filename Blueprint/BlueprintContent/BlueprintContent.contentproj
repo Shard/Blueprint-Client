@@ -37,14 +37,14 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GameThumbnail.png">
+    <Compile Include="Misc\GameThumbnail.png">
       <Name>GameThumbnail</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="system.spritefont">
+    <Compile Include="Misc\system.spritefont">
       <Name>system</Name>
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
@@ -58,35 +58,35 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="inventory.png">
+    <Compile Include="Ui\inventory.png">
       <Name>inventory</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="cursor.png">
+    <Compile Include="Ui\cursor.png">
       <Name>cursor</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="wallpaper_ice.jpg">
+    <Compile Include="Wallpaper\wallpaper_ice.jpg">
       <Name>wallpaper_ice</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="weapons.png">
+    <Compile Include="Weapons\weapons.png">
       <Name>weapons</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="blocks.png">
+    <Compile Include="Blocks\blocks.png">
       <Name>blocks</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
@@ -100,7 +100,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="shotgun.wav">
+    <Compile Include="Sounds\shotgun.wav">
       <Name>shotgun</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
@@ -114,7 +114,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="fluids.png">
+    <Compile Include="Blocks\fluids.png">
       <Name>fluids</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
@@ -135,29 +135,67 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="dirt_wall.png">
+    <Compile Include="Blocks\dirt_wall.png">
       <Name>dirt_wall</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="wall.png">
+    <Compile Include="Blocks\wall.png">
       <Name>wall</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="buttons.png">
+    <Compile Include="Ui\buttons.png">
       <Name>buttons</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="wallpaper.jpg">
+    <Compile Include="Wallpaper\wallpaper.jpg">
       <Name>wallpaper</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Misc\Font.png">
+      <Name>Font</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>FontTextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Ui\bars.png">
+      <Name>bars</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Weapons\arrow.png">
+      <Name>arrow</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Tmp\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="flora.png">
+      <Name>flora</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Ui\chat.png">
+      <Name>chat</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

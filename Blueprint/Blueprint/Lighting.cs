@@ -90,7 +90,7 @@ namespace Blueprint
             this.krypton.SpriteBatchCompatablityEnabled = true;
             this.krypton.CullMode = CullMode.CullClockwiseFace;
             this.krypton.Bluriness = 20;
-            this.krypton.AmbientColor = new Color(50,50,50);
+            this.krypton.AmbientColor = new Color(0,0,0);
             this.krypton.LightMapPrepare();
             
         }
@@ -112,11 +112,11 @@ namespace Blueprint
 
         }
 
+        /// <summary>
+        /// Clears all current shadows
+        /// </summary>
         public void ClearShadows()
-        {
-
-            krypton.Hulls.Clear();
-        }
+            { krypton.Hulls.Clear(); }
 
         private void DebugDraw(GraphicsDevice graphics)
         {

@@ -62,7 +62,7 @@ namespace Blueprint
         {
             foreach (var player in Players)
             {
-                player.Draw(spriteBatch, camera);
+                //player.Draw(spriteBatch, camera);
             }
         }
 

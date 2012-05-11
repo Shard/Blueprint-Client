@@ -18,7 +18,7 @@ namespace Blueprint
 
         // Other
         Texture2D PlayerTexture;
-
+        Texture2D BarsTexture;
 
         public Server(Config config)
         {
@@ -29,10 +29,11 @@ namespace Blueprint
             Players = new List<Player>();
         }
 
-        public void Initialize(Texture2D playerTexture)
+        public void Initialize(Texture2D playerTexture, Texture2D barsTexture)
         {
 
             PlayerTexture = playerTexture;
+            BarsTexture = barsTexture;
 
             // Tell server that server is avaliable
             //HttpWebRequest request = (HttpWebRequest)WebRequest.Create( Config.Server + "/games/register/" + Config.MapId + "/" + Config.IP);
@@ -75,7 +76,7 @@ namespace Blueprint
                         if (status == NetConnectionStatus.Connected)
                         {
                             Player newplayer = new Player();
-                            newplayer.Initialize(PlayerTexture, package, map.Spawn);
+                            newplayer.Initialize(PlayerTexture, BarsTexture, package, map.Spawn);
 
                             Players.Add(newplayer);
 
