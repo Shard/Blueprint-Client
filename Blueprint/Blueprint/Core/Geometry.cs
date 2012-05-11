@@ -60,5 +60,28 @@ namespace Blueprint
 
         #endregion
 
+        #region Range
+
+        public static int Range(Vector2 from, Vector2 to)
+        {
+            return Range(new Point((int)from.X, (int)from.Y), new Point( (int)to.X, (int)to.Y));
+        }
+
+        public static int Range(Rectangle from, Rectangle to)
+        {
+            return Range(new Point(from.Center.X / 24, from.Center.Y / 24), new Point(to.Center.X / 24, to.Center.Y / 24));
+        }
+
+        public static int Range(Point from, Point to)
+        {
+            int x = from.X - to.X;
+            int y = from.Y - to.Y;
+            if (x < 0) { x *= -1; }
+            if (y < 0) { y *= -1; }
+            if (x > y) { return x; } else { return y; }
+        }
+
+        #endregion
+
     }
 }

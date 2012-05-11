@@ -170,7 +170,7 @@ namespace Blueprint
             
         }
 
-        public void Update( Control control, Quickbar quickbar, Camera camera, Lighting lighting )
+        public void Update( Control control, Quickbar quickbar, Camera camera, Lighting lighting, Player player )
         {
 
             Fluids.Update(this);
@@ -180,7 +180,7 @@ namespace Blueprint
 
             // Grow Flora
             GrowCounter++;
-            if (GrowCounter > 500)
+            if (GrowCounter > 50)
             {
                 Flora.Update(this);
                 GrowCounter = 0;
@@ -190,37 +190,37 @@ namespace Blueprint
 
             #region Using Items
 
-            if (quickbar.UsingItem.Type == "placeblock")
+            if (quickbar.UsingItem.Type == "placeblock" && Geometry.Range(camera.FromRectangle(player.Movement.Area), control.MousePos) < 6)
             {
                 if (placeBlock(control.AtBlockX, control.AtBlockY, GetBlockType(quickbar.UsingItem.IntValue)))
                     { quickbar.useItem(quickbar.Selected); }
             }
 
-            if (quickbar.UsingItem.Type == "placewall")
+            if (quickbar.UsingItem.Type == "placewall" && Geometry.Range(camera.FromRectangle(player.Movement.Area), control.MousePos) < 6)
             {
                 if (placeWall(control.AtBlockX, control.AtBlockY, GetWallType(quickbar.UsingItem.IntValue)))
                     { quickbar.useItem(quickbar.Selected); }
             }
 
-            if (quickbar.UsingItem.Type == "mineblock")
+            if (quickbar.UsingItem.Type == "mineblock" && Geometry.Range(camera.FromRectangle(player.Movement.Area), control.MousePos) < 6)
             {
                 if (mineBlock(control.AtBlockX, control.AtBlockY))
                     { quickbar.useItem(quickbar.Selected); }
             }
 
-            if (quickbar.UsingItem.Type == "removewall")
+            if (quickbar.UsingItem.Type == "removewall" && Geometry.Range(camera.FromRectangle(player.Movement.Area), control.MousePos) < 6)
             {
                 if (RemoveWall(control.AtBlockX, control.AtBlockY))
                 { quickbar.useItem(quickbar.Selected); }
             }
 
-            if(quickbar.UsingItem.Type == "placeentity")
+            if (quickbar.UsingItem.Type == "placeentity" && Geometry.Range(camera.FromRectangle(player.Movement.Area), control.MousePos) < 6)
             {
                 if( Entities.Add(control.AtBlockX, control.AtBlockY, quickbar.UsingItem.IntValue) )
                     { quickbar.useItem(quickbar.Selected); }
             }
 
-            if (quickbar.UsingItem.Type == "removeentity")
+            if (quickbar.UsingItem.Type == "removeentity" && Geometry.Range(camera.FromRectangle(player.Movement.Area), control.MousePos) < 6)
             {
                 if( Entities.Damage(control.AtBlockX, control.AtBlockY))
                     { quickbar.useItem(quickbar.Selected); }
@@ -508,8 +508,8 @@ namespace Blueprint
                 return false;
             }
 
-            // Check range from player
             Blocks[x, y] = new Block(type);
+            Fluids.Water.Blocks[x, y] = 0;
             return true;
         }
 
@@ -544,6 +544,7 @@ namespace Blueprint
             if (Blocks[x, y].Health < 1)
             {
                 Blocks[x, y] = null;
+                Walls[x, y] = new Wall(WallTypes[1]);
                 return true;
             }
             return false;

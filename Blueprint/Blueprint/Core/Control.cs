@@ -66,5 +66,18 @@ namespace Blueprint
             State = state;
         }
 
+        public bool Pressed(Keys key)
+        {
+            if (currentKeyboard.IsKeyDown(key) && previousKeyboard.IsKeyUp(key)) { return true; } else { return false; }
+        }
+
+        public bool Click(bool left_button = true)
+        {
+            if (left_button)
+                { if (currentMouse.LeftButton == ButtonState.Pressed && previousMouse.LeftButton == ButtonState.Released) { return true; } else { return false; } }
+            else
+                { if (currentMouse.RightButton == ButtonState.Pressed && previousMouse.RightButton == ButtonState.Released) { return true; } else { return false; } }
+        }
+
     }
 }

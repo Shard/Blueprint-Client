@@ -24,7 +24,7 @@ namespace Blueprint.Fluid
 
         public void Update(Map map)
         {
-            Water.Update(ref map);
+            Water.Update(map);
         }
 
         public void Draw(SpriteBatch spriteBatch, Camera camera)

@@ -22,12 +22,14 @@ namespace Blueprint
             Types[2] = new FloraType("Grass", new Rectangle(24, 0, 24, 24), null, 10, 3);
             Types[3] = new FloraType("Grass", new Rectangle(48, 0, 24, 24), null, 10, 4);
             Types[4] = new FloraType("Grass", new Rectangle(72, 0, 24, 24), null, 10, 5);
-            Types[5] = new FloraType("Grass", new Rectangle(96, 0, 24, 24), null, 10, 0);
-            Types[6] = new FloraType("Cyan Flower", new Rectangle(0, 24, 24, 24));
-            Types[7] = new FloraType("Pink Flower", new Rectangle(24, 24, 24, 24));
-            Types[8] = new FloraType("Blue Flower", new Rectangle(24, 24, 24, 24));
-            Types[9] = new FloraType("Orange Flower", new Rectangle(24, 24, 24, 24));
-            Types[10] = new FloraType("Purple Flower", new Rectangle(24, 24, 24, 24));
+            Types[5] = new FloraType("Grass", new Rectangle(96, 0, 24, 24), null, 10, 6);
+            Types[6] = new FloraType("Grass", new Rectangle(120, 0, 24, 24), null, 10, 0);
+
+            Types[10] = new FloraType("Cyan Flower", new Rectangle(0, 24, 24, 24));
+            Types[11] = new FloraType("Pink Flower", new Rectangle(24, 24, 24, 24));
+            Types[12] = new FloraType("Blue Flower", new Rectangle(24, 24, 24, 24));
+            Types[13] = new FloraType("Orange Flower", new Rectangle(24, 24, 24, 24));
+            Types[14] = new FloraType("Purple Flower", new Rectangle(24, 24, 24, 24));
         }
 
         public void LoadContent()
@@ -46,8 +48,9 @@ namespace Blueprint
 
                     if (map.getBlock(x, y) != null && map.getBlock(x,y-1) == null)
                     {
-                        if (random.Next(0, 20) == 10)
+                        if (random.Next(0, 30) == 10)
                         {
+                            if (x < 1 || y < 1 || Flora[x,y-1] != null) { continue; }
                             Flora[x, y - 1] = new Flora(Types[1]);
                         }
                     }

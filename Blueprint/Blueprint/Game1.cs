@@ -46,7 +46,6 @@ namespace Blueprint
 
         Lighting Lighting;
 
-        List<Point> points;
 
         public BlueprintGame(string[] args)
         {
@@ -177,9 +176,9 @@ namespace Blueprint
             // Updates Players
             
 
-            Map.Update(Control, Player.Inventory.Quickbar, Camera, Lighting);
+            Map.Update(Control, Player.Inventory.Quickbar, Camera, Lighting, Player);
             Map.DroppedItems.Update(Map, Player);
-            NpcPackage.Update(Map, Player);
+            NpcPackage.Update(Map, Player, Control, Camera);
             WeaponPackage.Update(Control, Camera, Player, NpcPackage, Ui.FloatingTexts, ref Map);
             Ui.Update();
 
@@ -240,7 +239,7 @@ namespace Blueprint
             spriteBatch.Draw(Wallpaper, GraphicsDevice.Viewport.TitleSafeArea, GraphicsDevice.Viewport.TitleSafeArea, Color.White);
             Map.DroppedItems.Draw(spriteBatch, Camera, ItemPackage);
             WeaponPackage.Draw(spriteBatch, Camera);
-            NpcPackage.Draw(spriteBatch, Camera);
+            NpcPackage.Draw(spriteBatch, Camera, font);
             Map.Draw(spriteBatch, Camera);
             Player.Draw(spriteBatch, Camera);
             Map.Fluids.Draw(spriteBatch, Camera);

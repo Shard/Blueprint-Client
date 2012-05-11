@@ -303,8 +303,8 @@ namespace Blueprint
         {
 
             Point[] points = new Point[4];
-            if (map.getBlock(loc.X, loc.Y - 1) == null) { points[0] = new Point(loc.X, loc.Y - 1); } else { points[0] = Point.Zero; }
-            if (map.getBlock(loc.X, loc.Y + 1) == null) { points[1] = new Point(loc.X, loc.Y + 1); } else { points[1] = Point.Zero; }
+            if (map.getBlock(loc.X, loc.Y + 1) == null) { points[1] = new Point(loc.X, loc.Y + 1); } else { points[0] = Point.Zero; }
+            if (map.getBlock(loc.X, loc.Y - 1) == null) { points[0] = new Point(loc.X, loc.Y - 1); } else { points[1] = Point.Zero; }
             if (map.getBlock(loc.X - 1, loc.Y) == null) { points[2] = new Point(loc.X - 1, loc.Y); } else { points[2] = Point.Zero; }
             if (map.getBlock(loc.X + 1, loc.Y) == null) { points[3] = new Point(loc.X + 1, loc.Y); } else { points[3] = Point.Zero; }
             return points;
@@ -338,11 +338,13 @@ namespace Blueprint
                 // Get node with lowest f score
                 int lowest_score = 0;
                 int lowest_score_index = 0;
+                int lowest_y = 0;
                 for (int i = 0; i < open.Count; i++)
                 {
-                    if (lowest_score == 0 || f_score[ open[i].X, open[i].Y ] < lowest_score) {
+                    if (lowest_score == 0 || f_score[ open[i].X, open[i].Y ] < lowest_score || (open[i].Y > lowest_y && f_score[ open[i].X, open[i].Y ] <= lowest_score)) {
                         lowest_score = f_score[open[i].X, open[i].Y];
                         lowest_score_index = i;
+                        lowest_y = open[i].Y;
                     }
                 }
                 Point current = open[lowest_score_index];

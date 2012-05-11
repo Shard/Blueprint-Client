@@ -12,8 +12,10 @@ namespace Blueprint
         public string Name; // Name of the player
         public int Health; // Current Health of the player
         public int Mana; // Current Mana of the player
+        public int Invunerable;
         public float Speed; // Current Speed of the palyer
         public Inventory Inventory; // Inventory of the player
+        public int HealthRegenCounter;
 
         // Positioning and movement
         public Movement Movement; // Handles movement and collisions
@@ -47,6 +49,12 @@ namespace Blueprint
         {
             Movement.Update(map);
             Animation.Update(Movement);
+
+            if (Invunerable > 0) { Invunerable -= 1; }
+
+            HealthRegenCounter++;
+            if (HealthRegenCounter >= 30)
+            { HealthRegenCounter = 0; if (Health < 100) { Health++; } }
 
             // Killing
             if (Movement.Area.Y > map.SizeY * 24)
@@ -99,7 +107,7 @@ namespace Blueprint
 
         public bool Damage(int amount)
         {
-
+            if (Invunerable > 0) { return false; }
             Health -= amount;
             if (Health <= 0)
             {
@@ -109,7 +117,7 @@ namespace Blueprint
                 PositionCamera = true;
                 return true;
             }
-
+            Invunerable = 10;
             return false;
         }
     }

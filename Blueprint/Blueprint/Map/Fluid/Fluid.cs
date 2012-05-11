@@ -45,7 +45,7 @@ namespace Blueprint.Fluid
             MapHeight = height;
         }
 
-        public void Update ( ref Map map)
+        public void Update ( Map map)
         {
 
             CurrentSkip++;
@@ -156,9 +156,14 @@ namespace Blueprint.Fluid
         public void Draw(SpriteBatch spriteBatch, Texture2D texture, Camera camera)
         {
 
-            for (int x = 0; x < MapWidth; x++)
+            int startx = (int)MathHelper.Clamp(camera.X * -1 / 24f, 0, MapWidth);
+            int endx = 2 + startx + camera.Width / 24;
+            int starty = (int)MathHelper.Clamp(camera.Y * -1 / 24f, 0, MapHeight);
+            int endy = 2 + starty + camera.Height / 24;
+
+            for (int x = startx; x <= endx; x++)
             {
-                for (int y = 0; y < MapHeight; y++)
+                for (int y = starty; y <= endy; y++)
                 {
                     if (Blocks[x, y] != 0)
                     {
