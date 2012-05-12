@@ -72,8 +72,8 @@ namespace Blueprint
             // Dragging Item
             if(HeldItem != null)
             {
-                spriteBatch.DrawString(font, "asdasd", Vector2.Zero, Color.White);
-                spriteBatch.Draw(itemPackage.ItemTexture, new Rectangle(control.currentMouse.X-30,control.currentMouse.Y-30,30,30), HeldItem.Type.Location, Color.Orange);
+                spriteBatch.Draw(itemPackage.ItemTexture, new Rectangle(control.currentMouse.X,control.currentMouse.Y,30,30), HeldItem.Type.Location, Color.White);
+                control.ChangeCursor(Control.CursorStates.Custom);
             }
 
         }

@@ -54,7 +54,7 @@ namespace Blueprint
             graphics = new GraphicsDeviceManager(this);
             this.graphics.PreferredBackBufferWidth = 1280;
             this.graphics.PreferredBackBufferHeight = 720;
-            
+            this.graphics.SynchronizeWithVerticalRetrace = true;
             Content.RootDirectory = "Content";
             this.Window.AllowUserResizing = true;
             this.Window.ClientSizeChanged += new EventHandler<EventArgs>(Window_ClientSizeChanged);
@@ -122,11 +122,12 @@ namespace Blueprint
             Cursor = Content.Load<Texture2D>("Ui/cursor");
 
             // Initialize
+            Control.Initialize(Content.Load<Texture2D>("Ui/cursor"));
             Wallpaper = Content.Load<Texture2D>("Wallpaper/wallpaper");
             Map.Initialize(mapTexture, Package, Config, GraphicsDevice, Content);
             Player.Initialize(Package.LocalTexture("C:\\blueprint\\player.png", GraphicsDevice), Content.Load<Texture2D>("Ui/bars"), Package, Map.Spawn);
             Camera = new Camera(GraphicsDevice, Player);
-            WeaponPackage.Initialize(Content.Load<Texture2D>("Weapons/weapons"),Content.Load<Texture2D>("Weapons/arrow"));
+            WeaponPackage.Initialize(Content.Load<Texture2D>("Weapons/sword"),Content.Load<Texture2D>("Weapons/arrow"));
             ItemPackage.mock(Map.Types, WeaponPackage.Weapons);
             ItemPackage.Initialize(Content.Load<Texture2D>("items"));
             Player.Inventory.Initialize(Content.Load<Texture2D>("Ui/buttons"), ItemPackage);
@@ -157,8 +158,30 @@ namespace Blueprint
                 return;
             }
 
+
             // Update Input States
             Control.Update(Keyboard.GetState(), Mouse.GetState(), Camera);
+            
+            #region Game functions
+
+            if (Control.Pressed(Keys.F11))
+            {
+                if (!graphics.IsFullScreen)
+                {
+                    graphics.PreferredBackBufferWidth = 1920;
+                    graphics.PreferredBackBufferHeight = 1080;
+                }
+                else 
+                {
+                    graphics.PreferredBackBufferWidth = 1280;
+                    graphics.PreferredBackBufferHeight = 720;
+                }
+                graphics.ToggleFullScreen();
+                graphics.ApplyChanges();
+                
+            }
+
+            #endregion
 
             // Update Modules
             if (Server != null) { Server.Update(Control, Map, Player, gameTime, Package); }
@@ -255,8 +278,9 @@ namespace Blueprint
             if (Client != null) { Client.Draw(altBatch, Camera); }
             Ui.Draw(altBatch, Camera, font);
             NpcPackage.Interaction.Draw(altBatch, font, Camera, NpcPackage.UiTexture, NpcPackage.NpcTexture);
-            altBatch.Draw(Cursor, new Rectangle(Control.currentMouse.X, Control.currentMouse.Y, 20, 20), new Rectangle(0, 0, 24, 24), Color.White);
+            Control.Draw(altBatch);
 
+            #region debug
             if (NpcPackage.ActiveNpcs[0].CurrentPath != null)
             {
                 foreach (Point point in NpcPackage.ActiveNpcs[0].CurrentPath)
@@ -265,6 +289,7 @@ namespace Blueprint
                 }
                 altBatch.Draw(Wallpaper, Camera.FromRectangle(new Rectangle(NpcPackage.ActiveNpcs[0].CurrentDestination.X * 24,  NpcPackage.ActiveNpcs[0].CurrentDestination.Y * 24, 24,24)), Color.Red);
             }
+            #endregion
 
             #region Previews
 

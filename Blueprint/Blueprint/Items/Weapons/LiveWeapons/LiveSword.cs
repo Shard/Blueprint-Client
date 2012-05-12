@@ -12,6 +12,10 @@ namespace Blueprint
         public float SwingEnd;
         public string Direction; // The direction of the player when the weapon was created
 
+        public RotatedRectangle currentLocation
+        {
+            get { return new RotatedRectangle(new Rectangle((int)Location.X - 9, (int)Location.Y - Weapon.Sprite.Height, Weapon.Sprite.Width, Weapon.Sprite.Height * 2), Rotation); }
+        }
 
         public LiveSword(Weapon weapon, Vector2 location, string direction)
             : base(weapon, location)

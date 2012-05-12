@@ -9,6 +9,8 @@ namespace Blueprint
     class Control
     {
 
+        #region Raw States
+
         /// <summary>
         /// The current keyboard state
         /// </summary>
@@ -28,6 +30,10 @@ namespace Blueprint
         /// The current mouse state
         /// </summary>
         public MouseState currentMouse;
+
+        #endregion
+
+        #region Mouse Helpers
 
         /// <summary>
         /// The x location of the tile the mouse is currently at
@@ -49,6 +55,10 @@ namespace Blueprint
         /// </summary>
         public Rectangle MousePos { get { return new Rectangle(currentMouse.X, currentMouse.Y, 1, 1); } }
 
+        #endregion
+
+        #region Ui States
+
         /// <summary>
         /// If true, lock the keyboard controls for the game as they are being used by gui
         /// </summary>
@@ -67,6 +77,10 @@ namespace Blueprint
         /// </summary>
         public bool MouseLock;
 
+        #endregion
+
+        #region Cursor
+
         /// <summary>
         /// The different states the control object can be in, relating the mouse cursor
         /// </summary>
@@ -76,7 +90,9 @@ namespace Blueprint
             Interact,
             Mine,
             Chop,
-            Hammer
+            Hammer,
+            Attack,
+            Custom
         };
 
         /// <summary>
@@ -84,8 +100,37 @@ namespace Blueprint
         /// </summary>
         public CursorStates State;
 
+        /// <summary>
+        /// Cursor texture
+        /// </summary>
+        private Texture2D Texture;
+
+        private Rectangle Sprite
+        {
+            get { switch (State) {
+                case CursorStates.Mine:
+                    return new Rectangle(32,0,32,32);
+                case CursorStates.Attack:
+                    return new Rectangle(64,0,32,32);
+                case CursorStates.Custom:
+                case CursorStates.Interact:
+                    return new Rectangle(96, 0, 32, 32);
+                default:
+                    return new Rectangle(0, 0, 32, 32);
+            } }
+        }
+
+        #endregion
+
+        public void Initialize(Texture2D texture)
+        {
+            Texture = texture;
+        }
+
         public void Update(KeyboardState keyboard, MouseState mouse, Camera camera )
         {
+
+            State = CursorStates.Default;
 
             previousKeyboard = currentKeyboard;
             currentKeyboard = keyboard;
@@ -99,7 +144,7 @@ namespace Blueprint
 
         public void Draw(SpriteBatch spriteBatch)
         {
-
+            spriteBatch.Draw(Texture, new Rectangle(currentMouse.X, currentMouse.Y, 24, 24), Sprite, Color.White);
         }
 
         public void ChangeCursor(CursorStates state)

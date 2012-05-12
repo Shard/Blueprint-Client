@@ -65,7 +65,7 @@ namespace Blueprint
         public bool IsUsingItem;
         public Item CurrentItem
         {
-            get { return Items.Items[Selected]; }
+            get { if (Selected >= 0) { return Items.Items[Selected]; } else { return null; } }
         }
 
         public Quickbar( int size  )
@@ -228,7 +228,6 @@ namespace Blueprint
             {
 
                 Rectangle current_rect = new Rectangle((int)Area.X + (IncrementX * i), (int)Area.Y + (IncrementY * i), 64, 64);
-
                 spriteBatch.Draw(inventoryTexture, current_rect, new Rectangle(0, 0, 64, 64), Color.White);
 
                 // Draw item
@@ -239,31 +238,20 @@ namespace Blueprint
                 }
                 
                 if (i == MouseOver || i == Selected)
-                {
                     spriteBatch.Draw(inventoryTexture, current_rect, new Rectangle(128, 0, 64, 64), Color.White);
-                }
                 else
-                {
                     spriteBatch.Draw(inventoryTexture, current_rect, new Rectangle(64, 0, 64, 64), Color.White);
-                }
+
 
                 // Draw keybindings
                 string keybind_string;
                 if (i == 9) { keybind_string = "0"; } else { keybind_string = (i + 1).ToString(); }
                 TextHelper.DrawString(spriteBatch, font, keybind_string, new Vector2(current_rect.X + 50, current_rect.Y + 5), Color.White, 0.7f);
 
-                if (Items.Items[i] != null && Items.Items[i].Type.Stacksize > 0)
+                if (Items.Items[i] != null && Items.Items[i].Type.Stacksize > 0 && Items.Items[i].Stack > 1)
                 {
                     TextHelper.DrawString(spriteBatch, font, Items.Items[i].Stack.ToString(), new Vector2(current_rect.X + 56, current_rect.Y + 48), Color.White, 0.6f, align: "right");
                 }
-            }
-
-            // States
-            //spriteBatch.Draw(inventoryTexture, new Rectangle(20, 20 + (45 * Selected), 40, 40), new Rectangle(80, 0, 40, 40), Color.White);
-
-            if (MouseOver > -1)
-            {
-               // spriteBatch.Draw(inventoryTexture, new Rectangle(20, 20 + (45 * MouseOver), 40, 40), new Rectangle(40, 0, 40, 40), Color.White);
             }
 
         }

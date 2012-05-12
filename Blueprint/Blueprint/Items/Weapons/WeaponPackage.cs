@@ -24,6 +24,7 @@ namespace Blueprint
             Types[1] = new WeaponType("Axe", true);
             Types[2] = new WeaponType("Bow", true);
             Types[3] = new WeaponType("Arrow", false);
+            Types[4] = new WeaponType("Fireball", false);
 
             // Weapons
             Weapons = new Weapon[10];
@@ -41,7 +42,7 @@ namespace Blueprint
             Weapons[0] = new Weapon(11, Types[0], "Big Stick", new Rectangle(0, 0, WeaponTexture.Bounds.Width, WeaponTexture.Bounds.Height));
             Weapons[1] = new Weapon(12, Types[2], "Bow", new Rectangle(0, 0, WeaponTexture.Bounds.Width, WeaponTexture.Bounds.Height));
             Weapons[2] = new Weapon(13, Types[3], "Wooden Arrow", new Rectangle(0, 0, WeaponTexture.Bounds.Width, WeaponTexture.Bounds.Height));
-          
+           
         }
 
         public void Update(Control control, Camera camera, Player player, NpcPackage npcs, Ui.FloatingTextCollection floatingText, ref Map map)
@@ -56,7 +57,7 @@ namespace Blueprint
                 
                 if (weapon.Type.Name == "Sword" && !player.Inventory.Quickbar.IsUsingItem)
                 {
-                    LiveWeapons.Add(new LiveSword(GetWeaponById(player.Inventory.Quickbar.UsingItem.IntValue), startingSwordPosition(player, new Rectangle(0, 0, 47, 79)), player.Movement.Direction));
+                    LiveWeapons.Add(new LiveSword(GetWeaponById(player.Inventory.Quickbar.UsingItem.IntValue),new Vector2(player.Movement.Area.Center.X, player.Movement.Area.Center.Y - 5), player.Movement.Direction));
                     player.Inventory.Quickbar.IsUsingItem = true;
                 }
 
@@ -87,8 +88,7 @@ namespace Blueprint
                 if (LiveWeapons[i].Weapon.Type.Name == "Sword")
                 {
                     LiveSword weapon = LiveWeapons[i];
-                    //LiveWeapons[i].currentLocation.Rotation += LiveWeapons[i].Speed;
-                    LiveWeapons[i].Rotation += LiveWeapons[i].Speed / 5;
+                    weapon.Rotation += LiveWeapons[i].Speed;
                     LiveWeapons[i].Location += player.Movement.Moved;
                     if ((LiveWeapons[i].SwingEnd > 0 && LiveWeapons[i].Rotation > LiveWeapons[i].SwingEnd) || (LiveWeapons[i].SwingEnd < 0 && LiveWeapons[i].Rotation < LiveWeapons[i].SwingEnd))
                     {
@@ -200,12 +200,13 @@ namespace Blueprint
             {
                 if (weapon.Weapon.Type.Name == "Sword")
                 {
-                    //spriteBatch.Draw(WeaponTexture, camera.FromRectangle(new Rectangle((int)weapon.Location.X, (int)weapon.Location.Y, 47, 79)), new Rectangle(0,0,47,79), Color.White, weapon.Rotation, Vector2.Zero, SpriteEffects.None, 0 );
+                    Vector2 center = new Vector2(weapon.Weapon.Sprite.Center.X, weapon.Weapon.Sprite.Bottom);
+                    spriteBatch.Draw(WeaponTexture, camera.FromRectangle(new Rectangle((int)weapon.Location.X, (int)weapon.Location.Y, weapon.Weapon.Sprite.Width, weapon.Weapon.Sprite.Height)), weapon.Weapon.Sprite, Color.White, weapon.Rotation, center, SpriteEffects.None, 0);
                     // Draw hitboxes
-                    spriteBatch.Draw(WeaponTexture, camera.FromRectangle(new Rectangle((int)weapon.currentLocation.UpperLeftCorner().X, (int)weapon.currentLocation.UpperLeftCorner().Y, 5, 5)), Color.White);
-                    spriteBatch.Draw(WeaponTexture, camera.FromRectangle(new Rectangle((int)weapon.currentLocation.UpperRightCorner().X, (int)weapon.currentLocation.UpperRightCorner().Y, 5, 5)), Color.White);
-                    spriteBatch.Draw(WeaponTexture, camera.FromRectangle(new Rectangle((int)weapon.currentLocation.LowerLeftCorner().X, (int)weapon.currentLocation.LowerLeftCorner().Y, 5, 5)), Color.White);
-                    spriteBatch.Draw(WeaponTexture, camera.FromRectangle(new Rectangle((int)weapon.currentLocation.LowerRightCorner().X, (int)weapon.currentLocation.LowerRightCorner().Y, 5, 5)), Color.White);
+                    //spriteBatch.Draw(WeaponTexture, camera.FromRectangle(new Rectangle((int)weapon.currentLocation.UpperLeftCorner().X, (int)weapon.currentLocation.UpperLeftCorner().Y, 5, 5)), Color.White);
+                    //spriteBatch.Draw(WeaponTexture, camera.FromRectangle(new Rectangle((int)weapon.currentLocation.UpperRightCorner().X, (int)weapon.currentLocation.UpperRightCorner().Y, 5, 5)), Color.White);
+                    //spriteBatch.Draw(WeaponTexture, camera.FromRectangle(new Rectangle((int)weapon.currentLocation.LowerLeftCorner().X, (int)weapon.currentLocation.LowerLeftCorner().Y, 5, 5)), Color.White);
+                    //spriteBatch.Draw(WeaponTexture, camera.FromRectangle(new Rectangle((int)weapon.currentLocation.LowerRightCorner().X, (int)weapon.currentLocation.LowerRightCorner().Y, 5, 5)), Color.White);
                 }
                 else if (weapon.Weapon.Type.Name == "Arrow")
                 {
