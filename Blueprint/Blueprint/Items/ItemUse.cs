@@ -34,6 +34,13 @@ namespace Blueprint
             get { return Int32.Parse(Value); } 
         }
 
+        public ItemUse() { }
+
+        public ItemUse(string data)
+        {
+            Update(data);
+        }
+
         public void Clear()
         {
             Use = null;

@@ -84,6 +84,7 @@ namespace Blueprint
         /// <param name="item"></param>
         public bool Pickup(Item item)
         {
+            if (Bag.Items.AddItem(item)) { return true; }
             if (Quickbar.Items.AddItem(item)) { return true; }
 
             return false;

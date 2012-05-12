@@ -131,6 +131,7 @@
     <Compile Include="Map\Flora\FloraPackage.cs" />
     <Compile Include="Map\Flora\FloraType.cs" />
     <Compile Include="Map\Fluid\FluidLava.cs" />
+    <Compile Include="Map\MapHelper.cs" />
     <Compile Include="Map\Walls\Wall.cs" />
     <Compile Include="Map\Walls\WallType.cs" />
     <Compile Include="Map\Blocks\Block.cs" />

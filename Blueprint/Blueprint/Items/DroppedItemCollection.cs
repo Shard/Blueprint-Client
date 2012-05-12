@@ -19,10 +19,19 @@ namespace Blueprint
         {
             for (int i = 0; i < Items.Count; i++)
             {
-                Items[i].Movement.Update(map);
-                if (Items[i].AttemptPickup(player))
+                DroppedItem item = Items[i];
+
+                if (item.Movement.Velocity == Vector2.Zero && item.SettleCounter > 0)
+                    item.SettleCounter -= 1;
+                
+                if(item.SettleCounter > 0)
+                    Items[i].Movement.Update(map);
+
+
+                if (item.Movement.Area.Intersects(player.Movement.Area))
                 {
-                    Items.Remove(Items[i]);
+                    if (player.Inventory.Pickup(item.Item))
+                        Items.Remove(item);
                 }
             }
         }

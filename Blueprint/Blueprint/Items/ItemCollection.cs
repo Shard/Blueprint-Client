@@ -23,16 +23,19 @@ namespace Blueprint
         public bool AddItem(Item item)
         {
 
+            // Try and stack first
             for (int i = 0; i < Items.Length; i++)
             {
-                if (Items[i].Type == item.Type && Items[i].Stack < Items[i].Type.Stacksize)
-                {
-                    Items[i].Stack += 1; return true;
-                } else if(Items[i] == null)
-                {
-                    Items[i] = item; return true;
-                }
+                if (Items[i] != null && Items[i].Type == item.Type && Items[i].Stack < Items[i].Type.Stacksize)
+                    { Items[i].Stack += 1; return true; }
             }
+
+            // No stack matches, find an empty spot
+            for (int i = 0; i < Items.Length; i++)
+            {
+                if (Items[i] == null) { Items[i] = item; return true; }
+            }
+
 
             return false;
 

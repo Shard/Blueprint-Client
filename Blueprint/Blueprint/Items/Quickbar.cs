@@ -63,6 +63,10 @@ namespace Blueprint
         // Using Items
         public ItemUse UsingItem;
         public bool IsUsingItem;
+        public Item CurrentItem
+        {
+            get { return Items.Items[Selected]; }
+        }
 
         public Quickbar( int size  )
         {

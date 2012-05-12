@@ -11,6 +11,8 @@ namespace Blueprint
 
         // Metrics
 
+        #region Speed
+
         /// <summary>How quickly the object through Running/Flying can speed up towards max speed.</summary>
         public float Acceleration;
 
@@ -19,6 +21,13 @@ namespace Blueprint
 
         /// <summary>Basicially the absolute max speed the object can travel.</summary>
         public float TerminalSpeed;
+
+        /// <summary>The final value that determines where a user moves</summary>
+        public Vector2 Velocity;
+
+        #endregion
+
+        #region Jumping and Gravity
 
         /// <summary>The amount of downwards force that is being applied to the object.</summary>
         public float Gravity;
@@ -35,8 +44,13 @@ namespace Blueprint
         /// <summary>The amount an object can jump before it looses power</summary>
         public float MaxJumpPower;
 
-        /// <summary>The final value that determines where a user moves</summary>
-        public Vector2 Velocity;
+        /// <summary>True is the mover is actually jumping upwards</summary>
+        public bool IsJumping;
+
+        /// <summary> When true, gravity is acting</summary>
+        public bool Falling;
+
+        #endregion
 
         /// <summary>The area that the object occupies;</summary>
         public Rectangle Area;
@@ -50,30 +64,24 @@ namespace Blueprint
         /// <summary>The intention that is linked to the movement object</summary>
         public Intention Intention;
 
-        /// <summary>True is the mover is actually jumping upwards</summary>
-        public bool IsJumping;
-
-        /// <summary> When true, gravity is acting</summary>
-        public bool Falling;
-
         /// <summary>If the object has solid footing</summary>
         public bool Solid;
 
         /// <summary>The direction the object is facing</summary>
         public string Direction;
 
-        public Movement( Vector2 position, int width, int height)
+        public Movement( Vector2 position, int width, int height, float gravity = .35f, float drag = 0.2f)
         {
             Acceleration = 0.25f;
             MaxSpeed = 4f;
             TerminalSpeed = 12f;
-            Gravity = .35f;
-            Drag = 0.2f; 
+            Gravity = gravity;
+            Drag = drag; 
             JumpPower = 7f;
             MaxJumpPower = 7f;
             JumpSpeed = 3f;
             Velocity = new Vector2();
-            Area = new Rectangle((int)position.X, (int)position.Y, width, height);
+            Area = new Rectangle((int)position.X - width / 2, (int)position.Y - height / 2, width, height);
             Moved = new Vector2();
             Bouncy = 1f;
 
@@ -280,11 +288,6 @@ namespace Blueprint
             }
 
             Velocity -= apply * force;
-
-        }
-
-        public void CalculateCollision()
-        {
 
         }
 
@@ -546,6 +549,14 @@ namespace Blueprint
             }
 
             return true;
+
+        }
+
+        /// <summary>
+        /// Take a part out of the main collision code to allow for smaller collision detection
+        /// </summary>
+        public void CalculateCollision()
+        {
 
         }
 

@@ -15,6 +15,11 @@ namespace Blueprint
         public List<Entity> Entities;
         public EntityType[] Types;
 
+        /// <summary>
+        /// If is set, will preview where an entity will build
+        /// </summary>
+        public Entity Preview;
+
         public EntityPackage()
         {
             Types = new EntityType[10];
@@ -112,6 +117,11 @@ namespace Blueprint
                 spriteBatch.Draw(getType(entity.Type).Sprite, camera.FromRectangle(entity.Area), Color.White);
             }
 
+            if (Preview != null)
+            {
+                spriteBatch.Draw(getType(Preview.Type).Sprite, camera.FromRectangle(Preview.Area), new Color((byte)100, (byte)100, (byte)100, (byte)100));
+            }
+
         }
 
         public EntityType getType(int id)
@@ -145,6 +155,7 @@ namespace Blueprint
             Entities.Add(new Entity(getType(type), x, y));
             return true;
         }
+
 
         /// <summary>
         /// Attempt to deal damage to entities at x,y. returns true if destroyed

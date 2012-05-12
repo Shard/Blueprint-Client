@@ -190,6 +190,17 @@ namespace Blueprint
 
             #region Using Items
 
+            // preview
+            Entities.Preview = null;
+            if (quickbar.CurrentItem != null && Geometry.Range(camera.FromRectangle(player.Movement.Area), control.MousePos) < 6)
+            {
+                ItemUse use = new ItemUse(quickbar.CurrentItem.Type.Use);
+                if (use.Type == "placeentity" && CanPlaceEntity(Entities.getType(use.IntValue), control.AtBlockX, control.AtBlockY) )
+                {
+                    Entities.Preview = new Entity(Entities.getType(int.Parse(use.Value)), control.AtBlockX, control.AtBlockY);
+                }
+            }
+
             if (quickbar.UsingItem.Type == "placeblock" && Geometry.Range(camera.FromRectangle(player.Movement.Area), control.MousePos) < 6)
             {
                 if (placeBlock(control.AtBlockX, control.AtBlockY, GetBlockType(quickbar.UsingItem.IntValue)))
@@ -214,7 +225,7 @@ namespace Blueprint
                 { quickbar.useItem(quickbar.Selected); }
             }
 
-            if (quickbar.UsingItem.Type == "placeentity" && Geometry.Range(camera.FromRectangle(player.Movement.Area), control.MousePos) < 6)
+            if (quickbar.UsingItem.Type == "placeentity" && Geometry.Range(camera.FromRectangle(player.Movement.Area), control.MousePos) < 6 && CanPlaceEntity(Entities.getType(quickbar.UsingItem.IntValue), control.AtBlockX, control.AtBlockY))
             {
                 if( Entities.Add(control.AtBlockX, control.AtBlockY, quickbar.UsingItem.IntValue) )
                     { quickbar.useItem(quickbar.Selected); }
@@ -253,9 +264,9 @@ namespace Blueprint
 
         public void Draw(SpriteBatch spriteBatch, Camera camera)
         {
-            
 
-            // Draw Blocks
+            #region Draw Blocks
+
             int startx = (int)MathHelper.Clamp(camera.X * -1 / 24f, 0, this.SizeX);
             int endx = startx + camera.Width / 24;
             int starty = (int)MathHelper.Clamp(camera.Y * -1 / 24f, 0, this.SizeY);
@@ -294,9 +305,9 @@ namespace Blueprint
                 }
             }
 
-            Entities.Draw(spriteBatch, camera);
+            #endregion
 
-            
+            Entities.Draw(spriteBatch, camera);
 
         }
 
@@ -438,6 +449,19 @@ namespace Blueprint
         }
 
         /// <summary>
+        /// Checks to see if a block place at x,y would be out of bounds
+        /// </summary>
+        /// <param name="x">Coordianate X of the block location</param>
+        /// <param name="y">Coordianate Y of the block location</param>
+        /// <returns>Wether the location is within bounds of the map</returns>
+        public bool inBounds(int x, int y)
+        {
+            if (x < 0 || y < 0 || x >= SizeX || y >= SizeY) { return false; } else { return true; } 
+        }
+
+        #region Blocks
+
+        /// <summary>
         /// Gets a block type by its Id
         /// </summary>
         /// <param name="id"></param>
@@ -452,31 +476,6 @@ namespace Blueprint
         }
 
         /// <summary>
-        /// Gets a wall type by its Id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public WallType GetWallType(int id)
-        {
-            for (int i = 0; i < WallTypes.Length; i++)
-            {
-                if (id == WallTypes[i].Id) { return WallTypes[i]; }
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// Checks to see if a block place at x,y would be out of bounds
-        /// </summary>
-        /// <param name="x">Coordianate X of the block location</param>
-        /// <param name="y">Coordianate Y of the block location</param>
-        /// <returns>Wether the location is within bounds of the map</returns>
-        public bool inBounds(int x, int y)
-        {
-            if (x < 0 || y < 0 || x >= SizeX || y >= SizeY) { return false; } else { return true; } 
-        }
-
-        /// <summary>
         /// Safely gets a block from the map based of x/y
         /// </summary>
         /// <param name="x">Coordianate X of the block location</param>
@@ -485,11 +484,6 @@ namespace Blueprint
         public Block getBlock(int x, int y)
         {
             if (inBounds(x, y)) { return Blocks[x, y]; } else { return null; }
-        }
-
-        public Wall getWall(int x, int y)
-        {
-            if (inBounds(x, y)) { return Walls[x, y]; } else { return null; }
         }
 
         /// <summary>
@@ -504,28 +498,13 @@ namespace Blueprint
             if (getBlock(x, y) != null) { return false; }
 
             // Check for blocks to attach to
-            if (getBlock(x - 1, y) == null && getBlock(x + 1, y) == null && getBlock(x, y - 1) == null && getBlock(x, y + 1) == null) {
+            if (getBlock(x - 1, y) == null && getBlock(x + 1, y) == null && getBlock(x, y - 1) == null && getBlock(x, y + 1) == null)
+            {
                 return false;
             }
 
             Blocks[x, y] = new Block(type);
             Fluids.Water.Blocks[x, y] = 0;
-            return true;
-        }
-
-        public bool placeWall(int x, int y, WallType type)
-        {
-            if (getWall(x, y) != null) { return false; }
-
-            // Check for walls or block to attach to
-            if (getWall(x - 1, y) == null && getWall(x + 1, y) == null && getWall(x, y - 1) == null && getWall(x, y + 1) == null && getBlock(x - 1, y) == null && getBlock(x + 1, y) == null && getBlock(x, y - 1) == null && getBlock(x, y + 1) == null)
-            {
-                return false;
-            }
-
-            // Check range from player
-
-            Walls[x, y] = new Wall(type);
             return true;
         }
 
@@ -548,7 +527,46 @@ namespace Blueprint
                 return true;
             }
             return false;
-            
+
+        }
+
+        #endregion
+
+        #region Walls
+
+        /// <summary>
+        /// Gets a wall type by its Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public WallType GetWallType(int id)
+        {
+            for (int i = 0; i < WallTypes.Length; i++)
+            {
+                if (id == WallTypes[i].Id) { return WallTypes[i]; }
+            }
+            return null;
+        }
+
+        public Wall getWall(int x, int y)
+        {
+            if (inBounds(x, y)) { return Walls[x, y]; } else { return null; }
+        }
+
+        public bool placeWall(int x, int y, WallType type)
+        {
+            if (getWall(x, y) != null) { return false; }
+
+            // Check for walls or block to attach to
+            if (getWall(x - 1, y) == null && getWall(x + 1, y) == null && getWall(x, y - 1) == null && getWall(x, y + 1) == null && getBlock(x - 1, y) == null && getBlock(x + 1, y) == null && getBlock(x, y - 1) == null && getBlock(x, y + 1) == null)
+            {
+                return false;
+            }
+
+            // Check range from player
+
+            Walls[x, y] = new Wall(type);
+            return true;
         }
 
         public bool RemoveWall(int x, int y)
@@ -565,6 +583,32 @@ namespace Blueprint
             }
             return false;
         }
+
+        #endregion
+
+        #region Entities
+
+        /// <summary>
+        /// Returns wether an entity can be placed
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        public bool CanPlaceEntity(EntityType type, int x, int y)
+        {
+            if (Blocks[x, y + 1] == null) { return false; }
+            for (int x_upto = x; x_upto < x + type.Width; x_upto++)
+            {
+                for (int y_upto = y; y_upto > y - type.Height; y_upto--)
+                {
+                    if (Blocks[x_upto, y_upto] != null) { return false; }
+                }
+            }
+
+            return true;
+        }
+
+        #endregion
 
     }
 }

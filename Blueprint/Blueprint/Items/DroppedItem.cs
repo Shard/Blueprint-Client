@@ -6,26 +6,26 @@ namespace Blueprint
 {
     class DroppedItem
     {
-
-        public Vector2 Location;
+        /// <summary>
+        /// The item that will be picked up
+        /// </summary>
         public Item Item;
+
+        /// <summary>
+        /// Handles movement
+        /// </summary>
         public Movement Movement;
+
+        /// <summary>
+        /// When this counter reaches 0, movement update will not be called
+        /// </summary>
+        public byte SettleCounter;
 
         public DroppedItem(Vector2 location, Item item)
         {
-            Location = location;
             Item = item;
-            Movement = new Movement(location, 16, 16);
-        }
-
-        public bool AttemptPickup(Player player)
-        {
-            if (Rectangle.Intersect(Movement.Area, player.Movement.Area) != Rectangle.Empty)
-            {
-                // Pickup Item
-                return player.Inventory.Pickup(Item);
-            }
-            return false;
+            Movement = new Movement(location, 16, 16, .15f);
+            SettleCounter = 30;
         }
 
     }
