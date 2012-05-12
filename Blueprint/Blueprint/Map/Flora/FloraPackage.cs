@@ -16,7 +16,7 @@ namespace Blueprint
         {
             Sprite = floraTexture;
             Flora = new Flora[map.SizeX, map.SizeY];
-            Types = new FloraType[20];
+            Types = new FloraType[50];
 
             Types[1] = new FloraType("Grass", new Rectangle(0, 0, 24, 24), null, 10, 2);
             Types[2] = new FloraType("Grass", new Rectangle(24, 0, 24, 24), null, 10, 3);
@@ -30,6 +30,12 @@ namespace Blueprint
             Types[12] = new FloraType("Blue Flower", new Rectangle(24, 24, 24, 24));
             Types[13] = new FloraType("Orange Flower", new Rectangle(24, 24, 24, 24));
             Types[14] = new FloraType("Purple Flower", new Rectangle(24, 24, 24, 24));
+
+            Types[30] = new FloraType("Vine", new Rectangle(0, 48, 24,24));
+            Types[31] = new FloraType("Vine", new Rectangle(24, 48, 24, 24));
+            Types[32] = new FloraType("Vine", new Rectangle(48, 48, 24, 24));
+            Types[33] = new FloraType("Vine", new Rectangle(72, 48, 24, 24));
+
         }
 
         public void LoadContent()
@@ -41,19 +47,44 @@ namespace Blueprint
         {
             Random random = new Random();
 
-            for (int x = 0; x < map.SizeX; x++)
+            for (int x = 1; x < map.SizeX; x++)
             {
-                for (int y = 0; y < map.SizeY; y++)
+                for (int y = 1; y < map.SizeY; y++)
                 {
 
-                    if (map.getBlock(x, y) != null && map.getBlock(x,y-1) == null)
+                    // If square empty, attempt to place flowers and grass
+                    if (map.Blocks[x,y] != null && map.Blocks[x,y - 1] == null && Flora[x, y - 1] == null)
                     {
-                        if (random.Next(0, 30) == 10)
+                        int rand = random.Next(0, 600);
+                        if (rand > 0 && rand < 20)
                         {
-                            if (x < 1 || y < 1 || Flora[x,y-1] != null) { continue; }
                             Flora[x, y - 1] = new Flora(Types[1]);
                         }
+                        else if (rand == 21)
+                        {
+                            Flora[x, y - 1] = new Flora(Types[10]);
+                        }
+                        else if (rand == 22)
+                        {
+                            Flora[x, y - 1] = new Flora(Types[11]);
+                        }
+                        else if (rand == 23)
+                        {
+                            Flora[x, y - 1] = new Flora(Types[12]);
+                        }
                     }
+
+                    // If square is empty, attempt to place vines
+                    if (map.Blocks[x,y] != null && map.getBlock(x, y + 1) == null)
+                    {
+                        int rand = random.Next(0, 30);
+                        if (rand == 1)
+                        {
+                            Flora[x, y + 1] = new Flora(Types[30]);
+                        }
+                    }
+
+                    //if(Flora[x,y]
 
                     if (Flora[x, y] != null && Flora[x,y].Type.GrowInto != 0)
                     {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 using Blueprint.Events;
@@ -33,12 +34,11 @@ namespace Blueprint
             //Entities[1].Events.Add(new Event(Event.Triggers.PlayerInteract, Event.Actions.Animation, "toggle"));
         }
 
-        public void Initialize(Texture2D texture)
+        public void Initialize(ContentManager content)
         {
-            Texture = texture;
-            Types[0] = new EntityType(1, "Door", texture, 1, 2, true, EntityType.EntityFunction.Door);
-            Types[4] = new EntityType(1, "Door", texture, 1, 2, true, EntityType.EntityFunction.Door);
-            Entities.Add(new Entity(Types[0], 10, 10));
+            Texture = content.Load<Texture2D>("furniture");
+            Types[0] = new EntityType(1, "Door", content.Load<Texture2D>("Entities/door"), 1, 3, true, EntityType.EntityFunction.Door);
+            //Entities.Add(new Entity(Types[0], 10, 10));
         }
 
         public void Update(Control control, Camera camera)
@@ -114,12 +114,19 @@ namespace Blueprint
             foreach (Entity entity in Entities)
             {
                 if (entity == null) { continue; }
-                spriteBatch.Draw(getType(entity.Type).Sprite, camera.FromRectangle(entity.Area), Color.White);
-            }
-
-            if (Preview != null)
-            {
-                spriteBatch.Draw(getType(Preview.Type).Sprite, camera.FromRectangle(Preview.Area), new Color((byte)100, (byte)100, (byte)100, (byte)100));
+                EntityType type = getType(entity.Type);
+                if (type.Function == EntityType.EntityFunction.Door)
+                {
+                    if(entity.Solid)
+                        spriteBatch.Draw(type.Sprite, camera.FromRectangle(entity.Area), new Rectangle(0,0, type.Sprite.Width / 2, type.Sprite.Height), Color.White);
+                    else
+                        spriteBatch.Draw(type.Sprite, camera.FromRectangle(entity.Area), new Rectangle(type.Sprite.Width / 2, 0, type.Sprite.Width / 2, type.Sprite.Height), Color.White);
+                }
+                else
+                {
+                    spriteBatch.Draw(getType(entity.Type).Sprite, camera.FromRectangle(entity.Area), Color.White);
+                }
+                
             }
 
         }

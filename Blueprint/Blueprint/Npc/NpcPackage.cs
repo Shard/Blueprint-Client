@@ -18,6 +18,7 @@ namespace Blueprint
 
         // Other
         public Texture2D NpcTexture;
+        public Texture2D UiTexture;
 
         public NpcPackage()
         {
@@ -29,9 +30,10 @@ namespace Blueprint
 
         }
 
-        public void Initialize(Texture2D npcTexture)
+        public void Initialize(Texture2D npcTexture, Texture2D uiTexture)
         {
             NpcTexture = npcTexture;
+            UiTexture = uiTexture;
             Interaction.Initialize();
 
             // Ai
@@ -49,7 +51,7 @@ namespace Blueprint
  
         }
 
-        public void Update( Map map, Player player, Control control, Camera camera   )
+        public void Update( Map map, Player player, Control control, Camera camera, SpriteFont font )
         {
             for (int i = 0; i < ActiveNpcs.Count; i++)
             {
@@ -85,14 +87,16 @@ namespace Blueprint
                 {
                     control.State = Control.CursorStates.Interact;
                     if (control.Click(false))
-                        Interaction.State = NpcInteraction.NpcInteractionState.Intro;
+                        Interaction.Start(npc);
                 }
 
                 if (Interaction.State != NpcInteraction.NpcInteractionState.None)
                 {
-                    if (Geometry.Range(player.Movement.Area, npc.Movement.Area) > 5)
-                        Interaction.State = NpcInteraction.NpcInteractionState.None;
+                    if (Geometry.Range(player.Movement.Area, npc.Movement.Area) > 7)
+                        Interaction.End();
                 }
+
+                Interaction.Update(camera, control, font);
 
                 #endregion
 
@@ -117,7 +121,7 @@ namespace Blueprint
             {
                 spriteBatch.Draw(NpcTexture, camera.FromRectangle(ActiveNpcs[i].Movement.Area), ActiveNpcs[i].Npc.Race.DefaultSprite, Color.White);
             }
-            Interaction.Draw(spriteBatch, font);
+            //Interaction.Draw(spriteBatch, font, camera, UiTexture, NpcTexture);
         }
 
         private void MovementChase(Movement movement, Point dest)

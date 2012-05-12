@@ -112,7 +112,6 @@ namespace Blueprint
 
             // Loading Screen
             font = Content.Load<SpriteFont>("Misc/system");
-            //font = Content.Load<SpriteFont>("Font");
 
             // Load Remote Texutres
             Texture2D mapTexture = Package.RemoteTexture("/maps/sprite/" + Config.MapId, GraphicsDevice);
@@ -124,14 +123,14 @@ namespace Blueprint
 
             // Initialize
             Wallpaper = Content.Load<Texture2D>("Wallpaper/wallpaper");
-            Map.Initialize(mapTexture, Content.Load<Texture2D>("Blocks/blocks"), Content.Load<Texture2D>("furniture"), Content.Load<Texture2D>("Blocks/wall"), Content.Load<Texture2D>("flora"), Package, Config, GraphicsDevice);
+            Map.Initialize(mapTexture, Package, Config, GraphicsDevice, Content);
             Player.Initialize(Package.LocalTexture("C:\\blueprint\\player.png", GraphicsDevice), Content.Load<Texture2D>("Ui/bars"), Package, Map.Spawn);
             Camera = new Camera(GraphicsDevice, Player);
             WeaponPackage.Initialize(Content.Load<Texture2D>("Weapons/weapons"),Content.Load<Texture2D>("Weapons/arrow"));
             ItemPackage.mock(Map.Types, WeaponPackage.Weapons);
             ItemPackage.Initialize(Content.Load<Texture2D>("items"));
             Player.Inventory.Initialize(Content.Load<Texture2D>("Ui/buttons"), ItemPackage);
-            NpcPackage.Initialize(Content.Load<Texture2D>("npcs"));
+            NpcPackage.Initialize(Content.Load<Texture2D>("npcs"), Content.Load<Texture2D>("Ui/ui"));
             Chat.Initialize(Content.Load<Texture2D>("Ui/chat"));
             Lighting.LoadContent(GraphicsDevice);
 
@@ -178,7 +177,7 @@ namespace Blueprint
 
             Map.Update(Control, Player.Inventory.Quickbar, Camera, Lighting, Player);
             Map.DroppedItems.Update(Map, Player);
-            NpcPackage.Update(Map, Player, Control, Camera);
+            NpcPackage.Update(Map, Player, Control, Camera, font);
             WeaponPackage.Update(Control, Camera, Player, NpcPackage, Ui.FloatingTexts, ref Map);
             Ui.Update();
 
@@ -212,7 +211,7 @@ namespace Blueprint
             {
                 // Pathfind
                 Point npc = new Point(NpcPackage.ActiveNpcs[0].Movement.Area.X / 24, NpcPackage.ActiveNpcs[0].Movement.Area.Y / 24);
-                NpcPackage.ActiveNpcs[0].CurrentPath = Player.Movement.Pathfind(npc, new Point(Control.AtBlockX, Control.AtBlockY), Map);
+                NpcPackage.ActiveNpcs[0].CurrentPath = Player.Movement.Pathfind(npc, new Point(Control.AtTileX, Control.AtTileY), Map);
                 NpcPackage.ActiveNpcs[0].CurrentDestination = Point.Zero;
             }
 
@@ -255,6 +254,7 @@ namespace Blueprint
             if (Server != null) { Server.Draw(altBatch, Camera); }
             if (Client != null) { Client.Draw(altBatch, Camera); }
             Ui.Draw(altBatch, Camera, font);
+            NpcPackage.Interaction.Draw(altBatch, font, Camera, NpcPackage.UiTexture, NpcPackage.NpcTexture);
             altBatch.Draw(Cursor, new Rectangle(Control.currentMouse.X, Control.currentMouse.Y, 20, 20), new Rectangle(0, 0, 24, 24), Color.White);
 
             if (NpcPackage.ActiveNpcs[0].CurrentPath != null)
@@ -265,6 +265,28 @@ namespace Blueprint
                 }
                 altBatch.Draw(Wallpaper, Camera.FromRectangle(new Rectangle(NpcPackage.ActiveNpcs[0].CurrentDestination.X * 24,  NpcPackage.ActiveNpcs[0].CurrentDestination.Y * 24, 24,24)), Color.Red);
             }
+
+            #region Previews
+
+            // preview
+            if (Map.Entities.Preview != null)
+            {
+                EntityType type = Map.Entities.getType(Map.Entities.Preview.Type);
+                Color preview_color = new Color((byte)200, (byte)200, (byte)200, (byte)100);
+                if (type.Function == EntityType.EntityFunction.Door)
+                {
+                    if(Map.Entities.Preview.Solid)
+                        altBatch.Draw(type.Sprite, Camera.FromRectangle(Map.Entities.Preview.Area), new Rectangle(0,0, type.Sprite.Width / 2, type.Sprite.Height), preview_color);
+                    else
+                        altBatch.Draw(type.Sprite, Camera.FromRectangle(Map.Entities.Preview.Area), new Color((byte)100, (byte)100, (byte)100, (byte)100));
+                }
+                else
+                {
+
+                }
+            }
+
+            #endregion
 
             altBatch.End();
 

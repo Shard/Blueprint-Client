@@ -202,7 +202,7 @@ namespace Blueprint
             #endregion
 
             // Using Items
-            if (!locked_use && Selected > -1 && control.currentMouse.LeftButton == ButtonState.Pressed && control.MouseUi == false && Items.Items[Selected] != null)
+            if (!locked_use && Selected > -1 && control.currentMouse.LeftButton == ButtonState.Pressed && control.MouseLock == false && Items.Items[Selected] != null)
                 { UsingItem.Update(Items.Items[Selected].Type.Use); }
             else if(control.currentMouse.LeftButton == ButtonState.Released && control.previousMouse.LeftButton == ButtonState.Pressed){
                 // Wait up, some weapons want to finish

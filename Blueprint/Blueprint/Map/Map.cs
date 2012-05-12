@@ -4,6 +4,7 @@ using System.Net;
 using System.IO;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -70,17 +71,17 @@ namespace Blueprint
 
         }
 
-        public void Initialize( Texture2D blockTexture, Texture2D blockState, Texture2D furnitureTexture, Texture2D wallTexture, Texture2D floraTexture, Package package, Config config, GraphicsDevice graphics )
+        public void Initialize( Texture2D mapTexture, Package package, Config config, GraphicsDevice graphics, ContentManager content )
         {
 
             // Setup Liquids
-            Fluids.Initialize(SizeX, SizeY, blockState);
+            Fluids.Initialize(SizeX, SizeY, content.Load<Texture2D>("Blocks/blocks"));
 
-            BlockTexture = blockTexture;
-            BlockState = blockState;
-            WallTexture = wallTexture;
-            Entities.Initialize(furnitureTexture);
-            Flora.Initialize(this, floraTexture);
+            BlockTexture = mapTexture;
+            BlockState = content.Load<Texture2D>("Blocks/blocks");
+            WallTexture = content.Load<Texture2D>("Blocks/wall");
+            Entities.Initialize(content);
+            Flora.Initialize(this, content.Load<Texture2D>("flora"));
             // Gather Map Data
             string data = package.RemoteString("maps/manifest/" + config.MapId);
             XmlDocument xml = new XmlDocument();
@@ -180,7 +181,7 @@ namespace Blueprint
 
             // Grow Flora
             GrowCounter++;
-            if (GrowCounter > 50)
+            if (GrowCounter > 1000)
             {
                 Flora.Update(this);
                 GrowCounter = 0;
@@ -195,45 +196,45 @@ namespace Blueprint
             if (quickbar.CurrentItem != null && Geometry.Range(camera.FromRectangle(player.Movement.Area), control.MousePos) < 6)
             {
                 ItemUse use = new ItemUse(quickbar.CurrentItem.Type.Use);
-                if (use.Type == "placeentity" && CanPlaceEntity(Entities.getType(use.IntValue), control.AtBlockX, control.AtBlockY) )
+                if (use.Type == "placeentity" && CanPlaceEntity(Entities.getType(use.IntValue), control.AtTileX, control.AtTileY))
                 {
-                    Entities.Preview = new Entity(Entities.getType(int.Parse(use.Value)), control.AtBlockX, control.AtBlockY);
+                    Entities.Preview = new Entity(Entities.getType(int.Parse(use.Value)), control.AtTileX, control.AtTileY);
                 }
             }
 
             if (quickbar.UsingItem.Type == "placeblock" && Geometry.Range(camera.FromRectangle(player.Movement.Area), control.MousePos) < 6)
             {
-                if (placeBlock(control.AtBlockX, control.AtBlockY, GetBlockType(quickbar.UsingItem.IntValue)))
+                if (placeBlock(control.AtTileX, control.AtTileY, GetBlockType(quickbar.UsingItem.IntValue)))
                     { quickbar.useItem(quickbar.Selected); }
             }
 
             if (quickbar.UsingItem.Type == "placewall" && Geometry.Range(camera.FromRectangle(player.Movement.Area), control.MousePos) < 6)
             {
-                if (placeWall(control.AtBlockX, control.AtBlockY, GetWallType(quickbar.UsingItem.IntValue)))
+                if (placeWall(control.AtTileX, control.AtTileY, GetWallType(quickbar.UsingItem.IntValue)))
                     { quickbar.useItem(quickbar.Selected); }
             }
 
             if (quickbar.UsingItem.Type == "mineblock" && Geometry.Range(camera.FromRectangle(player.Movement.Area), control.MousePos) < 6)
             {
-                if (mineBlock(control.AtBlockX, control.AtBlockY))
+                if (mineBlock(control.AtTileX, control.AtTileY))
                     { quickbar.useItem(quickbar.Selected); }
             }
 
             if (quickbar.UsingItem.Type == "removewall" && Geometry.Range(camera.FromRectangle(player.Movement.Area), control.MousePos) < 6)
             {
-                if (RemoveWall(control.AtBlockX, control.AtBlockY))
+                if (RemoveWall(control.AtTileX, control.AtTileY))
                 { quickbar.useItem(quickbar.Selected); }
             }
 
-            if (quickbar.UsingItem.Type == "placeentity" && Geometry.Range(camera.FromRectangle(player.Movement.Area), control.MousePos) < 6 && CanPlaceEntity(Entities.getType(quickbar.UsingItem.IntValue), control.AtBlockX, control.AtBlockY))
+            if (quickbar.UsingItem.Type == "placeentity" && Geometry.Range(camera.FromRectangle(player.Movement.Area), control.MousePos) < 6 && CanPlaceEntity(Entities.getType(quickbar.UsingItem.IntValue), control.AtTileX, control.AtTileY))
             {
-                if( Entities.Add(control.AtBlockX, control.AtBlockY, quickbar.UsingItem.IntValue) )
+                if( Entities.Add(control.AtTileX, control.AtTileY, quickbar.UsingItem.IntValue) )
                     { quickbar.useItem(quickbar.Selected); }
             }
 
             if (quickbar.UsingItem.Type == "removeentity" && Geometry.Range(camera.FromRectangle(player.Movement.Area), control.MousePos) < 6)
             {
-                if( Entities.Damage(control.AtBlockX, control.AtBlockY))
+                if( Entities.Damage(control.AtTileX, control.AtTileY))
                     { quickbar.useItem(quickbar.Selected); }
             }
 
@@ -601,8 +602,18 @@ namespace Blueprint
             {
                 for (int y_upto = y; y_upto > y - type.Height; y_upto--)
                 {
+                    if (!inBounds(x_upto, y_upto)) { continue; }
                     if (Blocks[x_upto, y_upto] != null) { return false; }
+                    if (Fluids.Water.Blocks[x_upto, y_upto] != 0) { return false; }
+                    if (Flora.Flora[x_upto, y_upto] != null) { return false; }
                 }
+            }
+
+            Rectangle rect = new Rectangle(x * 24, y * 24, type.Width * 24, type.Height * 24);
+            foreach (Entity entity in Entities.Entities)
+            {
+                if (entity.Area.Intersects(rect))
+                    return false;
             }
 
             return true;
