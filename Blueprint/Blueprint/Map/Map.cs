@@ -244,9 +244,14 @@ namespace Blueprint
 
             lighting.ClearShadows();
 
-            for (int x = 0; x < 100; x++)
+            int startx = (int)MathHelper.Clamp(camera.X * -1 / 24f, 0, this.SizeX);
+            int endx = startx + camera.Width / 24;
+            int starty = (int)MathHelper.Clamp(camera.Y * -1 / 24f, 0, this.SizeY);
+            int endy = starty + camera.Height / 24;
+
+            for (int x = startx; x < endx; x++)
             {
-                for (int y = 0; y < 100; y++)
+                for (int y = starty; y < endy; y++)
                 {
                     if (Blocks[x, y] != null)
                     {
