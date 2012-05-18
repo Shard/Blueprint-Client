@@ -59,6 +59,11 @@ namespace Blueprint
         /// </summary>
         private string CurrentSelection;
 
+        /// <summary>
+        /// Set when there is a change in UI, allows the UI to be delayed by 1 frame to give it time for the game logic to catch up
+        /// </summary>
+        private bool SkipFrame;
+
         #endregion
 
         #region Settings
@@ -73,6 +78,8 @@ namespace Blueprint
         /// </summary>
         public float ScaleText = 0.75f;
 
+        
+
         #endregion
 
         public void Initialize()
@@ -84,6 +91,7 @@ namespace Blueprint
         {
             Npc = npc;
             State = NpcInteractionState.Intro;
+            SkipFrame = true;
         }
 
         public void End()
@@ -147,28 +155,44 @@ namespace Blueprint
         public void Draw(SpriteBatch spriteBatch, SpriteFont font, Camera camera, Texture2D uiTexture, Texture2D npcTexture)
         {
 
+            #region Other
+
+            if (SkipFrame == true)
+            {
+                SkipFrame = false;
+                return;
+            }
+
+            // Setup Dialog Box
+            Rectangle npc_area;
+            Rectangle sprite;
+            Rectangle bust_dest;
+            Rectangle bust_source;
+
+            if (State == NpcInteractionState.Intro || State == NpcInteractionState.Gossip)
+            {
+                // Setup the dialog box
+                npc_area = Npc.Movement.Area;
+                sprite = Npc.Npc.Race.DefaultSprite;
+                bust_dest = new Rectangle(CurrentHeader.X + 5, CurrentHeader.Y + CurrentHeader.Height - sprite.Height / 2, sprite.Width, sprite.Height / 2);
+                bust_source = new Rectangle(sprite.X, sprite.Y, sprite.Width, sprite.Height / 2);
+
+                // Draw the dialog box
+                spriteBatch.Draw(npcTexture, bust_dest, bust_source, Color.White); // Bust
+                TextHelper.DrawString(spriteBatch, font, Npc.Name, new Vector2(CurrentHeader.X + 20 + bust_dest.Width, CurrentHeader.Y + 10), Color.White); // Nametag
+                //spriteBatch.Draw(uiTexture, CurrentHeader, new Rectangle(50, 0, 50, 50), Color.White); // CurrentHeader gradient
+                spriteBatch.Draw(uiTexture, new Rectangle(CurrentBody.Center.X - 25, CurrentBody.Bottom, 50, 50), new Rectangle(100, 0, 50, 50), Color.White); // Spearch bubble arrow
+                spriteBatch.Draw(uiTexture, CurrentBody, new Rectangle(0, 0, 50, 50), Color.White);
+            }
+
+            #endregion
+
             #region Intro
 
             if (State == NpcInteractionState.Intro)
             {
 
-                // Setup
-                Rectangle npc_area = Npc.Movement.Area;
-                Rectangle sprite = Npc.Npc.Race.DefaultSprite;
-                Rectangle bust_dest = new Rectangle(CurrentHeader.X + 5, CurrentHeader.Y + CurrentHeader.Height - sprite.Height / 2, sprite.Width, sprite.Height / 2);
-                Rectangle bust_source = new Rectangle(sprite.X, sprite.Y, sprite.Width, sprite.Height / 2);
-                
-                spriteBatch.Draw(npcTexture, bust_dest, bust_source, Color.White); // Bust
-                TextHelper.DrawString(spriteBatch, font, Npc.Name, new Vector2(CurrentHeader.X + 20 + bust_dest.Width, CurrentHeader.Y + 10), Color.White); // Nametag
-                //spriteBatch.Draw(uiTexture, CurrentHeader, new Rectangle(50, 0, 50, 50), Color.White); // CurrentHeader gradient
-                spriteBatch.Draw(uiTexture, new Rectangle(CurrentBody.Center.X - 25, CurrentBody.Bottom, 50,50), new Rectangle(100,0,50,50), Color.White); // Spearch bubble arrow
-
-
-                // Body
-
-                spriteBatch.Draw(uiTexture, CurrentBody, new Rectangle(0, 0, 50, 50), Color.White);
                 TextHelper.DrawString(spriteBatch, font, CurrentText, new Vector2(CurrentBody.X + 10, CurrentBody.Y + 10), Color.White, 0.75f, width_wrap: 330);
-                
 
                 // Footer actions
                 Vector2 footer_offset = new Vector2(CurrentBody.X + 10, CurrentBody.Y + Height - 25);

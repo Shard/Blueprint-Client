@@ -53,7 +53,7 @@ namespace Blueprint
 
         private int GrowCounter;
 
-        public Map(int width = 1000, int height = 500)
+        public Map(int width = 900, int height = 500)
         {
 
             // Init
@@ -249,9 +249,9 @@ namespace Blueprint
             int starty = (int)MathHelper.Clamp(camera.Y * -1 / 24f, 0, this.SizeY);
             int endy = starty + camera.Height / 24;
 
-            for (int x = startx; x < endx; x++)
+            for (int x = startx; x <= endx + 2; x++)
             {
-                for (int y = starty; y < endy; y++)
+                for (int y = starty; y <= endy; y++)
                 {
                     if (Blocks[x, y] != null)
                     {
