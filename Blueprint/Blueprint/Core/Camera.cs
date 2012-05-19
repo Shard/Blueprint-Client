@@ -6,6 +6,9 @@ namespace Blueprint
 {
     class Camera
     {
+
+        #region Variables
+
         /// <summary>
         /// The X offset of the camera relative to the upper left of the canvas
         /// </summary>
@@ -26,6 +29,18 @@ namespace Blueprint
         /// </summary>
         public int Height;
 
+        /// <summary>
+        /// The maximun length of the deadzone in each direction
+        /// </summary>
+        private float MaxDeadzone = 6f;
+
+        /// <summary>
+        /// The current deadzone based on the x axis
+        /// </summary>
+        private float Deadzone;
+
+        #endregion
+
         public Camera(GraphicsDevice graphics, Player player)
         {
             Width = graphics.Viewport.Width;
@@ -40,6 +55,24 @@ namespace Blueprint
         /// <param name="movement"></param>
         public void Update( Vector2 movement )
         {
+
+            if (movement.X > 0 && Deadzone < MaxDeadzone)
+            {
+                Deadzone += movement.X;
+                if (Deadzone > MaxDeadzone)
+                    { movement.X = Deadzone - MaxDeadzone; Deadzone = MaxDeadzone; }
+                else
+                    movement.X = 0;
+            }
+            else if(movement.X < 0 && Deadzone > MaxDeadzone * -1)
+            {
+                Deadzone += movement.X;
+                if (Deadzone < MaxDeadzone * -1)
+                    { movement.X = Deadzone - MaxDeadzone * -1; Deadzone = MaxDeadzone * -1; }
+                else
+                    movement.X = 0;
+            }
+
             X -= movement.X;
             Y -= movement.Y;
         }

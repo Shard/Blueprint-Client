@@ -18,37 +18,117 @@ namespace Blueprint
     public class BlueprintGame : Microsoft.Xna.Framework.Game
     {
 
+
+        #region Graphics
+
+        /// <summary>
+        /// The graphics device object
+        /// </summary>
+        GraphicsDeviceManager graphics;
+
+        /// <summary>
+        /// The sprite batch that will have shadows applied to it
+        /// </summary>
+        SpriteBatch WorldBatch;
+
+        /// <summary>
+        /// The sprite batch that will not have shadows applied to
+        /// </summary>
+        SpriteBatch UiBatch;
+
+        #endregion
+
+        #region Core Subclasses
+
+        /// <summary>
+        /// The loading subclass manages the loading screen and before it is ready it will take control of the game loop
+        /// </summary>
         Loading Loading;
 
-        GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
-        SpriteBatch altBatch;
+        /// <summary>
+        /// Handles and contains many configuration options
+        /// </summary>
+        Config Config;
 
-        Player Player; // The play that is currently being played
-        Map Map; // The current map the player is on
-        ItemPackage ItemPackage; // A collection of every item avaliable
-        Chat Chat; // Manages the chatting interface
-        Config Config; // Handles argument parsing and other core functions key to making the game run
-        Server Server; // If client is hosting, provides functions to host a server
-        Client Client; //If client is joining, provides function to communicate with a server
-        Package Package; 
+        /// <summary>
+        /// If user is hosting, provides functions to host a server
+        /// </summary>
+        Server Server;
+
+        /// <summary>
+        /// If user is joining, provides function to communicate with a server
+        /// </summary>
+        Client Client;
+
+        /// <summary>
+        /// The package subclass contains functions for gathering assets
+        /// </summary>
+        Package Package;
+
+        /// <summary>
+        /// The control class contains many essential functions and variables related to user input
+        /// </summary>
         Control Control;
-        WeaponPackage WeaponPackage;
-        NpcPackage NpcPackage;
+
+        /// <summary>
+        /// Not sure to do with the ui class atm
+        /// </summary>
         Ui.Ui Ui;
 
-        Camera Camera; // The camera
+        /// <summary>
+        /// Handles all of the lighting effects
+        /// </summary>
+        Lighting Lighting;
 
-        SpriteFont font; // The main font used
-        Texture2D Cursor; // Cursor Texture
+        /// <summary>
+        /// Handles everything related to camera positioning
+        /// </summary>
+        Camera Camera;
+
+        #endregion
+
+        #region Game Subclasses
+
+        /// <summary>
+        /// The player that is current being played
+        /// </summary>
+        Player Player;
+
+        /// <summary>
+        /// The current map that is being played
+        /// </summary>
+        Map Map;
+
+        /// <summary>
+        /// Contains all of the chat functionality
+        /// </summary>
+        Chat Chat;
+
+        /// <summary>
+        /// Contains All weapons 
+        /// </summary>
+        WeaponPackage WeaponPackage;
+        NpcPackage NpcPackage;
+        ItemPackage ItemPackage; // A collection of every item avaliable
+
+        #endregion
+
+        #region Assets
+
+        SpriteFont font; 
+        Texture2D Cursor;
         Texture2D Wallpaper;
         SoundEffect ShotgunSound;
 
-        Lighting Lighting;
+        #endregion
+
+        #region Debug
 
         float ElapsedTime;
         int ElapsedFrames;
         int Fps;
+
+        #endregion
 
         public BlueprintGame(string[] args)
         {
@@ -138,8 +218,8 @@ namespace Blueprint
             Chat.Initialize(Content.Load<Texture2D>("Ui/chat"));
             Lighting.LoadContent(GraphicsDevice);
 
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-            altBatch = new SpriteBatch(GraphicsDevice);
+            WorldBatch = new SpriteBatch(GraphicsDevice);
+            UiBatch = new SpriteBatch(GraphicsDevice);
 
             if (Config.Hosting) { Server = new Server(Config); Server.Initialize(Content.Load<Texture2D>("player"), Content.Load<Texture2D>("Ui/bars")); } else { Server = null; }
             if (Config.Join != null) { Client = new Client(Config); Client.Initialize(Content.Load<Texture2D>("player"), Content.Load<Texture2D>("Ui/bars")); } else { Client = null; }
@@ -259,7 +339,7 @@ namespace Blueprint
             // Loading
             if (Loading.IsLoading)
             {
-                Loading.Draw(spriteBatch, GraphicsDevice, font);
+                Loading.Draw(WorldBatch, GraphicsDevice, font);
                 base.Draw(gameTime);
                 return;
             }
@@ -267,39 +347,39 @@ namespace Blueprint
             // Setup
             Lighting.Draw(GraphicsDevice);
             GraphicsDevice.Clear(Color.CornflowerBlue);
-            spriteBatch.Begin();
+            WorldBatch.Begin();
             
             // Before Shadows
-            spriteBatch.Draw(Wallpaper, GraphicsDevice.Viewport.TitleSafeArea, GraphicsDevice.Viewport.TitleSafeArea, Color.White);
-            Map.DroppedItems.Draw(spriteBatch, Camera, ItemPackage);
-            WeaponPackage.Draw(spriteBatch, Camera);
-            NpcPackage.Draw(spriteBatch, Camera, font);
-            Map.Draw(spriteBatch, Camera);
-            Player.Draw(spriteBatch, Camera);
-            Map.Fluids.Draw(spriteBatch, Camera);
+            WorldBatch.Draw(Wallpaper, GraphicsDevice.Viewport.TitleSafeArea, GraphicsDevice.Viewport.TitleSafeArea, Color.White);
+            Map.DroppedItems.Draw(WorldBatch, Camera, ItemPackage);
+            WeaponPackage.Draw(WorldBatch, Camera);
+            NpcPackage.Draw(WorldBatch, Camera, font);
+            Map.Draw(WorldBatch, Camera);
+            Player.Draw(WorldBatch, Camera);
+            Map.Fluids.Draw(WorldBatch, Camera);
             // Shadows
-            spriteBatch.End();
+            WorldBatch.End();
             Lighting.PostDraw(gameTime, GraphicsDevice);
-            altBatch.Begin();
+            UiBatch.Begin();
 
             // After Shadows
-            Player.DrawUi(altBatch, font);
-            Player.Inventory.Draw(altBatch, Control, font, ItemPackage);
-            Chat.Draw(altBatch, font, gameTime);
-            if (Server != null) { Server.Draw(altBatch, Camera); }
-            if (Client != null) { Client.Draw(altBatch, Camera); }
-            Ui.Draw(altBatch, Camera, font);
-            NpcPackage.Interaction.Draw(altBatch, font, Camera, NpcPackage.UiTexture, NpcPackage.NpcTexture);
-            Control.Draw(altBatch);
+            Player.DrawUi(UiBatch, font);
+            Player.Inventory.Draw(UiBatch, Control, font, ItemPackage);
+            Chat.Draw(UiBatch, font, gameTime);
+            if (Server != null) { Server.Draw(UiBatch, Camera); }
+            if (Client != null) { Client.Draw(UiBatch, Camera); }
+            Ui.Draw(UiBatch, Camera, font);
+            NpcPackage.Interaction.Draw(UiBatch, font, Camera, NpcPackage.UiTexture, NpcPackage.NpcTexture);
+            Control.Draw(UiBatch);
 
             #region debug
             if (NpcPackage.ActiveNpcs[0].CurrentPath != null)
             {
                 foreach (Point point in NpcPackage.ActiveNpcs[0].CurrentPath)
                 {
-                    altBatch.Draw(Wallpaper, Camera.FromRectangle(new Rectangle(point.X * 24, point.Y * 24, 24, 24)), Color.Green);
+                    UiBatch.Draw(Wallpaper, Camera.FromRectangle(new Rectangle(point.X * 24, point.Y * 24, 24, 24)), Color.Green);
                 }
-                altBatch.Draw(Wallpaper, Camera.FromRectangle(new Rectangle(NpcPackage.ActiveNpcs[0].CurrentDestination.X * 24,  NpcPackage.ActiveNpcs[0].CurrentDestination.Y * 24, 24,24)), Color.Red);
+                UiBatch.Draw(Wallpaper, Camera.FromRectangle(new Rectangle(NpcPackage.ActiveNpcs[0].CurrentDestination.X * 24,  NpcPackage.ActiveNpcs[0].CurrentDestination.Y * 24, 24,24)), Color.Red);
             }
             #endregion
 
@@ -313,9 +393,9 @@ namespace Blueprint
                 if (type.Function == EntityType.EntityFunction.Door)
                 {
                     if(Map.Entities.Preview.Solid)
-                        altBatch.Draw(type.Sprite, Camera.FromRectangle(Map.Entities.Preview.Area), new Rectangle(0,0, type.Sprite.Width / 2, type.Sprite.Height), preview_color);
+                        UiBatch.Draw(type.Sprite, Camera.FromRectangle(Map.Entities.Preview.Area), new Rectangle(0,0, type.Sprite.Width / 2, type.Sprite.Height), preview_color);
                     else
-                        altBatch.Draw(type.Sprite, Camera.FromRectangle(Map.Entities.Preview.Area), new Color((byte)100, (byte)100, (byte)100, (byte)100));
+                        UiBatch.Draw(type.Sprite, Camera.FromRectangle(Map.Entities.Preview.Area), new Color((byte)100, (byte)100, (byte)100, (byte)100));
                 }
                 else
                 {
@@ -325,9 +405,9 @@ namespace Blueprint
 
             #endregion
 
-            TextHelper.DrawString(altBatch, font, Fps.ToString(), new Vector2(20, 20), Color.White);
+            TextHelper.DrawString(UiBatch, font, Fps.ToString(), new Vector2(20, 20), Color.White);
 
-            altBatch.End();
+            UiBatch.End();
 
             
             base.Draw(gameTime);

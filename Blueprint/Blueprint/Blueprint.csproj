@@ -113,8 +113,9 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\Geometry.cs" />
-    <Compile Include="Core\TextHelper.cs" />
+    <Compile Include="Core\Hitbox.cs" />
+    <Compile Include="Core\Lib\Geometry.cs" />
+    <Compile Include="Core\Lib\TextHelper.cs" />
     <Compile Include="Events\Event.cs" />
     <Compile Include="Events\EventAction.cs" />
     <Compile Include="Events\EventCondition.cs" />
@@ -125,7 +126,7 @@
     <Compile Include="Items\Crafting\RecipieRequirement.cs" />
     <Compile Include="Items\Weapons\LiveWeapons\LiveProjectile.cs" />
     <Compile Include="Items\Weapons\LiveWeapons\LiveSword.cs" />
-    <Compile Include="Lighting.cs" />
+    <Compile Include="Map\Lighting\Lighting.cs" />
     <Compile Include="Map\Blocks\BlockZone.cs" />
     <Compile Include="Map\Flora\Flora.cs" />
     <Compile Include="Map\Flora\FloraPackage.cs" />
@@ -163,7 +164,7 @@
     <Compile Include="Items\Bag.cs" />
     <Compile Include="Items\DroppedItemCollection.cs" />
     <Compile Include="Items\ItemUse.cs" />
-    <Compile Include="Movement.cs" />
+    <Compile Include="Core\Movement.cs" />
     <Compile Include="Net\Chat.cs" />
     <Compile Include="Core\Camera.cs" />
     <Compile Include="Net\ChatWriter.cs" />
@@ -193,7 +194,7 @@
     <Compile Include="Npc\Race\NpcRaceDummy.cs" />
     <Compile Include="Npc\Shop.cs" />
     <Compile Include="Npc\ShopItem.cs" />
-    <Compile Include="Player.cs" />
+    <Compile Include="Player\Player.cs" />
     <Compile Include="Player\Animation.cs" />
     <Compile Include="Player\AnimationFrame.cs" />
     <Compile Include="Player\Animations.cs" />
@@ -254,7 +255,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Buffs\" />
-    <Folder Include="Map\Lighting\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="GameThumbnail.png" />
