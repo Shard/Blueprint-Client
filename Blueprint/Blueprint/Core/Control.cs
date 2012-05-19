@@ -75,7 +75,19 @@ namespace Blueprint
         /// <summary>
         ///  If true, the mouse is affecting ui and thus should no propogate to the game canvas
         /// </summary>
-        public bool MouseLock;
+        public bool MouseLock
+        {
+            set
+            {
+                if (value == true) { MouseLockCounter = 3; }
+                _MouseLock = value;
+            }
+            get { return _MouseLock; }
+        }
+
+        private bool _MouseLock;
+
+        private byte MouseLockCounter;
 
         #endregion
 
@@ -105,6 +117,9 @@ namespace Blueprint
         /// </summary>
         private Texture2D Texture;
 
+        /// <summary>
+        /// The source rectangle of the current mouse sprite
+        /// </summary>
         private Rectangle Sprite
         {
             get { switch (State) {
@@ -139,6 +154,11 @@ namespace Blueprint
 
             AtTileX = (currentMouse.X - (int)camera.X) / 24;
             AtTileY = (currentMouse.Y - (int)camera.Y) / 24;
+
+            if (MouseLock == true && MouseLockCounter > 0)
+                MouseLockCounter--;
+            else if (MouseLock == true)
+                MouseLock = false;
 
         }
 

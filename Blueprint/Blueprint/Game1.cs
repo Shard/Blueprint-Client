@@ -46,6 +46,9 @@ namespace Blueprint
 
         Lighting Lighting;
 
+        float ElapsedTime;
+        int ElapsedFrames;
+        int Fps;
 
         public BlueprintGame(string[] args)
         {
@@ -150,6 +153,15 @@ namespace Blueprint
 
         protected override void Update(GameTime gameTime)
         {
+            ElapsedTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            ElapsedFrames++;
+
+            if (ElapsedTime > 1)
+            {
+                Fps = ElapsedFrames;
+                ElapsedFrames = 0;
+                ElapsedTime = 0;
+            }
 
             if (Loading.IsLoading)
             {
@@ -312,6 +324,8 @@ namespace Blueprint
             }
 
             #endregion
+
+            TextHelper.DrawString(altBatch, font, Fps.ToString(), new Vector2(20, 20), Color.White);
 
             altBatch.End();
 

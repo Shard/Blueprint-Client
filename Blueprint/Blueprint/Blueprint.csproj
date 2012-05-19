@@ -158,6 +158,7 @@
     <Compile Include="Npc\Interaction\NpcDialog.cs" />
     <Compile Include="Npc\Interaction\NpcDialogLine.cs" />
     <Compile Include="Npc\Interaction\NpcInteraction.cs" />
+    <Compile Include="Npc\Interaction\NpcInteractionAction.cs" />
     <Compile Include="Player\Intention.cs" />
     <Compile Include="Items\Bag.cs" />
     <Compile Include="Items\DroppedItemCollection.cs" />

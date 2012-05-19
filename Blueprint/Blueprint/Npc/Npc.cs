@@ -15,6 +15,7 @@ namespace Blueprint
         public NpcAi Ai; // The Npc's AI
         public List<DropChance> Drops; // Possible Items that an NPC can drop
         public bool Friendly;
+        public NpcDialog Dialog;
 
         public Npc(string name, NpcRace race, NpcAi ai)
         {
@@ -24,6 +25,8 @@ namespace Blueprint
             Weapon = null;
             Shop = null;
             Drops = new List<DropChance>();
+            Dialog = new NpcDialog();
+            Dialog.Add("Intro text", NpcInteraction.NpcInteractionState.Intro);
             Friendly = true;
             Health = Race.Health;
         }

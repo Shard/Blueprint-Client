@@ -8,6 +8,8 @@ namespace Blueprint
     class NpcInteraction
     {
 
+        public List<NpcInteractionAction> Actions;
+
         public enum NpcInteractionState
         {
             None,
@@ -87,13 +89,21 @@ namespace Blueprint
 
         }
 
+        /// <summary>
+        /// Called at the start of a conversation between the player and an npc
+        /// </summary>
+        /// <param name="npc"></param>
         public void Start(ActiveNpc npc)
         {
             Npc = npc;
             State = NpcInteractionState.Intro;
+            CurrentText = npc.Npc.Dialog.Get(State).Line;
             SkipFrame = true;
         }
 
+        /// <summary>
+        /// End the conversation
+        /// </summary>
         public void End()
         {
             Npc = null;
@@ -103,7 +113,7 @@ namespace Blueprint
         public void Update(Camera camera, Control control, SpriteFont font)
         {
 
-            if (State == NpcInteractionState.Intro)
+            if (State == NpcInteractionState.Intro || State == NpcInteractionState.Gossip)
             {
                 // Calculate dialog area
                 CurrentLines = TextHelper.SplitWrap(CurrentText, 330, font, 0.75f).Length;
@@ -113,8 +123,10 @@ namespace Blueprint
 
                 if (control.MousePos.Intersects(CurrentBody))
                     control.MouseLock = true;
-                else
-                    control.MouseLock = false;
+            }
+
+            if (State == NpcInteractionState.Intro)
+            {
 
                 // Actions
                 Vector2 footer_offset = new Vector2(CurrentBody.X + 10, CurrentBody.Y + Height - 25);
@@ -135,7 +147,7 @@ namespace Blueprint
                 if (control.MousePos.Intersects(new Rectangle((int)footer_offset.X, (int)footer_offset.Y, (int)current_font.X, (int)current_font.Y)))
                 {
                     CurrentSelection = "Gossip";
-                    if (control.Click()) { State = NpcInteractionState.Gossip; }
+                    if (control.Click()) { State = NpcInteractionState.Gossip; CurrentText = Npc.Npc.Dialog.Get(State).Line; }
                 }
                 footer_offset.X += (int)(font.MeasureString("Gossip").X * 0.7f) + 10;
 
@@ -220,7 +232,7 @@ namespace Blueprint
 
             if (State == NpcInteractionState.Gossip)
             {
-                TextHelper.DrawString(spriteBatch, font, "Gossip open", new Vector2(100, 100), Color.White);
+                TextHelper.DrawString(spriteBatch, font, CurrentText, new Vector2(CurrentBody.X + 10, CurrentBody.Y + 10), Color.White, 0.75f, width_wrap: 330);
             }
 
             #endregion

@@ -37,8 +37,19 @@ namespace Blueprint
             return lines.ToArray();
         }
 
-        public static void DrawString(SpriteBatch spriteBatch, SpriteFont font, string text, Vector2 position, Color color, float scale = 1f, bool shadow = true, string align = "left", Camera camera = null, int width_wrap = 0)
-        {
+        public static void DrawString(
+            SpriteBatch spriteBatch,
+            SpriteFont font,
+            string text,
+            Vector2 position,
+            Color color,
+            float scale = 1f,
+            bool shadow = true,
+            string align = "left",
+            string valign = "top",
+            Camera camera = null,
+            int width_wrap = 0
+        ){
 
             if (width_wrap > 0)
             {
@@ -47,7 +58,7 @@ namespace Blueprint
                 int y_offset = 0;
                 foreach (string line in lines)
                 {
-                    DrawString(spriteBatch, font, line, new Vector2(position.X, position.Y + y_offset), color, scale, shadow, align, camera);
+                    DrawString(spriteBatch, font, line, new Vector2(position.X, position.Y + y_offset), color, scale, shadow, align, camera:camera);
                     y_offset += (int)measure.Y -4;
                 }
                 return;
@@ -55,13 +66,18 @@ namespace Blueprint
 
             // Camera offset
             if (camera != null)
-            {
-                position.X -= camera.X;
-                position.Y -= camera.Y;
-            }
+                position -= camera.ToVector2();
+
             // Alignment
             if (align == "right")
-                { position.X -= font.MeasureString(text).X * scale; }
+                position.X -= font.MeasureString(text).X * scale;
+            else if (align == "center")
+                position.X -= (font.MeasureString(text).X * scale) * 0.5f;
+
+            if (valign == "center")
+                position.Y -= (font.MeasureString(text).Y * scale) * 0.5f;
+            else if (valign == "bottom")
+                position.Y -= font.MeasureString(text).Y * scale;
 
             if (shadow)
             {

@@ -45,9 +45,13 @@ namespace Blueprint
 
             // Npcs
             Npcs[0] = new Npc("The guide", Races[0], Ai[1]);
+            Npcs[0].Dialog.Add("Hello {playername}", NpcInteraction.NpcInteractionState.Intro);
+            Npcs[0].Dialog.Add("Here is some interesting information {playername}", NpcInteraction.NpcInteractionState.Gossip);
+
 
             // Active Npcs
-            ActiveNpcs.Add(new ActiveNpc(Npcs[0], new Vector2(100,-50)));
+            ActiveNpc npc = new ActiveNpc(Npcs[0], new Vector2(200, -50));
+            ActiveNpcs.Add(npc);
  
         }
 

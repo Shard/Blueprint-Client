@@ -11,7 +11,7 @@ namespace Blueprint
         public NpcRaceDummy()
         {
             Name = "Dummy Race";
-            Health = 100;
+            Health = 1000;
             Mana = 100;
             DefaultSprite = new Rectangle(0, 0, 25, 48);
         }

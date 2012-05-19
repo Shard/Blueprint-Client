@@ -241,7 +241,7 @@ namespace Blueprint
             #endregion
 
             #region Lighting
-
+            
             lighting.ClearShadows();
 
             int startx = (int)MathHelper.Clamp(camera.X * -1 / 24f, 0, this.SizeX);
@@ -263,7 +263,7 @@ namespace Blueprint
                     }
                 }
             }
-
+            
             #endregion
 
         }
