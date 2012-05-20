@@ -4,6 +4,10 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Blueprint
 {
+
+    /// <summary>
+    /// The camera class provides functionality for and handles the camera
+    /// </summary>
     class Camera
     {
 
@@ -56,6 +60,7 @@ namespace Blueprint
         public void Update( Vector2 movement )
         {
 
+            // Deadzone calculation
             if (movement.X > 0 && Deadzone < MaxDeadzone)
             {
                 Deadzone += movement.X;

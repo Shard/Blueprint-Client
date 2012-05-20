@@ -134,11 +134,13 @@ namespace Blueprint
         public EntityType getType(int id)
         {
             return Types[0];
+            /*
             for (int i = 0; i < Types.Length; i++)
             {
                 if (Types[i] != null && Types[i].Id == id) { return Types[i]; }
             }
             return null;
+             */
         }
 
         public Entity Get(int x, int y)

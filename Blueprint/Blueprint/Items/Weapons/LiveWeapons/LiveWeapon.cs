@@ -4,6 +4,10 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Blueprint
 {
+
+    /// <summary>
+    /// Base class inherited by weapons
+    /// </summary>
     class LiveWeapon
     {
 

@@ -13,6 +13,8 @@ namespace Blueprint
     class Map
     {
 
+        #region SubClasses
+
         /// <summary>Array of all the blocks on the map</summary>
         public Block[,] Blocks;
 
@@ -36,9 +38,17 @@ namespace Blueprint
         /// <summary>Collection of all the fluids on the map</summary>
         public Fluid.FluidCollection Fluids;
 
+        #endregion
+
+        #region Textures and assets
+
         public Texture2D BlockTexture;
         public Texture2D BlockState;
         public Texture2D WallTexture;
+
+        #endregion
+
+        #region Metrics
 
         /// <summary>Defines how wide the map is in terms of blocks</summary>
         public int SizeX;
@@ -51,6 +61,11 @@ namespace Blueprint
         /// </summary>
         public Vector2 Spawn;
 
+        #endregion
+
+        /// <summary>
+        /// Used for delaying the grow function in the flora subclass
+        /// </summary>
         private int GrowCounter;
 
         public Map(int width = 900, int height = 500)
@@ -88,7 +103,6 @@ namespace Blueprint
             xml.LoadXml(data);
 
 
-            // Parse Map Data into types and blocks
 
             Spawn = new Vector2(Int32.Parse(xml.DocumentElement.Attributes["spawnx"].Value) * 24, Int32.Parse(xml.DocumentElement.Attributes["spawny"].Value) * 24);
 
@@ -402,7 +416,9 @@ namespace Blueprint
             if (getBlock(x, y + 1) != null) { bottom = false; }
             if (getBlock(x - 1, y) != null) { left = false; }
 
-            if(top == true && right == false && bottom == false && left == false){
+            if (top == false && right == false && bottom == false && left == false) {
+                frame = 6;
+            } else if(top == true && right == false && bottom == false && left == false){
 				frame = 1;
 			} else if(top == false && right == true && bottom == false && left == false){
 				frame = 1;
@@ -442,8 +458,6 @@ namespace Blueprint
 				rotate = 90;
 			} else if(top == true && right == true && bottom == true && left == true){
                 frame = 5;
-			} else if(top == false && right == false && bottom == false && left == false){
-                frame = 6;
 			} else { frame = 1; }
 
             return new BlockFrame(frame, rotate);

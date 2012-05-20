@@ -21,7 +21,7 @@ namespace Blueprint
             {
                 for (int y = rect.Y; y < rect.Y + rect.Height; y++)
                 {
-                    if(Blocks.IndexOf(new Vector2(x,y)) != null)
+                    if(Blocks.IndexOf(new Vector2(x,y)) != 0)
                     {
                         if (!add) { Blocks.Remove(new Vector2(x, y)); }
                     } else {

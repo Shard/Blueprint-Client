@@ -16,7 +16,6 @@ namespace Blueprint
 
         // Data
         public List<Player> Players;
-        string Command;
 
         public void HandleData(NetIncomingMessage msg)
         {

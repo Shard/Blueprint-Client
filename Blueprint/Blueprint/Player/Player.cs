@@ -35,19 +35,9 @@ namespace Blueprint
         public int Health; // Current Health of the player
 
         /// <summary>
-        /// The current max health of the player
-        /// </summary>
-        public int MaxHealth;
-
-        /// <summary>
         /// The current mana of the player
         /// </summary>
         public int Mana;
-
-        /// <summary>
-        /// The current max mana of the player
-        /// </summary>
-        public int MaxMana;
 
         /// <summary>
         /// If is above 0 the player is invunerable, 

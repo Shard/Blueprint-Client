@@ -14,6 +14,7 @@ namespace Blueprint
         public List<dynamic> LiveWeapons;
         public Texture2D WeaponTexture;
         public Texture2D ArrowTexture;
+        private Player Player;
 
         public WeaponPackage()
         {
@@ -75,6 +76,7 @@ namespace Blueprint
                         use.Charge = 0;
                         LiveWeapons.Add(liveWeapon);
                         player.Inventory.Quickbar.IsUsingItem = false;
+                        Player = player;
                     }
                 }
             }
@@ -196,6 +198,17 @@ namespace Blueprint
         public void Draw(SpriteBatch spriteBatch, Camera camera)
         {
 
+            #region Draw held animations
+
+            if (Player != null)
+            {
+                spriteBatch.Draw(WeaponTexture, Player.Movement.Area, Color.White);
+            }
+
+            #endregion
+
+            #region Draw live weapons
+
             foreach (var weapon in LiveWeapons)
             {
                 if (weapon.Weapon.Type.Name == "Sword")
@@ -212,9 +225,10 @@ namespace Blueprint
                 {
                     float angle = (float)Geometry.Angle(Vector2.Zero, weapon.Movement.Velocity);
                     spriteBatch.Draw(ArrowTexture, camera.FromRectangle(weapon.Movement.Area), ArrowTexture.Bounds, Color.White, MathHelper.ToRadians(angle + 90f), new Vector2(weapon.Movement.Area.Width / 2, weapon.Movement.Area.Height / 2), SpriteEffects.None, 0);
-
                 }
             }
+
+            #endregion
 
         }
 

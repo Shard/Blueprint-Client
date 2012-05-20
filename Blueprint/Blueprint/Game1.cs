@@ -12,6 +12,8 @@ using Lidgren.Network;
 using Krypton;
 using Krypton.Lights;
 
+#pragma warning disable 0649
+
 namespace Blueprint
 {
 

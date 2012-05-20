@@ -8,5 +8,10 @@ namespace Blueprint
 
         public List<Recipie> Recipies;
 
+        public RecipiePackage()
+        {
+            Recipies = new List<Recipie>();
+        }
+
     }
 }

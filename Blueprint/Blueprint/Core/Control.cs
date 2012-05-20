@@ -128,8 +128,9 @@ namespace Blueprint
                 case CursorStates.Attack:
                     return new Rectangle(64,0,32,32);
                 case CursorStates.Custom:
-                case CursorStates.Interact:
                     return new Rectangle(96, 0, 32, 32);
+                case CursorStates.Interact:
+                    return new Rectangle(4 * 32, 0,32,32);
                 default:
                     return new Rectangle(0, 0, 32, 32);
             } }
