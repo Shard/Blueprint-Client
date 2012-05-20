@@ -184,6 +184,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Npcs\Races\" />
     <Folder Include="Tmp\" />
   </ItemGroup>
   <ItemGroup>
@@ -217,6 +218,13 @@
   <ItemGroup>
     <Compile Include="Weapons\sword.png">
       <Name>sword</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Npcs\Sprites\lynch.png">
+      <Name>lynch</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

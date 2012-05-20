@@ -10,6 +10,11 @@ namespace Blueprint
 
         public List<NpcInteractionAction> Actions;
 
+        #region States
+
+        /// <summary>
+        /// Enum of all avaliable npc interaction states
+        /// </summary>
         public enum NpcInteractionState
         {
             None,
@@ -17,12 +22,13 @@ namespace Blueprint
             Shop,
             Gossip
         }
-        public NpcInteractionState State;
 
         /// <summary>
-        /// The npc the current user is interacting with
+        /// The current npc animation state
         /// </summary>
-        public ActiveNpc Npc;
+        public NpcInteractionState State;
+
+        #endregion
 
         #region Ui
 
@@ -84,46 +90,32 @@ namespace Blueprint
 
         #endregion
 
-        public void Initialize()
-        {
-
-        }
-
         /// <summary>
-        /// Called at the start of a conversation between the player and an npc
+        /// The npc the current user is interacting with
         /// </summary>
-        /// <param name="npc"></param>
-        public void Start(ActiveNpc npc)
-        {
-            Npc = npc;
-            State = NpcInteractionState.Intro;
-            CurrentText = npc.Npc.Dialog.Get(State).Line;
-            SkipFrame = true;
-        }
+        public ActiveNpc Subject;
 
-        /// <summary>
-        /// End the conversation
-        /// </summary>
-        public void End()
-        {
-            Npc = null;
-            State = NpcInteractionState.None;
-        }
 
         public void Update(Camera camera, Control control, SpriteFont font)
         {
+
+            #region Setup Dialog Area
 
             if (State == NpcInteractionState.Intro || State == NpcInteractionState.Gossip)
             {
                 // Calculate dialog area
                 CurrentLines = TextHelper.SplitWrap(CurrentText, 330, font, 0.75f).Length;
-                CurrentBody = camera.FromRectangle(new Rectangle(Npc.Movement.Area.Center.X - Width / 2, Npc.Movement.Area.Top - Height - 20, Width, Height));
-                CurrentHeader = camera.FromRectangle(new Rectangle(Npc.Movement.Area.Center.X - Width / 2, Npc.Movement.Area.Top - Height - 52, Width, 32));
+                CurrentBody = camera.FromRectangle(new Rectangle(Subject.Movement.Area.Center.X - Width / 2, Subject.Movement.Area.Top - Height - 20, Width, Height));
+                CurrentHeader = camera.FromRectangle(new Rectangle(Subject.Movement.Area.Center.X - Width / 2, Subject.Movement.Area.Top - Height - 52, Width, 32));
                 Height = 30 + (int)(font.MeasureString("S").Y - 4) * (CurrentLines + 1);
 
                 if (control.MousePos.Intersects(CurrentBody))
                     control.MouseLock = true;
             }
+
+            #endregion
+
+            #region Intro
 
             if (State == NpcInteractionState.Intro)
             {
@@ -147,7 +139,7 @@ namespace Blueprint
                 if (control.MousePos.Intersects(new Rectangle((int)footer_offset.X, (int)footer_offset.Y, (int)current_font.X, (int)current_font.Y)))
                 {
                     CurrentSelection = "Gossip";
-                    if (control.Click()) { State = NpcInteractionState.Gossip; CurrentText = Npc.Npc.Dialog.Get(State).Line; }
+                    if (control.Click()) { State = NpcInteractionState.Gossip; CurrentText = Subject.Type.Dialog.Get(State).Line; }
                 }
                 footer_offset.X += (int)(font.MeasureString("Gossip").X * 0.7f) + 10;
 
@@ -162,9 +154,11 @@ namespace Blueprint
 
             }
 
+            #endregion
+
         }
 
-        public void Draw(SpriteBatch spriteBatch, SpriteFont font, Camera camera, Texture2D uiTexture, Texture2D npcTexture)
+        public void Draw(SpriteBatch spriteBatch, SpriteFont font, Camera camera, Texture2D uiTexture)
         {
 
             #region Other
@@ -184,14 +178,14 @@ namespace Blueprint
             if (State == NpcInteractionState.Intro || State == NpcInteractionState.Gossip)
             {
                 // Setup the dialog box
-                npc_area = Npc.Movement.Area;
-                sprite = Npc.Npc.Race.DefaultSprite;
+                npc_area = Subject.Movement.Area;
+                sprite = Subject.Type.Race.Animation.CurrentFrame.ToRectangle();
                 bust_dest = new Rectangle(CurrentHeader.X + 5, CurrentHeader.Y + CurrentHeader.Height - sprite.Height / 2, sprite.Width, sprite.Height / 2);
                 bust_source = new Rectangle(sprite.X, sprite.Y, sprite.Width, sprite.Height / 2);
 
                 // Draw the dialog box
-                spriteBatch.Draw(npcTexture, bust_dest, bust_source, Color.White); // Bust
-                TextHelper.DrawString(spriteBatch, font, Npc.Name, new Vector2(CurrentHeader.X + 20 + bust_dest.Width, CurrentHeader.Y + 10), Color.White); // Nametag
+                spriteBatch.Draw(Subject.Type.Race.Texture, bust_dest, bust_source, Color.White); // Bust
+                TextHelper.DrawString(spriteBatch, font, Subject.Name, new Vector2(CurrentHeader.X + 20 + bust_dest.Width, CurrentHeader.Y + 10), Color.White); // Nametag
                 //spriteBatch.Draw(uiTexture, CurrentHeader, new Rectangle(50, 0, 50, 50), Color.White); // CurrentHeader gradient
                 spriteBatch.Draw(uiTexture, new Rectangle(CurrentBody.Center.X - 25, CurrentBody.Bottom, 50, 50), new Rectangle(100, 0, 50, 50), Color.White); // Spearch bubble arrow
                 spriteBatch.Draw(uiTexture, CurrentBody, new Rectangle(0, 0, 50, 50), Color.White);
@@ -246,7 +240,31 @@ namespace Blueprint
 
             #endregion
         }
-        
+
+        #region Helper Functions
+
+        /// <summary>
+        /// Called at the start of a conversation between the player and an npc
+        /// </summary>
+        /// <param name="subject">The subject npc of the interaction</param>
+        public void Start(ActiveNpc subject)
+        {
+            Subject = subject;
+            State = NpcInteractionState.Intro;
+            CurrentText = subject.Type.Dialog.Get(State).Line;
+            SkipFrame = true;
+        }
+
+        /// <summary>
+        /// End the conversation
+        /// </summary>
+        public void End()
+        {
+            Subject = null;
+            State = NpcInteractionState.None;
+        }
+
+        #endregion
 
     }
 }

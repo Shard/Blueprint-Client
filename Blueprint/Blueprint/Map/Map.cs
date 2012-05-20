@@ -74,7 +74,7 @@ namespace Blueprint
             // Init
             SizeX = width;
             SizeY = height;
-            Types = new BlockType[50];
+            Types = new BlockType[30];
             WallTypes = new WallType[10];
             Blocks = new Block[SizeX, SizeY];
             Walls = new Wall[SizeX, SizeY];
@@ -331,6 +331,11 @@ namespace Blueprint
 
         }
 
+        /// <summary>
+        /// Attempts to discover a new "house area" at x/y
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
         public void DiscoverAreas(int x, int y)
         {
 
@@ -461,11 +466,6 @@ namespace Blueprint
 			} else { frame = 1; }
 
             return new BlockFrame(frame, rotate);
-        }
-
-        public void Pathfind(Vector2 from, Vector2 to)
-        {
-
         }
 
         /// <summary>

@@ -103,6 +103,8 @@ namespace Blueprint
         public void DrawUi(SpriteBatch spriteBatch, SpriteFont font)
         {
 
+            #region Draw Bars
+
             // Health Bar
             Rectangle rect =  new Rectangle(Inventory.Quickbar.Area.X , Inventory.Quickbar.Area.Y - 30, Inventory.Quickbar.Area.Width / 2 -2, 28);
             Vector2 textAnchor = new Vector2(Inventory.Quickbar.Area.Center.X - 8, Inventory.Quickbar.Area.Y - 24);
@@ -111,7 +113,7 @@ namespace Blueprint
             health_rect.X += Inventory.Quickbar.Area.Width / 2 - (int)( (Inventory.Quickbar.Area.Width / 2) * (float)(Health * 0.01));
 
             spriteBatch.Draw(BarsTexture, health_rect, new Rectangle(0, 56, BarsTexture.Width, 28), Color.White);
-            spriteBatch.Draw(BarsTexture, health_rect, new Rectangle(0, 0, BarsTexture.Width, 28), Color.White);
+            spriteBatch.Draw(BarsTexture, rect, new Rectangle(0, 0, BarsTexture.Width, 28), Color.White);
             TextHelper.DrawString(spriteBatch, font, Health.ToString() + "/100", textAnchor, Color.White, align: "right", scale: 0.7f);
 
             // Mana Bar
@@ -120,6 +122,8 @@ namespace Blueprint
             spriteBatch.Draw(BarsTexture, rect, new Rectangle(0, 28, BarsTexture.Width, 28), Color.White);
             spriteBatch.Draw(BarsTexture, rect, new Rectangle(0, 0, BarsTexture.Width, 28), Color.White);
             TextHelper.DrawString(spriteBatch, font, Mana.ToString() + "/100", textAnchor, Color.White, align: "left", scale: 0.7f);
+
+            #endregion
 
         }
 

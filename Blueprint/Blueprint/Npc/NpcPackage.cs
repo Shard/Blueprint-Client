@@ -1,23 +1,52 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace Blueprint
 {
+
+    /// <summary>
+    /// Contains and maintains npcs
+    /// </summary>
     class NpcPackage
     {
 
-        // Collections
+        #region Collections
+
+        /// <summary>
+        /// A list of all active npcs
+        /// </summary>
         public List<ActiveNpc> ActiveNpcs;
+
+        /// <summary>
+        /// An array of all npc races
+        /// </summary>
         public NpcRace[] Races;
+
+        /// <summary>
+        /// An array of all npc ais
+        /// </summary>
         public NpcAi[] Ai;
-        public Npc[] Npcs;
+
+        /// <summary>
+        /// An array of all Npc Types
+        /// </summary>
+        public NpcType[] Types;
+
+        /// <summary>
+        /// Handles player to npc interaction
+        /// </summary>
         public NpcInteraction Interaction;
 
+        #endregion
+
         // Other
-        public Texture2D NpcTexture;
+        /// <summary>
+        /// The ui texture, will be replaced will ui class
+        /// </summary>
         public Texture2D UiTexture;
 
         public NpcPackage()
@@ -26,31 +55,30 @@ namespace Blueprint
             ActiveNpcs = new List<ActiveNpc>();
             Ai = new NpcAi[10];
             Races = new NpcRace[10];
-            Npcs = new Npc[10];
+            Types = new NpcType[10];
 
         }
 
-        public void Initialize(Texture2D npcTexture, Texture2D uiTexture)
+        public void Initialize(ContentManager content, Package package, Texture2D uiTexture)
         {
-            NpcTexture = npcTexture;
+
             UiTexture = uiTexture;
-            Interaction.Initialize();
 
             // Ai
             Ai[0] = new NpcAiDummy();
             Ai[1] = new NpcAiChase();
 
             // Races
-            Races[0] = new NpcRaceDummy();
+            Races[0] = new NpcRace("Lynch", content.Load<Texture2D>("Npcs/Sprites/lynch"), package.LocalString("c:/blueprint/lynch.xml", false));
 
             // Npcs
-            Npcs[0] = new Npc("The guide", Races[0], Ai[1]);
-            Npcs[0].Dialog.Add("Hello {playername}", NpcInteraction.NpcInteractionState.Intro);
-            Npcs[0].Dialog.Add("Here is some interesting information {playername}", NpcInteraction.NpcInteractionState.Gossip);
+            Types[0] = new NpcType("The Lynch", Races[0], Ai[1]);
+            Types[0].Dialog.Add("Hello {playername}", NpcInteraction.NpcInteractionState.Intro);
+            Types[0].Dialog.Add("Here is some interesting information {playername}", NpcInteraction.NpcInteractionState.Gossip);
 
 
             // Active Npcs
-            ActiveNpc npc = new ActiveNpc(Npcs[0], new Vector2(200, -50));
+            ActiveNpc npc = new ActiveNpc(Types[0], new Vector2(200, -50));
             ActiveNpcs.Add(npc);
  
         }
@@ -59,7 +87,7 @@ namespace Blueprint
         {
             for (int i = 0; i < ActiveNpcs.Count; i++)
             {
-                //ActiveNpcs[i].Npc.Ai.Update(ActiveNpcs[i].Movement, player);
+                //ActiveNpcs[i].Npc.Ai.Update(ActiveNpcs[i].Movement, player); ai off
 
                 ActiveNpc npc = ActiveNpcs[i];
 
@@ -83,7 +111,10 @@ namespace Blueprint
                     MovementChase(npc.Movement, npc.CurrentDestination);
                 else
                     npc.Movement.Intention.Stop();
+
                 ActiveNpcs[i].Movement.Update(map);
+                ActiveNpcs[i].Type.Race.Animation.Update(ActiveNpcs[i].Movement);
+
 
                 #region Interaction
 
@@ -121,11 +152,12 @@ namespace Blueprint
 
         public void Draw( SpriteBatch spriteBatch, Camera camera, SpriteFont font )
         {
-            for (int i = 0; i < ActiveNpcs.Count; i++)
+
+            foreach (ActiveNpc npc in ActiveNpcs)
             {
-                spriteBatch.Draw(NpcTexture, camera.FromRectangle(ActiveNpcs[i].Movement.Area), ActiveNpcs[i].Npc.Race.DefaultSprite, Color.White);
+                npc.Type.Race.Animation.Draw(spriteBatch, camera, npc.Type.Race.Texture);
             }
-            //Interaction.Draw(spriteBatch, font, camera, UiTexture, NpcTexture);
+
         }
 
         private void MovementChase(Movement movement, Point dest)

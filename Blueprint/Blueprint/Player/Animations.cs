@@ -13,13 +13,43 @@ namespace Blueprint
     class Animations
     {
 
+        /// <summary>
+        /// The collection of animation sets
+        /// </summary>
         public Animation[] Collection;
 
+        /// <summary>
+        /// The current animation set being used
+        /// </summary>
         public Animation CurrentAnimation;
-        public short TimeUpto;
-        public short FrameUpto;
+
+        /// <summary>
+        /// ??
+        /// </summary>
+        private short TimeUpto;
+
+        /// <summary>
+        /// ??
+        /// </summary>
+        private short FrameUpto;
+
+        /// <summary>
+        /// The current direction of the animator, used for flipping the sprite
+        /// </summary>
         public string CurrentDirection;
+
+        /// <summary>
+        /// The current location in the world of the animator
+        /// </summary>
         public Rectangle CurrentLocation;
+
+        /// <summary>
+        /// returns the current animation frame
+        /// </summary>
+        public AnimationFrame CurrentFrame
+        {
+            get { return CurrentAnimation.Frames[FrameUpto]; }
+        }
 
         public Animations(string data)
         {
@@ -155,12 +185,13 @@ namespace Blueprint
 
         public void Draw(SpriteBatch spriteBatch, Camera camera, Texture2D texture)
         {
+
+            // Flip the animation if needed
             SpriteEffects effects = SpriteEffects.FlipHorizontally;
             if (CurrentDirection == "right")
-            {
                 effects = SpriteEffects.None;
-            }
-            spriteBatch.Draw(texture, camera.FromRectangle(CurrentLocation), CurrentAnimation.Frames[FrameUpto].ToRectangle(), Color.White, 0f, Vector2.Zero, effects, 0f);
+
+            spriteBatch.Draw(texture, camera.FromRectangle(CurrentLocation), CurrentFrame.ToRectangle(), Color.White, 0f, Vector2.Zero, effects, 0f);
         }
 
     }

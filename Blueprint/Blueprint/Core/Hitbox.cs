@@ -69,19 +69,34 @@ namespace Blueprint
         /// </summary>
         public float AttackSpeed;
 
-        /// <summary>
-        /// The compiled defense
-        /// </summary>
-        public int Defense;
-
         #endregion
 
         #region Stats
 
+        /// <summary>
+        /// The current strenght of the object
+        /// </summary>
         public int Str;
+
+        /// <summary>
+        /// The current agility of the object
+        /// </summary>
         public int Agi;
+
+        /// <summary>
+        /// The current inteligence of the object
+        /// </summary>
         public int Int;
+
+        /// <summary>
+        /// The current vitality of the object
+        /// </summary>
         public int Vit;
+
+        /// <summary>
+        /// The compiled defense
+        /// </summary>
+        public int Defense;
 
         #endregion
 
@@ -95,14 +110,30 @@ namespace Blueprint
 
         #region Internal
 
+        /// <summary>
+        /// Used for tracking the update tick which occurs once every second
+        /// </summary>
         private float Timer;
 
         #endregion
+
+        public Hitbox()
+        {
+
+        }
 
         public void Update(GameTime time)
         {
 
             Timer += (float)time.ElapsedGameTime.Seconds;
+
+            if (Timer >= 1f)
+            {
+
+                // Apply Regen
+
+                Timer -= 1f;
+            }
 
         }
 

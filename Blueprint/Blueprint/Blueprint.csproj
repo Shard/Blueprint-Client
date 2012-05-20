@@ -116,6 +116,7 @@
     <Compile Include="Core\Hitbox.cs" />
     <Compile Include="Core\Lib\Geometry.cs" />
     <Compile Include="Core\Lib\TextHelper.cs" />
+    <Compile Include="Core\Stats.cs" />
     <Compile Include="Events\Event.cs" />
     <Compile Include="Events\EventAction.cs" />
     <Compile Include="Events\EventCondition.cs" />
@@ -191,7 +192,6 @@
     <Compile Include="Npc\NpcAnimation.cs" />
     <Compile Include="Npc\NpcPackage.cs" />
     <Compile Include="Npc\Race\NpcRace.cs" />
-    <Compile Include="Npc\Race\NpcRaceDummy.cs" />
     <Compile Include="Npc\Shop.cs" />
     <Compile Include="Npc\ShopItem.cs" />
     <Compile Include="Player\Player.cs" />

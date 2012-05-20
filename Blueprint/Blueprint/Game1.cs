@@ -216,7 +216,7 @@ namespace Blueprint
             ItemPackage.mock(Map.Types, WeaponPackage.Weapons);
             ItemPackage.Initialize(Content.Load<Texture2D>("items"));
             Player.Inventory.Initialize(Content.Load<Texture2D>("Ui/buttons"), ItemPackage);
-            NpcPackage.Initialize(Content.Load<Texture2D>("npcs"), Content.Load<Texture2D>("Ui/ui"));
+            NpcPackage.Initialize(Content, Package, Content.Load<Texture2D>("Ui/ui"));
             Chat.Initialize(Content.Load<Texture2D>("Ui/chat"));
             Lighting.LoadContent(GraphicsDevice);
 
@@ -371,7 +371,7 @@ namespace Blueprint
             if (Server != null) { Server.Draw(UiBatch, Camera); }
             if (Client != null) { Client.Draw(UiBatch, Camera); }
             Ui.Draw(UiBatch, Camera, font);
-            NpcPackage.Interaction.Draw(UiBatch, font, Camera, NpcPackage.UiTexture, NpcPackage.NpcTexture);
+            NpcPackage.Interaction.Draw(UiBatch, font, Camera, NpcPackage.UiTexture);
             Control.Draw(UiBatch);
 
             #region debug

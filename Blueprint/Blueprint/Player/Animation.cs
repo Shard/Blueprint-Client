@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Blueprint
 {
@@ -11,18 +13,64 @@ namespace Blueprint
     class Animation
     {
 
+        #region Variables
+
+        /// <summary>
+        /// The name of the animation sequence
+        /// </summary>
         public string Name;
+
+        /// <summary>
+        /// The state of said animation (start, loop, end)
+        /// </summary>
         public string State;
+
+        /// <summary>
+        /// The amount of frame to hold on the animation until the animation frame will move on
+        /// </summary>
         public short Time;
+
+        /// <summary>
+        /// The default width of the spirtes in the animation sequence
+        /// </summary>
         public short Width;
+
+        /// <summary>
+        /// The default height of the sprites in the animation sequence
+        /// </summary>
         public short Height;
+
+        /// <summary>
+        /// The default hitbox height of the animation sequence
+        /// </summary>
         public short HitboxHeight;
+
+        /// <summary>
+        /// The default hitbox width of the animation sequence
+        /// </summary>
         public short HitboxWidth;
+
+        /// <summary>
+        /// The offset x of the whole animation sequence
+        /// </summary>
         public short OffsetX;
+
+        /// <summary>
+        /// The offset y of the whole animation sequence
+        /// </summary>
         public short OffsetY;
+
+        /// <summary>
+        /// The collection of all animation frames used in the animation
+        /// </summary>
         public AnimationFrame[] Frames;
 
+        /// <summary>
+        /// Defines how many frames the current frame has been used for
+        /// </summary>
         private short frame_upto;
+
+        #endregion
 
         /// <summary>
         /// Constructer for the animation class
@@ -60,6 +108,10 @@ namespace Blueprint
 
         }
 
+        /// <summary>
+        /// Autogenerates a set of frames based off amount
+        /// </summary>
+        /// <param name="amount"></param>
         public void AutoGenerate(short amount)
         {
             
@@ -70,6 +122,10 @@ namespace Blueprint
             }
         }
 
+        /// <summary>
+        /// Takes an xml frame node and adds it to the animations current frames
+        /// </summary>
+        /// <param name="node"></param>
         public void AddFrame(XmlNode node)
         {
             AnimationFrame frame = new AnimationFrame(Width, Height, OffsetX, OffsetY, Time);
@@ -104,6 +160,15 @@ namespace Blueprint
             }
             Frames[frame_upto] = frame;
             frame_upto++;
+        }
+
+        /// <summary>
+        /// Returns a rectangle of the current 
+        /// </summary>
+        /// <returns></returns>
+        public Rectangle ToRectangle()
+        {
+            return new Rectangle();
         }
 
 
